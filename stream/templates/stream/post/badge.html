@@ -1,0 +1,72 @@
+{% extends "stream/base.html" %}
+{% load comments %}
+{% load el_pagination_tags %}
+
+
+
+{% block title %}Debate{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<div class="row">
+  <div class="col-md-2">
+
+  </div>
+  <div class="col-md-7">
+      {% if post %}
+
+    <div class="panel panel-default">
+      <div class="panel panel-heading">
+        Badge: {{post.name|capfirst}} <span class="badge"></span>
+      </div>
+      <div class="panel-body">
+          <p>Decription: {{post.description|capfirst}}</p>
+          <p>Badge Category: {{post.category|capfirst}}</p>
+          <p>Badge Rank: {{post.rank}}</p>
+          <p>Badge Owners</p>
+          <p><span>{% for person in post.collected_by.all %}
+            <a href="{{ person.profile.get_absolute_url }}">{{person.username}}</a>{% if not forloop.last %},{% endif %}{% endfor %}
+          <span></p>
+
+        </div>
+        <div class="panel-footer">
+          Cheers.
+        </div>
+      </div>
+
+          {% else %}
+            <p>There are no badges bearing this name</p>
+          {% endif %}
+</div>
+
+  <div class="col-md-3">
+    <h4>Top Debaters</h4>
+    <p>Donec id elit no
+      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+    </p>
+    <p>porta gravida</p><p>Fusce dapibus, tellu</p><p>tortor mauris</p>
+
+    <br/>
+    <h4>Latest Badge Winners</h4>
+    <p>Donec id elit no</p><p>porta gravida</p><p>Fusce dapibus, tellu</p><p>tortor mauris</p>
+    <p>Login  and comment on a debate to get your first badge<p>
+
+    <br/>
+    <h4>Latest Comments</h4>
+    <p>Kayode Ileayo says</p>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo,
+      tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+      Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+
+    <p>Kayode Ileayo says</p>
+      <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo,
+        tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+ </div>
+</div>
+
+{% endblock %}

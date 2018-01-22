@@ -1,0 +1,272 @@
+{% extends "opine/base.html" %}
+{% load md2 %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% load staticfiles %}
+
+{% block extra_nav %}
+  <div class="visible-xs visible-sm">
+  {% if post.author == user %}
+  <p>
+    <a href="{% url 'opine:edit_post' post.id %}">
+  <button class="btn btn-primary">Edit Post</button></a>
+  </p>
+  {% endif %}
+</div>
+{% endblock extra_nav %}
+
+
+{% block bottom_nav %}
+<div class="visible-xs visible-sm">
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+  <div class="container">
+      <ul class="nav nav-pills" role="tablist">
+        <li class="navbar-brand" role="presentation">
+          {% if user.is_authenticated %}
+          <button  name="{{ post.slug }}" value="Like" class="btn btn-xs like">
+            {% if liked %}
+            <i class="fa fa-heart like-button"></i>
+            {% else %}
+            <i class="fa fa-heart-o like-button"></i>
+            {% endif %}
+          </button>
+          <span class="badge total_likes">{{ post.total_likes }}</span>
+
+        {% else %}
+        <button class="btn btn-xs" data-toggle="tooltip" title="Login/Signup to like"><i class="fa fa-heart-o"></i></button>
+        <span class="badge">{{post.total_likes}}</span>
+      {% endif %}
+      </li>
+      <li class="" role="presentation">
+          {% get_comment_count for post as comment_count %}
+          <a href="#"><i class="fa fa-comments"></i><span class="badge">{{ comment_count }}</span></a>
+      </li>
+      <li role="presentation"  class="pull-right">
+        <div class="dropup">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class='fa-stack'><i class='fa fa-square-o fa-stack-2x'></i><i class='fa fa-share-square fa-stack-1x'></i></span>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            {% load social_share %}
+            <li>
+              {% post_to_linkedin "Debate on {{post.title}} &#13;&#10; {{post.summary}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-linkedin fa-stack-1x fa-inverse'></i></span></div>" %}
+            </li>
+            <li>
+              {% post_to_twitter "Check out debate on {{post.title}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-square-o fa-stack-2x'></i><i class='fa fa-twitter fa-stack-1x'></i></span></div>" %}
+            </li>
+            <li>
+              {% post_to_facebook object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-facebook fa-stack-1x fa-inverse'></i></span></div>" %}
+            </li>
+
+              <a href="whatsapp://send?text={{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}" data-action="share/whatsapp/share">
+                <li>&nbsp;&nbsp;&nbsp;<span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-envelope fa-stack-1x fa-inverse'></i></span>
+                </li>
+              </a>
+
+                <!--
+              <script>
+              if (navigator.userAgent.match(/iPhone|Android/i)) {document.write('<li><a href="whatsapp://send?text=See..">Share on WhatApp</a></li>'); }
+              </script>  -->
+
+          </ul>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</nav>
+</div>
+{% endblock bottom_nav %}
+
+
+
+<!-- Main Post details -->
+{% block content %}
+
+<div class="row">
+  <div class="col-md-2">
+    <div class="hidden-xs hidden-sm"></div>
+  </div>
+
+  <div class="col-md-7">
+    {% if post %}
+
+    <div class="card">
+        <div class="card-content">
+
+            <h3 class="text-primary">{{post.title}}</h3>
+
+            {% for tag in post.tags.all %}
+              <a href="{% url 'opine:post_list_by_tag' tag.slug  %}"><span class="badge btn-primary">{{ tag.name }}</span></a>
+            {% endfor %}
+            <p><br>
+            Posted on {{post.created}}
+            <span class="text-muted small pull-right">By {{post.author.get_full_name}}</span></p>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-content">
+
+        <p><br>{{post.summary|markdown:"safe, code-friendly, code-color"|linebreaks}}</p>
+
+        {% if not post.author == user %}
+        <p>
+          <a href="{% url 'opine:edit_post' post.id %}">
+        <span class="text-muted small">Edit Post</span></a>
+        </p>
+        {% endif %}
+      </div>
+      <div class="card-content">
+        {%if attachments%}
+        <div class="row">
+        {%for image in attachments%}
+          <div class="col-md-6">
+        <img src="{{ MEDIA_URL }}{{image}}", width = "200", height= "200"/>
+          </div>
+        {%endfor%}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="panel panel-default">
+                <div class="hidden-xs hidden-sm">
+                    <div class="panel-footer">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="btn-group" aria-label="comments">
+                          {% get_comment_count for post as comment_count %}
+                            <i class="fa fa-comments"></i>
+                            <a href="#"><span class="badge">{{ comment_count }}</span></a>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          {% if user.is_authenticated %}
+                          <button  name="{{ post.slug }}" value="Like" class="btn btn-xs like">
+                            {% if liked %}
+                            <i class="fa fa-heart like-button"></i>
+                            {% else %}
+                            <i class="fa fa-heart-o like-button"></i>
+                            {% endif %}
+                          </button>
+                          <span class="badge total_likes">{{ post.total_likes }}</span>
+
+                        {% else %}
+                        <button class="btn btn-xs" data-toggle="tooltip" title="Login/Signup to like"><i class="fa fa-heart-o"></i></button>
+                        <span class="badge">{{post.total_likes}}</span>
+                      {% endif %}
+                      </div>
+                      {% load social_share %}
+                      <div class="col-md-6">
+                        <ul class="nav nav-pills" role="tablist">
+                          <li role="presentation"  class="pull-right">
+                            <a class="" href="whatsapp://send?text=http://www.puto.com"{{ post.get_absolute_url }}"  \n {{post.title}}" data-action="share/whatsapp/share">
+                              <span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-whatsapp fa-stack-1x fa-inverse'></i></span>
+                            </a>
+                          </li>
+                          <li role="presentation" class="pull-right">
+                            {% post_to_linkedin "{{post.title}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-linkedin fa-stack-1x fa-inverse'></i></span></div>" %}
+                          </li>
+                          <li role="presentation" class="pull-right">
+                            {% post_to_twitter "{{post.title}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-square-o fa-stack-2x'></i><i class='fa fa-twitter fa-stack-1x'></i></span></div>" %}
+                          </li>
+                          <li role="presentation" class="pull-right">
+                            {% post_to_facebook object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-facebook fa-stack-1x fa-inverse'></i></span></div>" %}
+                          </li>
+                        </ul>
+
+                      </div>
+                    </div>
+
+                    </div>
+                </div>
+        </div>
+      </div>
+
+
+    {% endif %}
+
+    {% if post.allow_comments %}
+      <div class="comment">
+        <p class="text-center text-muted"><a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.</p>
+        <div class="well well-sm">
+          {% render_comment_form for post %}
+        </div>
+      </div>
+    {% endif %}
+
+      {% if comment_count %}
+      <hr/>
+      <ul class="media-list">
+        {% render_xtdcomment_tree for post allow_flagging allow_feedback show_feedback %}
+      </ul>
+
+      <span>
+      <form method="get" action="{% url 'opine:goto_post_page' post.pk post.slug %}">
+        <input type="text" name='page' value='{{goto_page_no}}'/>
+        <button type="submit" >Go to Page</button>
+      </form>
+    </span>
+      {% endif %}
+
+
+
+</div>
+
+  <div class="col-md-3">
+    <p>
+      <a href="{% url 'opine:new_post' %}">
+    <button class="btn btn-default btn-xs">Create New Post</button></a>
+    </p>
+
+
+    {% if post.count %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+
+        Page Views : {{post.count}}
+
+      </div>
+    </div>
+      {% endif %}
+
+
+ </div>
+</div>
+
+{% endblock %}
+
+{% block extra-js %}
+<script>
+$('.like').click(function(){
+      $.ajax({
+               type: "POST",
+               url: "{% url 'opine:like-post' %}",
+               data: {'slug': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               dataType: "json",
+               success: function(response) {
+                      // alert(response.message);
+                      // alert('Post likes count is now ' + response.likes_count);
+                      $(".total_likes").text(response.likes_count);
+                      if (response.liked){
+                        if($(".like-button").hasClass("fa fa-heart-o like-button")){
+                             $(".like-button").removeClass("fa-heart-o").addClass("fa-heart");
+                           };
+                      }else{
+                        $(".like-button").removeClass("fa-heart").addClass("fa-heart-o");
+                      };
+                },
+                error: function(rs, e) {
+                       alert(rs.responseText);
+                }
+
+          });
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "stream/base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block title %}Score Debate{% endblock %}
+
+
+{% block content %}
+
+        <div class="row">
+          <div class="col-md-2"></div>
+
+          <div class="col-md-7">
+
+            {% if debaters_supporting %}
+            <div class="panel panel-default">
+
+              <div class="panel-heading">List of Debaters Showing Interest in Supporting</div>
+              <div class="panel-body table-responsive">
+                  Approve 5 or less debaters from this category based on your choice.
+                  <table class="table table-hover table-condensed">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Specialization</th>
+                        <th>Add</th>
+                        <th>Remove</th>
+                        <th>Approval Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      {% for debaters in debaters_supporting %}
+                      <tr>
+                        <td>{{debaters.name.get_full_name}}</td>
+                        <td>{{debaters.name.username}}</td>
+                        <td>{{debaters.name.profile.specialization}}</td>
+                        <td><button class="btn btn-primary approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="yes">Approve</button></td>
+                        <td><button class="btn approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="no">Dispprove</button></td>
+                        <td id="approval-{{debaters.name.username}}">
+                          {% if debaters.approval_status == True %}
+                            approved
+                          {% elif debaters.approval_status == False %}
+                            not approved
+                          {% endif %}
+                        </td>
+                      </tr>
+                        {% endfor %}
+                  </tbody>
+                  </table>
+              </div>
+            </div>
+            {% endif %}
+
+            {% if debaters_opposing %}
+            <div class="panel panel-default">
+
+              <div class="panel-heading">List of Debaters Showing Interest in Opposing</div>
+              <div class="panel-body table-responsive">
+                Approve 5 or less debaters from this category based on your choice.
+                <table class="table table-hover table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Username</th>
+                      <th>Add</th>
+                      <th>Remove</th>
+                      <th>Approval Status</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for debaters in debaters_opposing %}
+                    <tr>
+                      <td>{{debaters.name.get_full_name}}</td>
+                      <td>{{debaters.name.username}}</td>
+                      <td>{{debaters.name.profile.specialization}}</td>
+                      <td><button class="btn btn-primary approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="yes">Approve</button></td>
+                      <td><button class="btn approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="no">Disapprove</button></td>
+                      <td id="approval-{{debaters.name.username}}">
+                        {% if debaters.approval_status == True %}
+                          approved
+                        {% elif debaters.approval_status == False %}
+                          not approved
+                        {% endif %}
+                      </td>
+                    </tr>
+                      {% endfor %}
+                </tbody>
+                </table>
+              </div>
+            </div>
+            {% endif %}
+
+            <div class="panel panel-default">
+
+              <div class="panel-heading">Change Debate Periods</div>
+
+              <div class="panel-body">
+                <ul>
+                  <li>Start Date should be earlier than end date</li>
+                  <li>Add/Edit End date when you want to end a debate</li>
+                  <li>Add date in which vote ends to display winner, after judges scores</li>
+                  <li>Dates should be in the following 24hr format YYYY/MM/DD HR:MIN:SEC e.g 2017-12-08 20:59:28</li>
+
+                <h4>Debate Period for: <br>
+                {{related_post.title}} </h4>
+                <br>
+                <form class="" action="." method="post">
+                  {% csrf_token %}
+                  <div class="form-group">
+                      <p>Debate Start Date/Time</p>
+                      <div class='input-group date datetimepicker1'>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        {% render_field mod_form.begin class+="form-control datetimepicker1" %}<br>
+                      </div>
+
+                  <p>Vote Start Date/Time</p>
+                  <div class='input-group date datetimepicker1'>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                    {% render_field mod_form.vote_starts class+="form-control datetimepicker1" %}<br>
+                  </div>
+                  <p>Debate End Date</p>
+                  <div class='input-group date datetimepicker1'>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                    {% render_field mod_form.end class+="form-control datetimepicker1" %}<br>
+                  </div>
+                  {{mod_form.errors}}
+                </div>
+
+                <div class="form-group">
+                  <input type="submit" value="Update Date/Time" class="btn btn-primary btn-block" />
+                  <hr>
+
+                  <p>Only edit necessary fields. Do not tamper with debate settings if unsure</p>
+                  <p>I believe you have discussed with co-moderators before changing settings.</p>
+                  <p>Return to <a href="{{related_post.get_absolute_url }}">debate</a><p>
+                </div>
+                </form>
+
+            </div>
+          </div>
+
+          </div>
+
+          <div class="col-md-3"></div>
+        </div>
+
+        {% block extra-js %}
+      <script type="text/javascript">
+      $(document).ready(function(){
+          $(function () {
+              $('.datetimepicker1').datetimepicker(
+                {
+                        format:'YYYY-MM-DD HH:mm:ss'
+                  }
+
+              );
+          });
+        });
+
+      </script>
+      {% endblock extra-js %}
+    <script>
+    $('.approve').click(function(){
+          $.ajax({
+                   type: "POST",
+                   url: "{% url 'stream:approve' %}",
+                   data: {'user_id': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}', 'post_id':$(this).attr('value'), 'position':$(this).attr('position'), 'approve':$(this).attr('approve') },
+                   dataType: "json",
+                   success: function(response) {
+                          //alert(response.message);
+                          if (response.approved == 1){
+                            $("td#approval-"+response.username).text("approved");
+                          }else{
+                              $("td#approval-"+response.username).text("not approved");
+                          };
+
+                    },
+                    error: function(rs, e) {
+                           alert(rs.responseText);
+                    }
+              });
+    });
+</script>
+
+
+{% endblock %}

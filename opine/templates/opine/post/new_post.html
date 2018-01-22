@@ -1,0 +1,152 @@
+{% extends "stream/base.html" %}
+{% load staticfiles %}
+
+{% block user %}<p>{{ post.author}}</p>{% endblock %}
+
+{% block content %}
+
+<div class="ui middle aligned center aligned grid">
+  <div class="column">
+    <p class="ui blue image header">
+      <img class="logo" src="{% static 'images/logo.png' %}" alt = "ffng"/>
+      <div class="content">
+        By creating new contents, you are keeping events for the upcoming generation.
+      </div>
+    </p>
+
+    <form class="ui large form post-form" action="." method="post" enctype="multipart/form-data">
+      <div class="ui stacked segment">
+        <div class="required field">
+          <div class="ui calendar" id="event_date">
+            <div class="ui left icon input">
+              <i class="add to calendar icon"></i>
+              <input class="datepicker" id="id_eventDate" name="eventDate" placeholder="Pick event date YYYY-MM-DD" type="text" />
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="external square icon"></i>
+            <input id="id_source" maxlength="200" name="source" placeholder="Give a url reference e.g http://www.xyz.com/ab" type="url" />
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="location arrow icon"></i>
+            <input id="id_place" maxlength="20" name="place" type="text" placeholder="Where did the event occur?" />
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="users icon"></i>
+            <input id="id_people" maxlength="250" name="people" type="text" placeholder="Which notable persons were involved? Separate tags by commas?"/>
+          </div>
+        </div>
+
+        <div class="required field">
+          <div class="ui left icon input">
+            <i class="users icon"></i>
+            <input id="id_title" maxlength="50" name="title" type="text" placeholder="Write a suitable title for your post"/>
+          </div>
+        </div>
+
+        <div class="required field">
+          <textarea cols="40" id="id_body" name="body" rows="10" maxlength="500" placeholder="Write full event details here" ></textarea>
+        </div>
+<!--
+        <input id="id_form-TOTAL_FORMS" name="form-TOTAL_FORMS" type="hidden" value="2" />
+        <input id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" type="hidden" value="0" />
+        <input id="id_form-MIN_NUM_FORMS" name="form-MIN_NUM_FORMS" type="hidden" value="0" />
+        <input id="id_form-MAX_NUM_FORMS" name="form-MAX_NUM_FORMS" type="hidden" value="1000" />
+
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="tags icon"></i>
+            <input id="id_form-0-image" name="form-0-image" type="file" />
+            <input id="id_form-0-id" name="form-0-id" type="hidden" />
+            <span class="helptext">
+            </div>
+            <div class="ui left icon input">
+              <i class="tags icon"></i>
+              <input id="id_form-1-image" name="form-1-image" type="file" />
+              <input id="id_form-1-id" name="form-1-id" type="hidden" />
+            </div>
+          </div>
+-->
+          <div class="field">
+            <div class="ui left icon input">
+              <div class="ui fluid multiple dropdown" id="lists">
+                <input type="hidden" name="tags" id="id_tags" />
+                <i class="tags icon"></i>
+                <span class="text">Add Tags</span>
+                <i class="add icon"></i>
+                <div class="menu">
+                  <div class="ui icon search input">
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search tags...">
+                  </div>
+                  <div class="divider"></div>
+                  <div class="header">
+                    <i class="tags icon"></i>
+                    Tag Label
+                  </div>
+                  <div class="scrolling menu">
+                    {% for tag in post_tags %}
+                    <div class="item" data-value={{tag}}>
+                      <div class="ui red empty circular label"></div>
+                      {{ tag }}
+                    </div>
+                    {% endfor %}
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+
+          {% csrf_token %}
+          <input type="submit" value = "Share History" class="ui large green submit button" />
+          <a class="ui large red button" href="{% url 'feed:post_list'%}">Cancel</a>
+        </div>
+
+        <div class="ui error message"></div>
+
+      </form>
+
+    <div class="ui message">
+      Thanks for being part of history? <a href="{% url 'feed:post_list' %}">Return to homepage</a>
+    </div>
+  </div>
+</div>
+
+<script id="jsbin-javascript">
+
+$('#event_date').calendar({
+  type: 'date',
+  monthFirst: false,
+  formatter: {
+    date: function (date, settings) {
+      if (!date) return '';
+      var day = date.getDate();
+      if (day < 10)
+        day = '0' + day
+      var month = date.getMonth() + 1;
+      if (month < 10)
+        month = '0' + month
+      var year = date.getFullYear();
+      return year + '-' + month + '-' + day;
+    }
+  }
+});
+</script>
+
+<script>
+$('#lists')
+.dropdown(
+  {}).val().toString()
+;
+
+</script>
+
+
+{% endblock %}

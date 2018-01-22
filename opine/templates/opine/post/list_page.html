@@ -1,0 +1,25 @@
+{% load el_pagination_tags %}
+
+{% paginate post %}
+
+{% for debates in post %}
+
+<div class="panel panel-default">
+<div class="panel-body">
+  <p class="pull-right">Starts on {{debates.begin}}</p>
+  <p>{% for tag in debates.tags.all %} {{ tag }}{% if not forloop.last %}, {% endif %}{% endfor %}<p>
+  <p>Suggested by {{debates.author.get_full_name}}</p>
+  <h4><a href="{{ debates.get_absolute_url }}">{{debates.title}} </a><span class="label label-default">New</span></h4>
+  <p>
+    {{ debates.summary|truncatewords:300|linebreaks }}
+  </p>
+  <p><strong>Debaters:</strong>
+    {% for names in debates.supporting_debaters.all %} {{ names.get_full_name }},{% endfor %}
+    {% for names in debates.opposing_debaters.all %} {{ names.get_full_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+  </p>
+
+</div>
+
+
+{% endfor %}
+{% show_more %}

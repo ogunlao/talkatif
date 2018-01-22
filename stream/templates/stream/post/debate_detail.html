@@ -1,0 +1,789 @@
+{% extends "stream/base.html" %}
+{% load staticfiles %}
+{% load md2 %}
+{% load comments %}
+{% load comments_xtd %}
+{% load widget_tweaks %}
+{% load stream_filter %}
+
+{% block extra_nav %}
+<div class="visible-xs visible-sm">
+        {% if post.author == user %}
+        <p>
+          <a href="{% url 'stream:edit_debate_post' post.id %}">
+        <button class="btn btn-primary">Edit Debate</button></a>
+        </p>
+        {% endif %}
+
+        {% for admin in post.moderator.all %}
+          {% if admin == user %}
+  <div class="panel panel-default">
+    <div class="panel-body">
+        Moderator Panel
+        <a href="{% url 'stream:mod_debate' post.pk %}">
+          <button type="button" class="btn btn-info">Go to Mod</button></a>
+        <hr/>
+        <p>Edit debate start and end times in Mod</p>
+    </div>
+  </div>
+          {% endif %}
+        {% endfor %}
+
+        {% for admin in post.judges.all %}
+          {% if admin == user %}
+  <div class="panel panel-default">
+    <div class="panel-body">
+        Judges Panel
+        <a href="{% url 'stream:score_debate' post.pk %}">
+          <button type="button" class="btn btn-info">Score Debate</button>
+        </a>
+        <p>Use panel to score debates if debate has ended.</p>
+          {% endif %}
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+{% endblock extra_nav %}
+
+
+{% block bottom_nav %}
+<div class="visible-xs visible-sm">
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+  <div class="container">
+      <ul class="nav nav-pills" role="tablist">
+        <li class="navbar-brand" role="presentation">
+          {% if user.is_authenticated %}
+          <button  name="{{ post.slug }}" value="Like" class="btn btn-xs like">
+            {% if liked %}
+            <i class="fa fa-heart like-button"></i>
+            {% else %}
+            <i class="fa fa-heart-o like-button"></i>
+            {% endif %}
+          </button>
+          <span class="badge total_likes">{{ post.total_likes }}</span>
+        {% else %}
+          <button class="btn btn-xs" data-toggle="tooltip" title="Login/Signup to like"><i class="fa fa-heart-o"></i></button>
+          <span class="badge">{{like_count}}</span>
+        {% endif %}
+
+      </li>
+      <li class="" role="presentation">
+          {% get_comment_count for post as comment_count %}
+          <a href="#"><i class="fa fa-comments"></i><span class="badge">{{ comment_count }}</span></a>
+      </li>
+      <li role="presentation"  class="pull-right">
+        <div class="dropup">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class='fa-stack'><i class='fa fa-square-o fa-stack-2x'></i><i class='fa fa-share-square fa-stack-1x'></i></span>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            {% load social_share %}
+            <li>
+              {% post_to_linkedin "Debate on {{post.title}} &#13;&#10; {{post.summary}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-linkedin fa-stack-1x fa-inverse'></i></span>linkedin</div>" %}
+            </li>
+            <li>
+              {% post_to_twitter "Check out debate on {{post.title}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-square-o fa-stack-2x'></i><i class='fa fa-twitter fa-stack-1x'></i></span>twitter</div>" %}
+            </li>
+            <li>
+              {% post_to_facebook object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-facebook fa-stack-1x fa-inverse'></i></span>facebook</div>" %}
+            </li>
+
+              <a href="whatsapp://send?text='{{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}'" data-action="share/whatsapp/share">
+                <li>&nbsp;&nbsp;&nbsp;<span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-whatsapp fa-stack-1x fa-inverse'></i></span>Whatsapp
+                </li>
+              </a>
+
+                <!--
+              <script>
+              if (navigator.userAgent.match(/iPhone|Android/i)) {document.write('<li><a href="whatsapp://send?text=See..">Share on WhatApp</a></li>'); }
+              </script>  -->
+
+          </ul>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</nav>
+</div>
+{% endblock bottom_nav %}
+
+<!-- Main Post details -->
+{% block content %}
+
+<div class="row">
+  <div class="col-md-2">
+      <div class="hidden-xs hidden-sm">
+              {% for admin in post.moderator.all %}
+                {% if admin == user %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Moderator Panel
+          </div>
+          <div class="panel-body">
+              <a href="{% url 'stream:mod_debate' post.pk %}">
+                <button type="button" class="btn btn-primary">Go to Mod</button></a>
+              <hr/>
+              <p>Approve debaters and edit debate start and end times.</p>
+          </div>
+        </div>
+                {% endif %}
+              {% endfor %}
+
+              {% for admin in post.judges.all %}
+                {% if admin == user %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Judges Panel
+          </div>
+          <div class="panel-body">
+              <a href="{% url 'stream:score_debate' post.pk %}">
+                <button type="button" class="btn btn-primary">Score Debate</button>
+              </a><hr/>
+              <p>Use panel to score debates if debate has ended.</p>
+            </div>
+          </div>
+                {% endif %}
+              {% endfor %}
+
+            </div>
+    </div>
+
+{% if post %}
+<!-- Card Projects -->
+<div class="col-md-7">
+  <div class="card">
+      <div class="card-content">
+          <h3 class="text-primary">{{post.title}}</h3>
+          {% if debate_in_progress or debate_has_ended %}
+            <i class="fa fa-lock fa-lg" aria-hidden="true"></i>
+            {% else  %}
+            <i class="fa fa-unlock-alt fa-lg" aria-hidden="true"></i>
+          {% endif %}
+
+          {% for tag in post.tags.all %}
+            <a href="{% url 'stream:debate_list_by_tag' tag.slug  %}"><span class="badge btn-primary">{{ tag.name }}</span></a>
+          {% endfor %}
+
+          {% if post.winner_updated %}
+            <span class="pull-right"><i class="fa fa-glass fa-lg" aria-hidden="true">{{post.winner}}</i></span>
+          {% endif %}
+          <p>
+          <span class="text-muted small"><br>{{post.debate_category | capfirst}} debate</span>
+          <span class="text-muted small pull-right">By {{post.author.get_full_name}}</span></p>
+      </div>
+  </div>
+  <div class="card alert alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-close fa-lg btn-danger" aria-hidden="true"></i></button>
+    <div class="card-content">
+      <p class="small">
+        <i class="fa fa-clock-o fa-lg" aria-hidden="true"><span class="text-muted">
+        {% if post.end %} Ends {{post.end}}
+        {% elif post.begin %}
+        Started {{post.begin}}
+        {% else %} Debate starts soon.
+        {% endif %}
+        </span></i>
+      </p>
+      <p><br>{{post.summary|markdown:"safe, code-friendly, code-color"|linebreaks}}</p>
+
+      {% if post.author == user %}
+      <p>
+        <a href="{% url 'stream:edit_debate_post' post.id %}">
+      <span class="text-muted small">Edit Debate</span></a>
+      </p>
+      {% endif %}
+    </div>
+
+    <div class="card-content">
+      {%if attachments%}
+      <div class="row">
+      {%for image in attachments%}
+        <div class="col-md-6 ">
+        <p id="image{{forloop.counter}}" post_id ={{post.id}} image_id = {{image.id}} >
+          <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+        </p>
+        </div>
+      {%endfor%}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+  <div class="card alert alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-close fa-lg btn-danger" aria-hidden="true"></i></button>
+    <div class="card-action">
+      <div class="row">
+        <div class="col-md-4">
+        {% if post.supporting_debaters.all %}
+          <h5>Supporting <i class="fa fa-group" aria-hidden="true"></i></h5>
+            {% for names in post.supporting_debaters.all %}
+            <div class="media">
+              <div class="media-left">
+                <a href={{names.profile.get_absolute_url}}>
+                {% if names.profile.image %}
+                <img src="{{ names.profile.image.thumbnail.50x50 }}" />
+                {% else %}
+                <img src="{{MEDIA_URL}}/__placeholder__/placeholder.png" width=50, height=50/>
+                {% endif %}
+              </a>
+              </div>
+              <div class="media-body">
+                <h5 class="media-heading">{{ names.get_full_name }}</h5>
+                <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a><br>
+                  Speaker {{forloop.counter}}</a></p>
+              </div>
+            </div>
+            {% endfor %}{%endif%}
+            {% if user.is_authenticated and not debate_in_progress and post.debate_category == "closed"  %}
+            <a href={% url 'stream:join_participants' post_id=post.id position="supporting"  %}>
+              Apply to join supporting team.
+            </a>
+            {% endif %}
+
+          </div>
+          <div class="col-md-4">
+          {% if post.opposing_debaters.all %}
+            <h5>Opposing <i class="fa fa-group" aria-hidden="true"></i></h5>
+              {% for names in post.opposing_debaters.all %}
+              <div class="media">
+                <div class="media-left">
+                  <a href={{names.profile.get_absolute_url}}>
+                    {% if names.profile.image %}
+                    <img src="{{ names.profile.image.thumbnail.50x50 }}" />
+                    {% else %}
+                    <img src="{{MEDIA_URL}}/__placeholder__/placeholder.png" width=50, height=50/>
+                    {% endif %}
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h5 class="media-heading">{{ names.get_full_name }}</h5>
+                  <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a><br>
+                    Speaker {{forloop.counter}}</p>
+                </div>
+              </div>
+              {% endfor %}
+              {% endif %}
+
+              {% if user.is_authenticated and not debate_in_progress and post.debate_category == "closed"%}
+              <a href={% url 'stream:join_participants' post_id=post.id position="opposing"  %}>
+                Apply to join opposing team.
+              </a>
+              {% endif %}
+            </div>
+            <div class="col-md-4">
+              {% if post.moderator.all %}
+              <h5>Moderator(s)</h5>
+              {% for names in post.moderator.all %}
+              <div class="media">
+                <div class="media-left">
+                  <a href="">
+                    {% if names.profile.image %}
+                    <img src="{{ names.profile.image.thumbnail.50x50 }}" />
+                    {% else %}
+                    <img src="{{MEDIA_URL}}/__placeholder__/placeholder.png" width=50, height=50/>
+                    {% endif %}
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h5 class="media-heading">{{names.get_full_name}}</h5>
+                  <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a><br>
+                    Mod {{forloop.counter}} <i class="fa fa-eye fa-lg" aria-hidden="true"></i></p>
+                </div>
+              </div>
+              {% endfor %}
+              {% endif %}
+
+              {% if post.judges.all %}
+              <h5>Judges(s)</h5>
+              {% for names in post.judges.all %}
+              <div class="media">
+                <div class="media-left">
+                  <a href="">
+                    {% if names.profile.image %}
+                    <img src="{{ names.profile.image.thumbnail.50x50 }}" />
+                    {% else %}
+                    <img src="{{MEDIA_URL}}/__placeholder__/placeholder.png" width=50, height=50/>
+                    {% endif %}
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h5 class="media-heading">{{names.get_full_name}}</h5>
+                  <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a>
+                  <br>Judge {{forloop.counter}} <i class="fa fa-binoculars fa-lg" aria-hidden="true"></i></p>
+                </div>
+              </div>
+              {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="panel panel-default">
+            <div class="hidden-xs hidden-sm">
+                <div class="panel-footer">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="btn-group" aria-label="comments">
+                      {% get_comment_count for post as comment_count %}
+                        <i class="fa fa-comments"></i>
+                        <a href="#"><span class="badge">{{ comment_count }}</span></a>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      {% if user.is_authenticated %}
+                      <button  name="{{ post.slug }}" value="Like" class="btn btn-xs like">
+                        {% if liked %}
+                        <i class="fa fa-heart like-button"></i>
+                        {% else %}
+                        <i class="fa fa-heart-o like-button"></i>
+                        {% endif %}
+                      </button>
+                      <span class="badge total_likes">{{ post.total_likes }}</span>
+
+                    {% else %}
+                    <button class="btn btn-xs" data-toggle="tooltip" title="Login/Signup to like"><i class="fa fa-heart-o"></i></button>
+                    <span class="badge">{{post.total_likes}}</span>
+                  {% endif %}
+                  </div>
+                  {% load social_share %}
+                  <div class="col-md-6">
+                    <ul class="nav nav-pills" role="tablist">
+                      <li role="presentation"  class="pull-right">
+                        <a href="whatsapp://send?text='{{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}'" data-action="share/whatsapp/share">
+                          <span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-whatsapp fa-stack-1x fa-inverse btn-success'></i></span>
+                        </a>
+                      </li>
+                      <li role="presentation" class="pull-right">
+                        {% post_to_linkedin "{{post.title}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-linkedin fa-stack-1x fa-inverse'></i></span></div>" %}
+                      </li>
+                      <li role="presentation" class="pull-right">
+                        {% post_to_twitter "{{post.title}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-square-o fa-stack-2x'></i><i class='fa fa-twitter fa-stack-1x'></i></span></div>" %}
+                      </li>
+                      <li role="presentation" class="pull-right">
+                        {% post_to_facebook object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-facebook fa-stack-1x fa-inverse'></i></span></div>" %}
+                      </li>
+                    </ul>
+
+                  </div>
+                </div>
+
+                </div>
+            </div>
+          </div>
+        </div>
+
+          {% if not debate_in_progress or debate_has_ended or not user.is_authenticated%}
+            <div class="alert alert-warning" role="alert">
+              <p>Debate closed for comments due to one of the following reasons:
+              <ul>
+                <li>Debate has not yet started.</li>
+                <li>Debate follower is not logged in. Login to post comments</li>
+                <li>Debate has ended and comments cosed on the issue</li>
+                <li>Debate is in progress and only debaters or moderators are allowed to comment presently</li>
+              </ul>
+            </p>
+            </div>
+          {% else %}
+          <div class="alert alert-danger" role="alert">
+            <p>Comments are highly moderated and filtering occur instantly.</p>
+            <p>So, avoid using obscene words or foul language to express your views.</p>
+            <p>If your comment is placed under moderation, it would be reviewed and/or edited
+              to suit the platform's atmosphere</p>
+          </div>
+            {% endif %}
+        {% endif %}
+
+
+      {% get_comment_form for post as form %}
+      {% for person in post.moderator.all %}
+      {% if not debate_has_ended and person == request.user%}
+      <div class="comments">
+        <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
+          {% csrf_token %}
+          <fieldset>
+            {% if post.debate_category == "open" %}
+            <div class="form-group pull-right" >
+              Debate Position:
+              <select name="debate_option" id = "debate_option" required>
+                <option value=""></option>
+                <option value="Supporting">Supporting</option>
+                <option value="Opposing">Opposing</option>
+              </select>
+            </div>
+            {% endif %}
+
+            <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
+
+            <div class="alert alert-danger hidden" data-comment-element="errors">
+            </div>
+
+            {% for field in form %}
+              {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
+            {% endfor %}
+
+            <div style="display:none">{{ form.honeypot }}</div>
+
+            <div class="form-group well well-sm {% if 'comment' in form.errors %}has-error{% endif %}">
+                {% render_field form.comment rows='5'%}
+              <p class="text-center text-muted small">
+                <a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.
+                <br>For open debate, indicate if supporting or opposing at top of comment.
+              </p>
+            </div>
+
+          </fieldset>
+
+          <p class="text-danger">You can post comments as a moderator before debate starts. Other persons cannot post comments during this period.</p>
+          <div class="form-group">
+            <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+              <input type="submit" name="post" value='send' class="btn btn-primary" />
+              <input type="submit" name="preview" value="preview" class="btn btn-default" />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      {% endif %}
+      {% endfor %}
+
+      {% for person in post.supporting_debaters.all %}
+      {% if not debate_has_ended and person == request.user and debate_in_progress %}
+      <div class="comments">
+        <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
+          {% csrf_token %}
+          <fieldset>
+            {% if post.debate_category == "open" %}
+            <div class="form-group pull-right" >
+              Debate Position:
+              <select name="debate_option" id = "debate_option" required>
+                <option value=""></option>
+                <option value="Supporting">Supporting</option>
+                <option value="Opposing">Opposing</option>
+              </select>
+            </div>
+            {% endif %}
+
+            <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
+
+            <div class="alert alert-danger hidden" data-comment-element="errors">
+            </div>
+
+            {% for field in form %}
+              {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
+            {% endfor %}
+
+            <div style="display:none">{{ form.honeypot }}</div>
+
+            <div class="form-group well well-sm {% if 'comment' in form.errors %}has-error{% endif %}">
+                {% render_field form.comment rows='5' placeholder="400 words max to express idea."%}
+              <p class="text-center text-muted small">
+                <a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.
+                <br>For open debate, indicate if supporting or opposing at top of comment.
+              </p>
+            </div>
+
+          </fieldset>
+
+          <div class="form-group">
+            <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+              <input type="submit" name="post" value='send' class="btn btn-primary" />
+              <input type="submit" name="preview" value="preview" class="btn btn-default" />
+            </div>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+      {% endfor %}
+
+      {% for person in post.opposing_debaters.all %}
+      {% if not debate_has_ended and person == request.user and debate_in_progress %}
+      <div class="comments">
+        <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
+          {% csrf_token %}
+          <fieldset>
+            {% if post.debate_category == "open" %}
+            <div class="form-group pull-right" >
+              Debate Position:
+              <select name="debate_option" id = "debate_option" required>
+                <option value=""></option>
+                <option value="Supporting">Supporting</option>
+                <option value="Opposing">Opposing</option>
+              </select>
+            </div>
+            {% endif %}
+
+            <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
+
+            <div class="alert alert-danger hidden" data-comment-element="errors">
+            </div>
+
+            {% for field in form %}
+              {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
+            {% endfor %}
+
+            <div style="display:none">{{ form.honeypot }}</div>
+
+            <div class="form-group well well-sm {% if 'comment' in form.errors %}has-error{% endif %}">
+                {% render_field form.comment rows='5' placeholder="400 words max to express idea."%}
+              <p class="text-center text-muted small">
+                <a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.
+                <br>For open debate, indicate if supporting or opposing at top of comment.
+              </p>
+            </div>
+
+          </fieldset>
+
+
+          <div class="form-group">
+            <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+              <input type="submit" name="post" value='send' class="btn btn-primary" />
+              <input type="submit" name="preview" value="preview" class="btn btn-default" />
+            </div>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+      {% endfor %}
+
+      {% if user.is_authenticated and debate_has_ended %}
+      <div class="comments">
+        <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
+          {% csrf_token %}
+          <fieldset>
+            {% if post.debate_category == "open" %}
+            <div class="form-group pull-right" >
+              Debate Position:
+              <select name="debate_option" id = "debate_option" required>
+                <option value=""></option>
+                <option value="Supporting">Supporting</option>
+                <option value="Opposing">Opposing</option>
+              </select>
+            </div>
+            {% endif %}
+
+            <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
+
+            <div class="alert alert-danger hidden" data-comment-element="errors">
+            </div>
+
+            {% for field in form %}
+              {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
+            {% endfor %}
+
+            <div style="display:none">{{ form.honeypot }}</div>
+
+            <div class="form-group well well-sm {% if 'comment' in form.errors %}has-error{% endif %}">
+                {% render_field form.comment rows='5' placeholder="400 words max to express idea."%}
+              <p class="text-center text-muted small">
+                <a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.
+                <br>For open debate, indicate if supporting or opposing at top of comment.
+              </p>
+            </div>
+
+          </fieldset>
+          <div class="form-group">
+            <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+              <input type="submit" name="post" value='send' class="btn btn-primary" />
+              <input type="submit" name="preview" value="preview" class="btn btn-default" />
+            </div>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+
+          {% if comment_count %}
+          <ul class="media-list">
+            {% render_xtdcomment_tree for post allow_flagging allow_feedback show_feedback  %}
+          </ul>
+          <span class="pull-right">
+          <form method="get" action="{% url 'stream:goto_page' post.debate_category post.pk post.slug %}">
+            <input type="text" name='page' value='{{goto_page_no}}'/>
+            <button type="submit" >Go to Page</button>
+          </form>
+          </span>
+        {% endif %}
+          <br>
+        </div>
+
+  <div class="col-md-3">
+    <p>
+      <a href="{% url 'stream:suggest_post' %}">
+    <button class="btn btn-default btn-sm">Create a new debate</button></a>
+    </p>
+    <br>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {% if voted_before or not post.begin or debate_in_progress or not user.is_authenticated %}
+        <button  name="{{ post.slug }}" value="support" class="btn btn-xs btn-primary vote disabled">Support</button>
+        <button  name="{{ post.slug }}" value="oppose" class="btn btn-xs btn-success vote disabled">Oppose</button>
+        {% else %}
+        <button  name="{{ post.slug }}" value="support" class="btn btn-xs btn-primary vote">Support</button>
+        <button  name="{{ post.slug }}" value="oppose" class="btn btn-xs btn-success vote">Oppose</button>
+        {% endif %}
+
+
+        <p class="debate_stand small"><br>
+        {% if vote_message %}{{vote_message}}
+        {% else %}You have not voted in this debate{% endif %}
+        <br>
+          {% if not user.is_authenticated %}
+          <a href="{% url 'account_login' %}">Login</a> or <a href="{% url 'account_signup' %}">SignUp</a> to vote.
+          {% endif %}
+        </p><hr/>
+        <p class="small">Voting Starts :
+            {% if post.vote_starts %}{{post.vote_starts}}{% else %}Not yet set by Mod{%endif%}<br>
+          Voting Ends :
+            {% if post.end %}{{post.end}}{% else %}Not yet set by Mod{%endif%}<br>
+          Result displayed afterwards. Please be patient.</p>
+
+
+      </div>
+      {% if debate_has_ended %}
+      <div class="panel-footer">
+        <p aria-label="Debate Results" class="text-danger">Results:<br>
+        Supporting Team: {{total_support_vote}}<br>
+        Opposing Team: {{total_oppose_vote}}
+        </p>
+      </div>
+      {% endif %}
+
+    </div>
+
+    {% if post.count %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+
+        Total Followers : {{post.count}}
+
+      </div>
+    </div>
+      {% endif %}
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {% if notify_status %}
+            <p class="has_set_notification small">You have previously set notification for this debate. You would be notified via email 15 mins before debate starts.</p><br>
+          {% else %}
+            <p class="has_set_notification small">Set notification to get alert when debate starts. {%if not user.is_authenticated %}You must be logged in.{%endif%}</p><br>
+          {% endif %}
+
+          {% if notify_status or not user.is_authenticated %}
+            <button  name="{{ post.slug }}" value="notify" class="btn btn-sm btn-success disabled notify">Notify</button>
+          {% else %}
+            <button  name="{{ post.slug }}" value="notify" class="btn btn-sm btn-success notify">Notify</button>
+          {% endif %}
+        </div>
+      </div>
+ </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra-js %}
+<script>
+
+$(document).ready(function(){
+    $("select#debate_option").change(function(){
+        var debate_option = $("#debate_option option:selected").val();
+        $("textarea#id_comment").val("`"+debate_option + "  Position.`");
+    });
+});
+
+</script>
+<script>
+$('.like').click(function(){
+      $.ajax({
+               type: "POST",
+               url: "{% url 'stream:like' %}",
+               data: {'slug': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               dataType: "json",
+               success: function(response) {
+                      // alert(response.message);
+                      // alert('Debate likes count is now ' + response.likes_count);
+                      $(".total_likes").text(response.likes_count);
+                      if (response.liked){
+                        if($(".like-button").hasClass("fa fa-heart-o like-button")){
+                             $(".like-button").removeClass("fa-heart-o").addClass("fa-heart");
+                           };
+                      }else{
+                        $(".like-button").removeClass("fa-heart").addClass("fa-heart-o");
+                      };
+                },
+                error: function(rs, e) {
+                       alert(rs.responseText);
+                }
+
+          });
+
+
+});
+
+$('.vote').click(function(){
+      $.ajax({
+               type: "POST",
+               url: "{% url 'stream:vote' %}",
+               data: {'slug': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}', 'debate_stand':$(this).attr('value')},
+               dataType: "json",
+               success: function(response) {
+                      //alert(response.message);
+                      $(".debate_stand").text(response.message);
+                      $(".vote").addClass("disabled");
+
+                },
+                error: function(rs, e) {
+                       alert(rs.responseText);
+                }
+          });
+});
+
+$('.notify').click(function(){
+      $.ajax({
+               type: "POST",
+               url: "{% url 'stream:notify' %}",
+               data: {'slug': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}', },
+               dataType: "json",
+               success: function(response) {
+                      //alert(response.message);
+                      $(".has_set_notification").text(response.message);
+                      $(".notify").addClass("disabled");
+
+                },
+                error: function(rs, e) {
+                       alert(rs.responseText);
+                }
+          });
+});
+
+
+{% for image in attachments %}
+
+$(document).ready(function(){
+  var id = {{forloop.counter}}
+  var img_css_id = "image"+id.toString()
+  //console.log(img_css_id)
+  $.ajax({
+           type: "POST",
+           url: "{% url 'stream:load_image' %}",
+           data: {'csrfmiddlewaretoken': '{{ csrf_token }}', 'post_id':$("#"+img_css_id).attr('post_id'),'image_id':$("#"+img_css_id).attr('image_id'), },
+           success: function(response) {
+                  $('#'+img_css_id).html('<img width="250", height="250", src="data:image/png;base64,' + response + '" />');
+
+            },
+            error: function(rs, e) {
+                   alert(rs.responseText);
+            }
+      });
+});
+
+{% endfor %}
+
+</script>
+{% endblock %}

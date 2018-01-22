@@ -1,0 +1,63 @@
+{% extends "stream/base.html" %}
+{% load comments %}
+{% load el_pagination_tags %}
+
+
+
+{% block title %}Puto - Search{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="container">
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-7">
+    {% if query %}
+
+        {% for result in page.object_list %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {% if result.debate_category %}
+          <p class="pull-right">Starts: {{result.begin}}</p>
+          <p>{% for tag in result.tags %}
+            <a href="{% url 'stream:debate_list_by_tag' tag   %}"><span class="badge">{{tag}}</span></a>{% endfor %}
+          <p>
+          <p>Suggested by {{result.author.get_full_name}}</p>
+          <h4><a href="{{ result.object.get_absolute_url }}">{{result.title}} </a><span class="label label-default">New</span></h4>
+          <p>
+            {{ result.summary|truncatewords:300|linebreaks }}
+          </p>
+          <p><strong>Debaters:</strong>
+            {% for names in result.supporting_debaters %} {{ names }},{% endfor %}
+            {% for names in result.opposing_debaters %} {{ names }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+          </p>
+        {% else %}
+        <p class="pull-right">Created {{result.created}}</p>
+        <p>{% for tag in result.tags %}
+          <a href="{% url 'opine:post_list_by_tag' tag   %}"><span class="badge">{{tag}}</span></a>{% endfor %}
+        <p>
+        <p>Suggested by {{result.author.get_full_name}}</p>
+        <h4><a href="{{ result.object.get_absolute_url }}">{{result.title}} </a><span class="label label-default">New</span></h4>
+        <p>
+          {{ result.summary|truncatechars:300|linebreaks }}
+        </p>
+        {% endif %}
+        </div>
+          <!-- <div class="panel-footer">
+          </div> -->
+        </div>
+
+          {% endfor %}
+
+          {% else %}
+            <p>There are no results for this search.</p>
+          {% endif %}
+</div>
+
+  <div class="col-md-3">
+
+  </div>
+</div>
+
+{% endblock %}

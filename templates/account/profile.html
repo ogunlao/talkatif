@@ -1,0 +1,149 @@
+{% extends "account/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Profile for {{profile_user.first_name}}{% endblock %}
+
+{% block content %}
+
+        <div class="row">
+          <div class="col-md-2">
+          </div>
+
+          <div class="col-md-7">
+            {% if created %}
+            <div class="alert alert-info alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <p class="text-danger">Welcome to your profile! Quickly update your profile by clicking <a href="{% url 'update_profile'%}">edit profile</a></p>
+          </div>
+            {% endif %}
+            <div class="panel panel-default">
+              <div class="panel-heading">{{ profile_user_name|title }}
+                {% if profile_user == request.user %}
+                  <a href="{% url 'update_profile'%}">Edit Profile</a>
+                {% endif %}
+              </div>
+              <div class="panel-body">
+                  {% if profile_user.profile.image %}
+                  <img src="{{ profile_user.profile.image.thumbnail.100x100 }}" />
+                  {% else %}
+                  <img src="{{MEDIA_URL}}/images/profile/avatar2.png" width="100" height=100 />
+                  {% endif %}
+
+              <table class="table table-condensed">
+                <tbody>
+                  <tr>
+                    <td>Username</td>
+                    <td>{{ profile_user.username }}</td>
+                  </tr>
+                  <tr>
+                    <td>First Name</td>
+                    <td>{{ profile_user.first_name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Last Name</td>
+                    <td>{{ profile_user.last_name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Other Names</td>
+                    <td>{{ profile_user.middle_name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Occupation</td>
+                    <td>{{ post.specialization }}</td>
+                  </tr>
+                  <tr>
+                    <td>Location</td>
+                    <td>{{ post.city }}, {{post.country.name}}</td>
+                  </tr>
+                  <tr>
+                    <td>Bio</td>
+                    <td>{{ post.bio }}</td>
+                  </tr>
+
+                </tbody>
+              </table>
+
+                {% if supported %}
+                <hr>
+                <h5>Debate on Supporting Side <span class="badge">{{supported.count}}</span></h5>
+                {% for debate_list in supported %}
+                  <p><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
+                {% endfor %}
+                {% endif %}
+
+                {% if opposed %}
+                <hr>
+                <h5>Debate on Opposing Side <span class="badge">{{opposed.count}}</span></h5>
+                {% for debate_list in opposed %}
+                  <p><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
+                {% endfor %}
+                {% endif %}
+
+
+                {% if moderated %}
+                <hr>
+                <h5>Moderated <span class="badge">{{moderated.count}}</span></h5>
+                {% for debate_list in moderated %}
+                  <p><a href="">{{debate_list.post}}</a></p>
+                {% endfor %}
+                {% endif %}
+
+                {% if judged %}
+                <hr>
+                <h5>Judged <span class="badge">{{judged.count}}</span></h5>
+                {% for debate_list in judged %}
+                  <p><a href="">{{debate_list.post}}</a></p>
+                {% endfor %}
+                {% endif %}
+
+              </div>
+            </div>
+
+        </div>
+      <div class="col-md-3">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <p>Stats</p>
+          </div>
+          <div class="panel-body">
+            <p><span class="badge">{{won.count}}</span> Won</p>
+            <p><span class="badge">{{lost.count}}</span> Lost</p>
+            <p><span class="badge">{{drew.count}}</span> Draw(s)</p>
+            <p><span class="badge">{{moderated.count}}</span> Moderated</p>
+            <p><span class="badge">{{judged.count}}</span> Judged</p>
+            <hr>
+            <p><span class="badge">{{supported.count}}</span> Debates in Supporting Team</p>
+            <p><span class="badge">{{opposed.count}}</span> Debates in Opposing Team</p>
+          </div>
+          <div class="panel-footer">Active <span class="badge">{{debate_involved.count}}</span></div>
+          </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <p>Badges</p>
+          </div>
+          <div class="panel-body">
+            {% if badges %}
+            {% for badge in badges %}
+            <p>
+              {% with ''|center:badge.rank as range %}
+                  {% for _ in range %}<span class="glyphicon glyphicon-star" aria-hidden="true"></span>{% endfor %}
+              {% endwith %}
+              {{badge.category|capfirst}} - <a href="{{badge.get_absolute_url}}" data-toggle="tooltip" title="{{badge.description}}">{{badge.name|capfirst}}</a> </p>
+            {% endfor %}
+            {% else %}
+            <p>No badge earned yet.</p>
+            {% endif %}
+          </div>
+          <div class="panel-footer">Badges <span class="badge">{{badges.count}}</span>
+
+
+
+
+          </div>
+          </div>
+
+     </div>
+   </div>
+    {% endblock %}

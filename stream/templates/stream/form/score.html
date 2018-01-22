@@ -1,0 +1,123 @@
+{% extends "stream/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Score Debate{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+
+        <div class="row">
+          <div class="col-md-2"></div>
+
+          <div class="col-md-7">
+            <div class="panel panel-default">
+              {% if scored %}
+              <div class="panel-heading">Debate Scores and Votes</div>
+              {% else %}
+              <div class="panel-heading">Score Debate for both teams</div>
+              {% endif %}
+
+              <div class="panel-body">
+                <ul>
+                  <li>Scores should be on a scale of ten i.e. Highest score is 10.</li>
+                  <li>Any observation during debate should be written in the observation section</li>
+                  <li>Only one score is necessary and needed from judges.</li>
+                  <li>Scores should be fail and just</li>
+                </ul>
+              {% if scored %}
+                  <br/>
+                  <h5>Debate Topic</h5>
+                  <p>{{ post.post }}</p><hr>
+                  <p>Highest Possible Raw Judge Score: {{ post.highest_score }}</p>
+                  <p>Supporting Side Raw Score: {{ post.supporting_score }}</p>
+                  <p>Opposing Side Raw Score: {{post.opposing_score }}</p>
+                  <p>Observations</p>
+                  {% if post.observation %}
+                  <p>{{post.observation | linebreaks}}</p>
+                  {% else %}
+                  <p>No recorded observation or anomaly</p>
+                  {% endif %}
+
+              {% if calculated %}
+                  <hr>
+                  <p>Total Votes for Supporting Team: {{post.supporting_vote }}</p>
+                  <p>Total Votes for Opposing Team: {{post.opposing_vote }}</p>
+                  <hr>
+                  <p>Judge Score for Supporting Side over {{post.judge_percent_share}}: {{judge_support_percent}}</p>
+                  <p>Judge Score for Opposing Side over {{post.judge_percent_share}}: {{judge_support_percent}}</p>
+                  <p>Votes Score for Supporting Side over {{post.vote_percent_share}}: {{vote_support_percent}}</p>
+                  <p>Votes Score for Opposing Side over {{post.vote_percent_share}}: {{vote_oppose_percent}}</p>
+                  <hr>
+
+                  <p>Suppoting Team Score: {{supporting_team_percent_score}} %</p>
+                  <p>Opposing Team Score: {{opposing_team_percent_score}} %</p>
+                  <hr>
+                  <p>Winner of Debate</p>
+                  {% if supporting_team_percent_score > opposing_team_percent_score  %}
+                  <p>Supporting Team Wins</p>
+                  {% elif supporting_team_percent_score == opposing_team_percent_score %}
+                  <p>Debate ends in a stale</p>
+                  {% elif supporting_team_percent_score < opposing_team_percent_score %}
+                  <p>Opposing Team Wins</p>
+                  {% endif %}
+
+              {% endif %}
+                  <p>Return to <a href="{{ related_post.get_absolute_url }}">debate</a><p>
+
+              {% else %}
+                <h4>Debate Topic:<br>
+                {{related_post.title}} </h4>
+                <br>
+                <form class="" action="." method="post">
+                  {% csrf_token %}
+                  <div class="form-group">
+                  <p>Supporting Side Score</p>
+                  {% render_field score_form.supporting_score class+="form-control" %}<br>
+                  <p>Opposing Side Score</p>
+                  {% render_field score_form.opposing_score class+="form-control" %}<br>
+                  <p>Highest Score Possible (Default: 10)</p>
+                  {% render_field score_form.highest_score class+="form-control" %}<br>
+                  <p>Observations</p>
+                  {% render_field score_form.observation class+="form-control" placeholder="Comments not compulsory" %}<br>
+                  {{score_form.errors}}
+                </div>
+                <br><hr>
+                <div class="form-group">
+                <p>Voters Percent Share(Default: 70%)</p>
+                {% render_field score_form.vote_percent_share class+="form-control" %}<br>
+                <p>Judges Percent Share(Default: 30%)</p>
+                {% render_field score_form.judge_percent_share class+="form-control" %}<br>
+                <p>Both should total 100%</p>
+              </div>
+                <div class="form-group">
+                  <input type="submit" value="Send Scores" class="btn btn-primary btn-block" />
+                  <hr>
+                  <p>Values cannot be changed after submission</p>
+                  <p>Return to <a href="{% url 'stream:debate_detail' related_post.debate_category related_post.slug %}">debate</a><p>
+                </div>
+                </form>
+
+        {% endif %}
+            </div>
+          </div>
+
+          </div>
+
+          <div class="col-md-3">
+            <br>
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <p>Noting added yet</p>
+                  <button type="button" class="btn btn-success">Notify me via email</button>
+                </div>
+                <div class="panel-footer">
+                  <p>Invite friends to join debate</p>
+                  <button type="button" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                  </button>
+                </div>
+                </div>
+          </div>
+        </div>
+
+{% endblock %}

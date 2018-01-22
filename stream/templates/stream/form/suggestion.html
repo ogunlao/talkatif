@@ -1,0 +1,46 @@
+{% extends "stream/base.html" %}
+{% load markdownify %}
+{% load widget_tweaks %}
+
+{% block title %}Puto - New Debate{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+
+        <div class="row">
+          <div class="col-md-2"></div>
+
+          <div class="col-md-7">
+            <div class="panel panel-default">
+              <div class="panel-heading">Post a topic for debate</div>
+              <div class="panel-body">
+                <form class="" enctype="multipart/form-data" action="." method="post">
+                  {% csrf_token %}
+                  {% for field in form %}
+                  <div class="form-group">
+                  <p>
+                    {{ field.label_tag }}<br>
+                    {{ field|add_class:"form-control"}}
+                    {% if field.help_text %}
+                      <small class="text-muted">{{ field.help_text|markdownify }}</small>
+                    {% endif %}
+                    </p>
+                    <p class="text-danger"><strong>{{field.errors}}</strong></p>
+                  </div>
+                  <br/>
+                  {% endfor %}
+                </div><br>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary btn-block">Add Debate</button>
+                  <hr>
+                  <p>Debate topic would be posted. Gracias</p>
+                </div>
+                </form>
+
+            </div>
+          </div>
+
+          <div class="col-md-3"></div>
+        </div>
+
+{% endblock %}
