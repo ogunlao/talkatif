@@ -22,30 +22,30 @@ from django.conf.urls import include
 
 #Add URL maps to redirect the base URL to our application
 from django.views.generic import RedirectView
-from stream import views
-
+from debate import views as debate_views
+from discourse import views as discourse_views
 
 urlpatterns = [
-    url(r'^$', views.index, name = 'main_page'),
+    url(r'^$', debate_views.index, name = 'main_page'),
     #url(r'^$', RedirectView.as_view(url='/all/', permanent=True)),
-    url(r'^all/', views.all_list, name='all_streams'),
+    url(r'^all/', debate_views.all_list, name='all_list'),
     url(r'^admin/', admin.site.urls),
-    url(r'^debate/', include('stream.urls', namespace='stream', app_name='stream')),
-    url(r'^opine/', include('opine.urls', namespace='opine', app_name='opine')),
-    url(r'^index/', views.index, name = 'index'),
+    url(r'^debate/', include('debate.urls', namespace='debate', app_name='debate')),
+    url(r'^discourse/', include('discourse.urls', namespace='discourse', app_name='discourse')),
+    url(r'^index/', debate_views.index, name = 'index'),
     url(r'^search/', include('haystack.urls')),
     url(r'^blog/', include('zinnia.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^accounts/profile/(?P<username>[-\w\d]+)/', views.profile, name='profile'),
-    url(r'^accounts/profile/', views.update_profile, name='update_profile'),
-    url(r'^dashboard/', views.dashboard, name = 'dashboard'),
+    url(r'^accounts/profile/(?P<username>[-\w\d]+)/', debate_views.profile, name='profile'),
+    url(r'^accounts/profile/', debate_views.update_profile, name='update_profile'),
+    url(r'^dashboard/', debate_views.dashboard, name = 'dashboard'),
 ]
 
-handler404 = 'opine.views.handler404'
-handler500 = 'opine.views.handler500'
+handler404 = 'discourse_views.handler404'
+handler500 = 'discourse_views.handler500'
 # Use static() to add url mapping to serve static files during development (only)
 
 from django.conf.urls.static import static

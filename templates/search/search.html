@@ -1,4 +1,4 @@
-{% extends "stream/base.html" %}
+{% extends "debate/base.html" %}
 {% load comments %}
 {% load el_pagination_tags %}
 
@@ -21,7 +21,7 @@
         {% if result.debate_category %}
           <p class="pull-right">Starts: {{result.begin}}</p>
           <p>{% for tag in result.tags %}
-            <a href="{% url 'stream:debate_list_by_tag' tag   %}"><span class="badge">{{tag}}</span></a>{% endfor %}
+            <a href="{% url 'debate:debate_list_by_tag' tag   %}"><span class="badge">{{tag}}</span></a>{% endfor %}
           <p>
           <p>Suggested by {{result.author}}</p>
           <h4><a href="{{ result.object.get_absolute_url }}">{{result.title}} </a><span class="label label-default">New</span></h4>

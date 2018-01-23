@@ -25,7 +25,7 @@
                 <p class="pull-right small">Created: {{post.created}}</p>
                 <div class="panel-body">
                     <p>{% for tag in post.tags.all %}
-                      <a href="{% url 'opine:post_list_by_tag' tag.slug  %}"><span class="badge">{{tag.name}}</span></a>
+                      <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}"><span class="badge">{{tag.name}}</span></a>
                       {% endfor %}
                     <p>
                     <p class="small">By <a href="{{post.author.profile.get_absolute_url}}">{{post.author.get_full_name}}</a></p>
@@ -94,7 +94,7 @@
                       </span></i>
                     </p>
                     <p>{% for tag in post.tags.all %}
-                      <a href="{% url 'stream:debate_list_by_tag' tag.slug  %}"><span class="badge">{{tag.name}}</span></a>
+                      <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}"><span class="badge">{{tag.name}}</span></a>
                       {% endfor %}
                     </p>
                     <p class="small">By <a href="{{post.author.profile.get_absolute_url}}">{{post.author.get_full_name}}</a></p>
@@ -173,10 +173,10 @@
   <div class="col-md-3">
     {% if user.is_authenticated %}
     <p>What's your inspiration?</p>
-    <a href="{% url 'stream:suggest_post' %}" ><button class="btn btn-default">Create a Debate &raquo;</button></a>
+    <a href="{% url 'debate:suggest_post' %}" ><button class="btn btn-default">Create a Debate &raquo;</button></a>
     <br/>
     <p>OR</p>
-    <a href="{% url 'opine:new_post' %}" ><button class="btn btn-default">Create a Post &raquo;</button></a>
+    <a href="{% url 'discourse:new_post' %}" ><button class="btn btn-default">Create a Post &raquo;</button></a>
     {% endif %}
 
     {% if last_5_badges %}
@@ -190,8 +190,10 @@
     {% endfor %}
     {% endif %}
 
+
+    {% get_last_xtdcomments 5 as last_comments for debate.postdebate discourse.post %}
+    {% if last_comments %}
     <h5>Latest Comments</h5>
-    {% get_last_xtdcomments 5 as last_comments for stream.postdebate opine.post %}
     <div class="panel panel-default">
       <div class="panel-body">
         {% for comment in last_comments %}
@@ -213,7 +215,8 @@
         {% endfor %}
       </div>
     </div>
-    
+    {% endif %}
+
   </div>
   </div>
 </div>

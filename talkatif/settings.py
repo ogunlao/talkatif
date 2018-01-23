@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'stream.apps.StreamConfig',
-    'opine.apps.OpineConfig',
+    'debate.apps.DebateConfig',
+    'discourse.apps.DiscourseConfig',
     'mptt',
     'zinnia_bootstrap',
     'zinnia', #blog
@@ -295,7 +295,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
         'show_feedback': True,
     },
 
-    'opine.post': {
+    'discourse.post': {
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,

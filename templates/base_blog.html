@@ -74,21 +74,21 @@
       <nav role="navigation" class="navbar-collapse">
       <ul class="nav navbar-nav">
         <li class="nav"><img src="{{ MEDIA_URL }}logo/logo.png", width = "40", height= "40"/></li>
-        <li><a href="{% url 'all_streams' %}">tALkatIF</a></li>
+        <li><a href="{% url 'all_list' %}">tALkatIF</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sections <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="{% url 'stream:debate_list' %}">All Debates</a></li>
+            <li><a href="{% url 'all_list' %}">All talkatif</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href= "{% url 'stream:debate_list_by_category' 'open' %}">Open Debates<span class="sr-only">(current)</span></a></li>
-            <li><a href="{% url 'stream:debate_list_by_category' 'closed' %}">Closed Debates</a></li>
+            <li><a href= "{% url 'debate:debate_list_by_category' 'open' %}">Arguements - Open<span class="sr-only">(current)</span></a></li>
+            <li><a href="{% url 'debate:debate_list_by_category' 'closed' %}">Debates - Closed</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="{% url 'opine:post_list' %}">Opinions</a></li>
+            <li><a href="{% url 'discourse:post_list' %}">Discourse</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="/blog/">Blog</a></li>
           </ul>
         </li>
-        <!-- <li><a href="{% url 'stream:suggest_post' %}">Suggest Debate Topic</a></li> -->
+        <!-- <li><a href="{% url 'debate:suggest_post' %}">Suggest Debate Topic</a></li> -->
       </ul>
 
 
@@ -110,7 +110,7 @@
           </a>
           {% endif %}
         </li>
-        <li><a href="{% url 'stream:debate_list' %}">All Debates</a></li>
+        <li><a href="{% url 'debate:debate_list' %}">All Debates</a></li>
         <li><a href="{% url 'profile' user %}">{{ request.user.get_full_name }}</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
@@ -118,13 +118,13 @@
             <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
             <li><a href="{% url 'profile' request.user %}">Profile</a></li>
             <li><a href="{% url 'account_reset_password' %}">Change Password</a></li>
-            <li><a href="{% url 'stream:rules_guidelines' %}">Rules</a></li>
+            <li><a href="{% url 'debate:rules_guidelines' %}">Rules</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="#">FAQ</a></li>
         {% else %}
             <li><a href="{% url 'account_login' %}">Sign In</a></li>
             <li><a href="{% url 'account_signup' %}">New User? Sign Up</a></li>
-            <li><a href="{% url 'stream:rules_guidelines' %}">Rules</a></li>
+            <li><a href="{% url 'debate:rules_guidelines' %}">Rules</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="#">Help</a></li>
         {% endif %}

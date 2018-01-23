@@ -1,0 +1,52 @@
+{% extends "discourse/base.html" %}
+{% load widget_tweaks %}
+{% load markdownify %}
+
+{% block title %}Edit Post{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+
+        <div class="row">
+          <div class="col-md-2"></div>
+
+          <div class="col-md-7">
+            <div class="panel panel-default">
+              <div class="panel-heading">Post or Edit</div>
+              <div class="panel-body">
+                <form class="" enctype="multipart/form-data" action="." method="post">
+                  {% csrf_token %}
+                  <div class="form-group">
+
+                    {% for field in form %}
+                    <div class="input-group">
+                    <p>
+                      {{ field.label_tag }}<br>
+                      {{ field|add_class:"form-control"}}
+                      {% if field.help_text %}
+                        <small class="text-muted">{{ field.help_text|markdownify }}</small>
+                      {% endif %}
+                      </p>
+                      {% for error in field.errors %}
+                    </p><strong>{{field.errors}}</strong></p>
+                      {% endfor%}
+                  </div><br/>
+                    {% endfor %}
+                    </div>
+                    <div class="form-group">
+                      <input type="submit" value="submit post" class="btn btn-primary btn-block" />
+                    </div>
+
+                </form>
+
+
+          </div>
+
+        </div></div>
+
+          <div class="col-md-3">
+
+          </div>
+        </div>
+
+{% endblock %}
