@@ -1,5 +1,6 @@
 {% extends "debate/base.html" %}
 {% load staticfiles %}
+{% load humanize %}
 {% load md2 %}
 {% load comments %}
 {% load comments_xtd %}
@@ -156,6 +157,8 @@
 <div class="col-md-7">
   <div class="card">
       <div class="card-content">
+          {% if post.updated != post.created %}<p class="small">Edited</p>{% endif %}
+          {{post.updated}}vs{{post.created}}
           <h3 class="text-primary">{{post.title}}</h3>
           {% if debate_in_progress or debate_has_ended %}
             <i class="fa fa-lock fa-lg" aria-hidden="true"></i>
@@ -180,9 +183,9 @@
     <div class="card-content">
       <p class="small">
         <i class="fa fa-clock-o fa-lg" aria-hidden="true"><span class="text-muted">
-        {% if post.end %} Ends {{post.end}}
+        {% if post.end %} Ends {{post.end|naturaltime}}
         {% elif post.begin %}
-        Started {{post.begin}}
+        Started {{post.begin|naturaltime}}
         {% else %} Debate starts soon.
         {% endif %}
         </span></i>
@@ -355,9 +358,11 @@
                   <div class="col-md-6">
                     <ul class="nav nav-pills" role="tablist">
                       <li role="presentation"  class="pull-right">
+                        {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
                         <a href="whatsapp://send?text='{{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}'" data-action="share/whatsapp/share">
                           <span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-whatsapp fa-stack-1x fa-inverse btn-success'></i></span>
                         </a>
+                        {% endif %}
                       </li>
                       <li role="presentation" class="pull-right">
                         {% post_to_linkedin "{{post.title}}" object_or_url "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-linkedin fa-stack-1x fa-inverse'></i></span></div>" %}
@@ -401,8 +406,8 @@
 
 
       {% get_comment_form for post as form %}
-      {% for person in post.moderator.all %}
-      {% if not debate_has_ended and person == request.user%}
+
+      {% if post.debate_category == "open" or user_is_moderator %}
       <div class="comments">
         <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
           {% csrf_token %}
@@ -410,10 +415,10 @@
             {% if post.debate_category == "open" %}
             <div class="form-group pull-right" >
               Debate Position:
-              <select name="debate_option" id = "debate_option" required>
+              <select name="debate_option" id = "debate_option">
                 <option value=""></option>
-                <option value="Supporting">Supporting</option>
-                <option value="Opposing">Opposing</option>
+                <option value="I agree">agree</option>
+                <option value="I disagree">disagree</option>
               </select>
             </div>
             {% endif %}
@@ -432,7 +437,7 @@
             <div class="form-group well well-sm {% if 'comment' in form.errors %}has-error{% endif %}">
                 {% render_field form.comment rows='5'%}
               <p class="text-center text-muted small">
-                <a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.
+                <a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported in comments.
                 <br>For open debate, indicate if supporting or opposing at top of comment.
               </p>
             </div>
@@ -448,12 +453,9 @@
           </div>
         </form>
       </div>
-
       {% endif %}
-      {% endfor %}
 
-      {% for person in post.supporting_debaters.all %}
-      {% if not debate_has_ended and person == request.user and debate_in_progress %}
+      {% if user_in_opposing_team or user_in_supporting_team or user_is_judge and debate_in_progress %}
       <div class="comments">
         <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
           {% csrf_token %}
@@ -463,8 +465,8 @@
               Debate Position:
               <select name="debate_option" id = "debate_option" required>
                 <option value=""></option>
-                <option value="Supporting">Supporting</option>
-                <option value="Opposing">Opposing</option>
+                <option value="I agree">agree</option>
+                <option value="I disagree">disagree</option>
               </select>
             </div>
             {% endif %}
@@ -483,7 +485,7 @@
             <div class="form-group well well-sm {% if 'comment' in form.errors %}has-error{% endif %}">
                 {% render_field form.comment rows='5' placeholder="400 words max to express idea."%}
               <p class="text-center text-muted small">
-                <a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.
+                <a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported in comments.
                 <br>For open debate, indicate if supporting or opposing at top of comment.
               </p>
             </div>
@@ -499,10 +501,8 @@
         </form>
       </div>
       {% endif %}
-      {% endfor %}
 
-      {% for person in post.opposing_debaters.all %}
-      {% if not debate_has_ended and person == request.user and debate_in_progress %}
+      {% if user.is_authenticated and debate_has_ended and not user_is_judge and not user_is_moderator and not user_in_opposing_team and not user_in_supporting_team %}
       <div class="comments">
         <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
           {% csrf_token %}
@@ -512,8 +512,8 @@
               Debate Position:
               <select name="debate_option" id = "debate_option" required>
                 <option value=""></option>
-                <option value="Supporting">Supporting</option>
-                <option value="Opposing">Opposing</option>
+                <option value="I agree">agree</option>
+                <option value="I disagree">disagree</option>
               </select>
             </div>
             {% endif %}
@@ -530,58 +530,9 @@
             <div style="display:none">{{ form.honeypot }}</div>
 
             <div class="form-group well well-sm {% if 'comment' in form.errors %}has-error{% endif %}">
-                {% render_field form.comment rows='5' placeholder="400 words max to express idea."%}
+                {% render_field form.comment rows='5' placeholder="Be cogent, interesting and concise." %}
               <p class="text-center text-muted small">
-                <a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.
-                <br>For open debate, indicate if supporting or opposing at top of comment.
-              </p>
-            </div>
-
-          </fieldset>
-
-
-          <div class="form-group">
-            <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
-              <input type="submit" name="post" value='send' class="btn btn-primary" />
-              <input type="submit" name="preview" value="preview" class="btn btn-default" />
-            </div>
-          </div>
-        </form>
-      </div>
-      {% endif %}
-      {% endfor %}
-
-      {% if user.is_authenticated and debate_has_ended %}
-      <div class="comments">
-        <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
-          {% csrf_token %}
-          <fieldset>
-            {% if post.debate_category == "open" %}
-            <div class="form-group pull-right" >
-              Debate Position:
-              <select name="debate_option" id = "debate_option" required>
-                <option value=""></option>
-                <option value="Supporting">Supporting</option>
-                <option value="Opposing">Opposing</option>
-              </select>
-            </div>
-            {% endif %}
-
-            <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
-
-            <div class="alert alert-danger hidden" data-comment-element="errors">
-            </div>
-
-            {% for field in form %}
-              {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
-            {% endfor %}
-
-            <div style="display:none">{{ form.honeypot }}</div>
-
-            <div class="form-group well well-sm {% if 'comment' in form.errors %}has-error{% endif %}">
-                {% render_field form.comment rows='5' placeholder="400 words max to express idea."%}
-              <p class="text-center text-muted small">
-                <a href='http://commonmark.org/help/' target='_blank'>Mardown</a> supported in comments.
+                <a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported in comments.
                 <br>For open debate, indicate if supporting or opposing at top of comment.
               </p>
             </div>
@@ -692,8 +643,9 @@
 
 $(document).ready(function(){
     $("select#debate_option").change(function(){
+        var text_content =$("textarea#id_comment").val();
         var debate_option = $("#debate_option option:selected").val();
-        $("textarea#id_comment").val("`"+debate_option + "  Position.`");
+        $("textarea#id_comment").val("`"+debate_option + "`\n" + text_content);
     });
 });
 

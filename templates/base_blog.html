@@ -13,6 +13,7 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <link rel="shortcut icon" href="{% static "favicon.ico" %}" />
   <!-- Site Properties -->
   <title>talkatif - {% block title %}Home{% endblock %}</title>
 
@@ -74,13 +75,13 @@
       <nav role="navigation" class="navbar-collapse">
       <ul class="nav navbar-nav">
         <li class="nav"><img src="{{ MEDIA_URL }}logo/logo.png", width = "40", height= "40"/></li>
-        <li><a href="{% url 'all_list' %}">tALkatIF</a></li>
+        <li><a href="{% url 'all_list' %}">talkatif</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sections <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{% url 'all_list' %}">All talkatif</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href= "{% url 'debate:debate_list_by_category' 'open' %}">Arguements - Open<span class="sr-only">(current)</span></a></li>
+            <li><a href= "{% url 'debate:debate_list_by_category' 'open' %}">Arguments - Open<span class="sr-only">(current)</span></a></li>
             <li><a href="{% url 'debate:debate_list_by_category' 'closed' %}">Debates - Closed</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{% url 'discourse:post_list' %}">Discourse</a></li>

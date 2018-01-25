@@ -1,5 +1,6 @@
 {% extends "discourse/base.html" %}
 {% load widget_tweaks %}
+{% load humanize %}
 {% load markdownify %}
 {% load md2 %}
 {% load comments %}
@@ -19,7 +20,7 @@
         {% for post in object_list.object_list %}
     <div class="panel panel-default">
       <div class="panel-body">
-          <p class="pull-right">Created: {{post.created}}</p>
+          <p class="pull-right">Created: {{post.created|timesince}}</p>
           <p>{% for tag in post.tags.all %}
             <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}"><span class="badge">{{tag.name}}</span></a>
             {% endfor %}
@@ -27,7 +28,7 @@
           <p>Posted by <a href="{{post.author.profile.get_absolute_url}}">{{post.author.get_full_name}}</a></p>
           <h4><a href="{{post.get_absolute_url}}">{{post.title}} </a><span class="label label-default">New</span></h4>
           <p>
-                {{ post.summary|truncatechars:70|markdown:"safe, code-friendly, code-color"|linebreaks }}
+                {{ post.summary|truncatechars:300|markdown:"safe, code-friendly, code-color"|linebreaks }}
           </p>
 
         </div>
@@ -55,11 +56,12 @@
                     <li>
                       {% post_to_facebook  "{{post.get_absolute_url}}" "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-facebook fa-stack-1x fa-inverse'></i></span>facebook</div>" %}
                     </li>
-
+                      {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
                       <a href="whatsapp://send?text={{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}" data-action="share/whatsapp/share">
                         <li>&nbsp;&nbsp;&nbsp;<span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-whatsapp fa-stack-1x fa-inverse'></i></span>WhatsApp
                         </li>
                       </a>
+                      {% endif %}
 
                         <!--
                       <script>

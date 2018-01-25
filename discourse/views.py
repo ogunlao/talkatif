@@ -5,6 +5,7 @@ from .forms import PostForm
 from django.contrib.auth.models import User
 #from .forms import PostDebateForm
 from django.contrib import messages
+from django.db import IntegrityError
 from django.utils import timezone
 from meta.views import Meta #to include metatags in view for display, check django-meta
 from taggit.models import Tag
@@ -102,9 +103,8 @@ def post_detail(request, post_id, post_slug):
     context = {'post':post, 'like_count':like_count, 'liked':liked, 'attachments':attachments}
     return render(request, 'discourse/post/post_detail.html', context)
 
-
 @login_required
-def edit_post(request, post_id = None):
+def new_post(request, post_id = None):
     post = Post()
     if post_id: #if instance of post is to be edited
         post = get_object_or_404(Post, pk = post_id)
@@ -116,9 +116,15 @@ def edit_post(request, post_id = None):
             # Form fields passed validation
             post = form.save(commit=False)
             post.author = request.user
-            post.save()
-            form.save_m2m()
 
+            try:
+                post.save()
+                form.save_m2m()
+            except IntegrityError as e:
+                if 'unique constraint' in e.args[0]: # or e.args[0] from Django 1.10
+                    message_info = "Post has previously been saved."
+                    messages.info(request, message_info )
+                return redirect('all_list')
             #Saves post attachments
             images_attached = form.cleaned_data['attachment']
             if images_attached:
@@ -128,12 +134,12 @@ def edit_post(request, post_id = None):
             message_info = "Post saved! Come back for comments and responses."
             messages.info(request, message_info )
             post = get_object_or_404(Post, title = post.title )
-            return redirect('discourse:post_detail', post_slug = post.slug )
+            return redirect('discourse:post_detail', post_id=post.id, post_slug = post.slug )
         else:
             print (form.errors)
     else:
         form = PostForm(instance=post)
-        return render(request, 'discourse/form/edit_post.html', {'form': form})
+        return render(request, 'discourse/form/new_post.html', {'form': form})
 
 from django.http import HttpResponse
 try:

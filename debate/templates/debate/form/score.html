@@ -1,4 +1,4 @@
-{% extends "stream/base.html" %}
+{% extends "debate/base.html" %}
 {% load widget_tweaks %}
 
 {% block title %}Score Debate{% endblock %}
@@ -93,7 +93,7 @@
                   <input type="submit" value="Send Scores" class="btn btn-primary btn-block" />
                   <hr>
                   <p>Values cannot be changed after submission</p>
-                  <p>Return to <a href="{% url 'stream:debate_detail' related_post.debate_category related_post.slug %}">debate</a><p>
+                  <p>Return to <a href="{% url 'debate:debate_detail' related_post.debate_category related_post.id related_post.slug %}">debate</a><p>
                 </div>
                 </form>
 

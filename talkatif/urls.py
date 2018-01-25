@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^debate/', include('debate.urls', namespace='debate', app_name='debate')),
     url(r'^discourse/', include('discourse.urls', namespace='discourse', app_name='discourse')),
     url(r'^index/', debate_views.index, name = 'index'),
+    url(r'^delete_comment/(?P<comment_id>\d+)/$', debate_views.delete_my_comment, name='delete_my_comment'),
     url(r'^search/', include('haystack.urls')),
     url(r'^blog/', include('zinnia.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),

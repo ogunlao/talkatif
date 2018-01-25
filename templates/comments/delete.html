@@ -12,16 +12,14 @@
 <div class="row">
   <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">
     <h4 class="text-center">{% trans "Remove this comment?" %}</h4>
-    <p>{% trans "As a moderator you can delete comments. Deleting a comment does not remove it from the site, only prevents your website from showing the text. Click on the remove button to delete the following comment:" %}</p>
+    <p>{% trans "As the comment owner or a moderator you can delete comments. Deleting a comment does not remove it from the site, only prevents talkatif from showing the text. Click on the remove button to delete the following comment:" %}</p>
     <div class="well well-lg">
       <div class="media">
         <div class="media-left">
-          {% if comment.user_url %}
-          <a href="{{ comment.user_url }}">
-            {{ comment.user_email|xtd_comment_gravatar }}
-          </a>
+          {% if comment.user.profile.image %}
+          <img src="{{ item.comment.user.profile.image.thumbnail.25x25 }}"/>
           {% else %}
-          {{ comment.user_email|xtd_comment_gravatar }}
+          <img src="{{MEDIA_URL}}/__placeholder__/placeholder.png" width=25, height=25/>
           {% endif %}
         </div>
         <div class="media-body">

@@ -35,13 +35,14 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 # Application definition
 
 INSTALLED_APPS = [
-    'grappelli', #jazzy admin interface
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'debate.apps.DebateConfig',
     'discourse.apps.DiscourseConfig',
     'mptt',
@@ -49,13 +50,14 @@ INSTALLED_APPS = [
     'zinnia', #blog
     'tagging',
     'versatileimagefield',
+    'django_user_agents',
 
     #used by chron to send emails
     'django.contrib.sites',
     'chroniker',
     'compressor',
 
-    'markdownify', #for markdown support
+    'markdownify',
 
     #used by newsletter
     'django_extensions',
@@ -73,25 +75,21 @@ INSTALLED_APPS = [
     #'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.google',
 
-    'taggit', #for adding tags to posts
-    'widget_tweaks', #for adding classes to forms, esp bootstrap classes
-    'el_pagination', #for setting continuous scrolling
-    #'avatar', #for uploading and displaying profile pictures
-    'django_social_share', #for sharing posts
+    'taggit',
+    'widget_tweaks',
+    'el_pagination',
+    'django_social_share',
 
     'haystack',
     'meta', #adds metadata to sites
     'imagekit',
     'robots', #Generates site.xml file for crawlers
 
-
-    'django_comments_xtd', #for adding comments to posts
+    'django_comments_xtd',
     'django_comments',
-    'django_markdown2', #for adding markdown to posts
-
+    'django_markdown2',
     'rest_framework',
     'django_countries',
-    #'django.contrib.comments'
 ]
 
 MIDDLEWARE = [
@@ -100,15 +98,13 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'tracking.middleware.VisitorTrackingMiddleware',
-    #'tracking.middleware.VisitorCleanUpMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
 ROOT_URLCONF = 'talkatif.urls'
-
-SITE_ID = 4
+SITE_ID = 5
 
 TEMPLATES = [
     {
@@ -149,13 +145,6 @@ WSGI_APPLICATION = 'talkatif.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, config('DB_NAME')),
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -221,12 +210,12 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
 # Required by django-allauth to extend the sign up form to include profile data
-ACCOUNT_FORMS = {'signup': 'stream.forms.SignupForm'}
+ACCOUNT_FORMS = {'signup': 'debate.forms.SignupForm'}
 
 #Django-meta settings
 META_SITE_PROTOCOL = 'http'
-#META_SITE_DOMAIN = "localhost"
-META_DEFAULT_KEYWORDS = ["debate","faceoff","opinions", "criticism", "rebuttal"]
+META_SITE_DOMAIN = "www.talkatif.com"
+META_DEFAULT_KEYWORDS = ["debate","faceoff","opinions", "criticism", "rebuttal", "arguement", "discourse", "discussion"]
 META_USE_SITES = True
 
 
@@ -261,8 +250,6 @@ COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
 
 # Either enable sending mail messages to the console:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-#EMAIL_BACKEND = 'django.core.mail.backends.filebasedEmailBackend'
-#EMAIL_FILE_PATH = 'tmp/email-messages/'
 
 #Django-chrontab settings
 
@@ -284,12 +271,12 @@ CACHES = {
 
 #comment manager
 MANAGERS = (
-    ('Joe Bloggs', 'joe.bloggs@example.com'),
+    ('Ogun Lao', 'ogunlao@talkatif.com'),
 )
 
 #To allow comment flagging, likes and dislikes
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
-    'stream.postdebate': {
+    'debate.postdebate': {
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,
@@ -348,16 +335,11 @@ NEWSLETTER_BATCH_DELAY = 60
 # Number of emails in one batch
 NEWSLETTER_BATCH_SIZE = 100
 
-# Django dashing configuration files
-DASHING = {
-    'INSTALLED_WIDGETS': ('number', 'list', 'graph','clock',),
-    'PERMISSION_CLASSES':  (
-        'dashing.permissions.IsAdminUser',
-    )
-}
-
 #versatile image field settings
 VERSATILEIMAGEFIELD_SETTINGS = {
     'create_images_on_demand': True,
     }
 VERSATILEIMAGEFIELD_USE_PLACEHOLDIT = True
+
+
+MATHJAX_ENABLED=True

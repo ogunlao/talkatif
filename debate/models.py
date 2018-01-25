@@ -40,12 +40,12 @@ class PostDebate(models.Model):
         ('InProgress', 'In Progress'),
         )
     title = models.CharField(max_length=500, help_text="Title of Debate")
-    slug = models.SlugField(max_length=250, unique_for_date='created')
+    slug = models.SlugField(max_length=250, unique=True)
     show = models.BooleanField('Can debate be viewed online ?', default=True)
     debate_category = models.CharField(max_length=6, choices=DEBATE_CATEGORY, default='open')
     status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='st')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='suggested_post')
-    summary = models.TextField('What is your inspiration for the debate?', max_length=1000, help_text="Enter a brief summary. <a href='http://commonmark.org/help/' target='_blank'>Markdown supported<a/>")
+    summary = models.TextField('What is your inspiration for the debate?', max_length=1000, help_text="Enter a brief summary. <a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported.")
     allow_comments = models.BooleanField('allow comments', default=True)
     tags = TaggableManager()
     begin = models.DateTimeField(null=True, blank = True)
@@ -94,12 +94,11 @@ class PostDebate(models.Model):
     def __str__(self):
         return self.title
 
+
 class Attachment(models.Model):
     post = models.ForeignKey(PostDebate, related_name="attachment")
-    file = VersatileImageField(
-        'Image Attachments', blank=True, null=True,
-        upload_to='attachments/debate', help_text="Add Pictures"
-    )
+    file = models.ImageField('Image Attachments', blank=True, null=True,\
+        upload_to='attachments/debate', help_text="Add Pictures")
 
     #file = models.FileField(upload_to='attachments/debate', help_text="Attach images to post. 2 max")
     def __str__(self):
@@ -176,44 +175,20 @@ class Profile(models.Model):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     #Needed for allauth signup
-    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    other_name = models.CharField(max_length=100, blank=True, null=True)
     specialization = models.CharField(max_length=200, blank=True, null=True, help_text="e.g. Practicing Lawyer, \
                                             Programmer, Business Man, Political Activist")
     date_of_birth = models.DateField(blank=True, null=True, help_text="yyyy/mm/dd")
-    bio = models.TextField(blank=True, null=True)
-    mobile_no = models.CharField(max_length=11, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True, help_text="Tell us a little about yourself.")
     city = models.CharField(max_length=100, blank=True, null=True,
                                         help_text="e.g Lagos, New York")
     country = CountryField(blank_label='(select country)', default = "NG")
     participation_type = models.ManyToManyField('Participation', blank=True, related_name='participation_type')
     notify = models.BooleanField(default = True, help_text="Notify me of upcoming debates.")
     image = VersatileImageField(
-        'Image', blank=True, null=True,
+        'Profile Picture', blank=True, null=True,
         upload_to='images/profile/',
-        width_field='width',
-        height_field='height'
     )
-    height = models.PositiveIntegerField(
-        'Image Height',
-        blank=True,
-        null=True
-    )
-    width = models.PositiveIntegerField(
-        'Image Width',
-        blank=True,
-        null=True
-    )
-    optional_image = VersatileImageField(
-        'Optional Image',
-        upload_to='images/profile/optional/',
-        blank=True,
-        placeholder_image=OnDiscPlaceholderImage(
-            path=os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                'placeholder.png'
-                )
-            )
-        )
 
     def get_absolute_url(self):
         return reverse('profile', args=[self.user.username,])

@@ -16,7 +16,7 @@ class Post(models.Model):
     objects = models.Manager() # The default manager.
     published = PublishedManager() # Our custom manager.
     title = models.CharField(max_length=500, help_text="Give a clear title for the post")
-    slug = models.SlugField(max_length=250, unique_for_date='created')
+    slug = models.SlugField(max_length=250, unique=True)
     show = models.BooleanField('Post Enabled/Disabed', default=True)
     category = models.BooleanField('A field used to separate discourse from debates', default=True, blank = True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='author', default = User)

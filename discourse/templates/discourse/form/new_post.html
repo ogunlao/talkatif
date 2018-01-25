@@ -1,9 +1,9 @@
 {% extends "discourse/base.html" %}
+{% load staticfiles %}
 {% load widget_tweaks %}
 {% load markdownify %}
 
-{% block title %}Edit Post{% endblock %}
-{% load staticfiles %}
+{% block title %}New Discourse{% endblock %}
 
 {% block content %}
 
@@ -19,7 +19,6 @@
                   <div class="form-group">
 
                     {% for field in form %}
-                    <div class="input-group">
                     <p>
                       {{ field.label_tag }}<br>
                       {{ field|add_class:"form-control"}}
@@ -28,9 +27,9 @@
                       {% endif %}
                       </p>
                       {% for error in field.errors %}
-                    </p><strong>{{field.errors}}</strong></p>
+                    <p class="text-danger"><strong>{{error}}</strong></p>
                       {% endfor%}
-                  </div><br/>
+                  <br/>
                     {% endfor %}
                     </div>
                     <div class="form-group">

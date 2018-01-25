@@ -1,8 +1,8 @@
-{% extends "stream/base.html" %}
+{% extends "debate/base.html" %}
 {% load markdownify %}
 {% load widget_tweaks %}
 
-{% block title %}Puto - New Debate{% endblock %}
+{% block title %}New Debate{% endblock %}
 {% load staticfiles %}
 
 {% block content %}
@@ -25,7 +25,9 @@
                       <small class="text-muted">{{ field.help_text|markdownify }}</small>
                     {% endif %}
                     </p>
-                    <p class="text-danger"><strong>{{field.errors}}</strong></p>
+                    {% for error in field.errors %}
+                    <p class="text-danger"><strong>{{error}}</strong></p>
+                    {% endfor%}
                   </div>
                   <br/>
                   {% endfor %}

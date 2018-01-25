@@ -1,7 +1,19 @@
+{% extends "base.html" %}
+
 {% load i18n %}
 {% load comments %}
+{% load widget_tweaks %}
 
-<form method="POST" action="{% comment_form_target %}" class="form-horizontal">
+
+
+{% block title %}Edit Comment{% endblock %}
+
+{% block content %}
+
+{{comment.id}}
+{{comment.comment}}
+
+<form method="POST" action="{% url 'debate:edit_own_comment' comment.id %}" class="form-horizontal">
   {% csrf_token %}
   <fieldset>
     <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
@@ -17,7 +29,7 @@
 
     <div class="form-group {% if 'comment' in form.errors %}has-error{% endif %}">
       <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-        {{ form.comment }}
+        {% render_field form.comment %}
       </div>
     </div>
 
@@ -68,3 +80,5 @@
       <input type="submit" name="preview" value="{% trans 'preview' %}" class="btn btn-default" />
     </div>
   </div></form>
+
+{% endblock %}

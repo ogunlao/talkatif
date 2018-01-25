@@ -1,4 +1,4 @@
-{% extends "stream/base.html" %}
+{% extends "debate/base.html" %}
 {% load staticfiles %}
 {% load widget_tweaks %}
 
@@ -114,7 +114,7 @@
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                         {% render_field mod_form.begin class+="form-control datetimepicker1" %}<br>
-                      </div>
+                      </div><br>
 
                   <p>Vote Start Date/Time</p>
                   <div class='input-group date datetimepicker1'>
@@ -122,19 +122,21 @@
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
                     {% render_field mod_form.vote_starts class+="form-control datetimepicker1" %}<br>
-                  </div>
-                  <p>Debate End Date</p>
+                  </div><br>
+                  <p>Debate End Date/Time</p>
                   <div class='input-group date datetimepicker1'>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
                     {% render_field mod_form.end class+="form-control datetimepicker1" %}<br>
                   </div>
-                  {{mod_form.errors}}
+                  {% for error in mod_form.errors %}
+                    <p class="text-danger">{{error}}</p>
+                  {% endfor %}
                 </div>
 
                 <div class="form-group">
-                  <input type="submit" value="Update Date/Time" class="btn btn-primary btn-block" />
+                  <input type="submit" value="Update Debate Date/Time" class="btn btn-primary btn-block" />
                   <hr>
 
                   <p>Only edit necessary fields. Do not tamper with debate settings if unsure</p>
@@ -170,7 +172,7 @@
     $('.approve').click(function(){
           $.ajax({
                    type: "POST",
-                   url: "{% url 'stream:approve' %}",
+                   url: "{% url 'debate:approve' %}",
                    data: {'user_id': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}', 'post_id':$(this).attr('value'), 'position':$(this).attr('position'), 'approve':$(this).attr('approve') },
                    dataType: "json",
                    success: function(response) {

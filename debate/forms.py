@@ -6,6 +6,9 @@ from django_countries import countries #country dropdown
 from django.contrib.auth.hashers import make_password #used to hash passwords
 from multiupload.fields import MultiImageField
 
+
+
+
 class PostDebateForm(forms.ModelForm):
     attachment = MultiImageField(min_num=0, max_num=2, max_file_size=1024*1024*5, required = False)
     class Meta:

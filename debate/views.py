@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponse, reverse
 from django.contrib.auth.decorators import login_required
 from .models import PostDebate, Profile, Votes, Notifyme, Stat,\
                 Scores, Badge, Participation, TrackedPost, TrackedBadge, Attachment, PostDebater
@@ -9,6 +9,7 @@ from .forms import PostDebateForm, UserForm, ProfileForm, ScoresForm, ModeratorF
 from discourse.forms import PostForm
 from django.contrib import messages
 from django.utils import timezone
+from django.db import IntegrityError
 from meta.views import Meta #to include metatags in view for display, check django-meta
 from taggit.models import Tag
 import random
@@ -73,11 +74,6 @@ def debate_list(request, tag_slug = None, category = None):
 
     if category:
         object_list = object_list.filter(debate_category=category)
-
-    # for object_1 in object_list:
-    #     object_1.url = object_1.get_absolute_url()
-
-    #print(obj1.title for obj1 in object_list)
 
     paginator = Paginator(object_list, 1) # Show 2 posts per page
 
@@ -212,10 +208,19 @@ def debate_detail(request, category, post_id, post_slug):
     deb_stat = Stat.objects.all()
     all_badges = Badge.objects.all()
 
+    #user_in_debate = post.supporting_debaters.all().filter(supporting_debaters__pk=request.user.id)
+    user_in_supporting_team = post.supporting_debaters.all().filter(id=request.user.id)
+    user_in_opposing_team = post.opposing_debaters.all().filter(id=request.user.id)
+    user_is_moderator = post.moderator.all().filter(id=request.user.id)
+    user_is_judge = post.judges.all().filter(id=request.user.id)
+
+    print(user_is_moderator, "|", user_in_opposing_team,"|", user_in_supporting_team)
     context = {'post': post, 'meta' : meta, 'like_count' : like_count, 'liked' : liked, 'vote_message' : vote_message,
             'total_support_vote' : total_support_vote, 'total_oppose_vote' : total_oppose_vote, 'notify_status' : notify_status,
             'debate_in_progress': debate_in_progress, 'debate_has_ended':debate_has_ended, 'deb_stat':deb_stat, \
-            'attachments':attachments }
+            'attachments':attachments, 'user_in_supporting_team':user_in_supporting_team, \
+            'user_in_opposing_team':user_in_opposing_team, 'user_is_moderator':user_is_moderator, \
+            'user_is_judge':user_is_judge }
     return render(request, 'debate/post/debate_detail.html', context)
 
 
@@ -243,6 +248,9 @@ def join_participants(request, post_id, position):
     return redirect('debate:debate_detail', category = post.debate_category, post_id=post.pk, \
             post_slug = post.slug )
 
+
+from PIL import Image as Img
+
 @login_required
 def new_post(request, post_id = None):
     sent = False
@@ -260,10 +268,16 @@ def new_post(request, post_id = None):
             if post.debate_category == "open":
                 post.begin = timezone.now()
 
-            post.save()
+            try:
+                post.save()
+                form.save_m2m()
+            except IntegrityError as e:
+                if 'unique constraint' in e.args[0]:
+                #if 'unique constraint' in e.message: # or e.args[0] from Django 1.10
+                    message_info = "Post has previously been saved."
+                    messages.info(request, message_info )
+                return redirect('all_list')
             sent = True
-
-            form.save_m2m()
 
             post = get_object_or_404(PostDebate, title = post.title )
             #Saves post attachments
@@ -272,19 +286,24 @@ def new_post(request, post_id = None):
                 for each in form.cleaned_data['attachment']:
                     Attachment.objects.create(file=each, post = post)
 
+                for each in Attachment.objects.filter(post=post):
+                    print (settings.MEDIA_ROOT +"/"+ str(each))
+                    img = Img.open(settings.MEDIA_ROOT +"/"+ str(each))
+                    img.save(settings.MEDIA_ROOT +"/"+ str(each),quality=70,optimize=True)
+
             post.moderator.add(request.user)
             post.save()
             message_info = "Debate uploaded Successfully! You have been made a debate moderator. Choose time to start and end debate"
             if post.debate_category == "closed":
                 message_info = "Debate Uploaded Successfully. Debaters can now add theselves to debate."
             messages.info(request, message_info )
-            return redirect('debate:debate_detail', category = post.debate_category, \
+            return redirect('debate:debate_detail', category = post.debate_category, post_id=post.id, \
                     post_slug = post.slug )
         else:
             print (form.errors)
     else:
         form = PostDebateForm(instance=post)
-        return render(request, 'debate/form/suggestion.html', {'form': form, 'sent': sent})
+        return render(request, 'debate/form/new_debate.html', {'form': form, 'sent': sent})
 
 @login_required
 def profile(request, username):
@@ -397,7 +416,6 @@ def profile(request, username):
                             break
 
                     if not ignore:
-                        print("badge seen")
                         badge.collected_by.add(profile_user)
                         badge.save()
                         #Track saved badges
@@ -406,7 +424,7 @@ def profile(request, username):
                         track_badge.user = profile_user
                         track_badge.save()
 
-                        messages.info(request, 'Hurray!! New Community badge >'+ badge.name.title()+ '< given to '+profile_user_name+' for making ' +str(suggester)+' suggestions')
+                        messages.info(request, 'Hurray!! New Community badge >'+ badge.name.title()+ '< given to '+profile_user_name+' for creating ' +str(suggester)+' debate post')
 
     context = {'post': post, 'profile_user': profile_user, 'moderated':moderated,'judged':judged, 'supported':supported, 'opposed':opposed, \
                 'won':won, 'lost': lost, 'drew':drew, 'debate_involved': debate_involved, 'badges':badges,
@@ -726,3 +744,38 @@ def approve(request):
     ctx = {'approved': approved, 'username': user.username, }
     # use mimetype instead of content_type if django < 5
     return HttpResponse(json.dumps(ctx), content_type='application/json')
+
+
+# from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
+#                                  get_model as get_comment_model)
+# XtdComment = get_comment_model()
+# from django_comments_xtd.forms import XtdCommentForm
+# @login_required
+# def edit_own_comment(request, comment_id):
+#     comment = get_object_or_404(get_comment_model(),
+#                                 pk=comment_id, site__pk=settings.SITE_ID)
+#
+#     #form = get_comment_model
+#     form = XtdCommentForm(comment.content_object, comment = comment)
+#     #form = get_form()(comment.content_object)
+#     print(comment)
+#     template_arg = 'comments/edit_comment_form.html'
+#     return render(request, template_arg,
+#                   {"comment": comment, "form": form, "cid": comment_id})
+from django_comments_xtd import (comment_was_posted, signals, signed, get_model )
+
+@login_required
+def delete_my_comment(request, comment_id, next=None):
+    comment = get_object_or_404(get_model(), pk=comment_id, site__pk=settings.SITE_ID)
+    if comment.user == request.user:
+        if request.method == "POST":
+            comment.is_removed = True
+            comment.save()
+            post_id = comment.object_pk
+            post_model = comment.content_type.model
+
+            return redirect(comment.content_object.get_absolute_url())
+        else:
+            return render(request, 'comments/delete.html', {'comment': comment, "next": next}, )
+    else:
+        raise Http404

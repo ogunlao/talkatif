@@ -1,10 +1,13 @@
 {% extends "debate/base.html" %}
+{% load humanize %}
 {% load md2 %}
 {% load widget_tweaks %}
 {% load markdownify %}
 {% load comments %}
 {% load comments_xtd %}
 {% load i18n %}
+
+
 {% block title %}Debate{% endblock %}
 
 {% block content %}
@@ -19,9 +22,9 @@
       <div class="panel-body">
           <p class="pull-right small">
             <i class="fa fa-clock-o fa-lg" aria-hidden="true"><span class="text-muted">
-            {% if post.end %} Ends {{post.end}}
+            {% if post.end %} Ends {{post.end|naturaltime}}
             {% elif post.begin %}
-            Started {{post.begin}}
+            Started {{post.begin|naturaltime}}
             {% else %} Debate starts soon.
             {% endif %}
             </span></i>
@@ -35,7 +38,7 @@
             {% if debate_in_progress %}<span class="label label-default">In Progress</span>{% endif %}
           </h4>
           <p>
-            {{ post.summary|truncatechars:70|markdown:"safe, code-friendly, code-color"|linebreaks}}
+            {{ post.summary|truncatechars:300|markdown:"safe, code-friendly, code-color"|linebreaks}}
           </p>
           <p><strong>Debaters:</strong>
           {% if post.debate_category == "closed" and post.supporting_debaters.all or post.opposing_debaters.all %}
@@ -71,11 +74,12 @@
                     <li>
                       {% post_to_facebook  "{{post.get_absolute_url}}" "<div class='btn'><span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-facebook fa-stack-1x fa-inverse'></i></span>facebook</div>" %}
                     </li>
-
+                      {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
                       <a href="whatsapp://send?text={{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}" data-action="share/whatsapp/share">
                         <li>&nbsp;&nbsp;&nbsp;<span class='fa-stack'><i class='fa fa-circle fa-stack-2x'></i><i class='fa fa-whatsapp fa-stack-1x fa-inverse'></i></span>WhatsApp
                         </li>
                       </a>
+                      {% endif %}
 
                         <!--
                       <script>
