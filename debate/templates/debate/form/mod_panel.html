@@ -2,23 +2,22 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 
-{% block title %}Score Debate{% endblock %}
+{% block title %}Mod Panel{% endblock %}
 
 
 {% block content %}
 
         <div class="row">
-          <div class="col-md-2"></div>
-
-          <div class="col-md-7">
+          <div class="col m2"></div>
+          {% if debaters_supporting or debaters_opposing %}
+          <div class="col m7">
 
             {% if debaters_supporting %}
-            <div class="panel panel-default">
+            <div class="card">
 
-              <div class="panel-heading">List of Debaters Showing Interest in Supporting</div>
-              <div class="panel-body table-responsive">
-                  Approve 5 or less debaters from this category based on your choice.
-                  <table class="table table-hover table-condensed">
+              <div class="card-content">List of Debaters Showing Interest in Supporting
+                  <p class="red-text">Approve 5 or less debaters from this category based on your choice.</p>
+                  <table class="responsive-table highlight">
                     <thead>
                       <tr>
                         <th>Name</th>
@@ -49,16 +48,16 @@
                   </tbody>
                   </table>
               </div>
-            </div>
+            </div> <!-- End of card -->
             {% endif %}
 
             {% if debaters_opposing %}
-            <div class="panel panel-default">
+            <div class="card">
 
-              <div class="panel-heading">List of Debaters Showing Interest in Opposing</div>
-              <div class="panel-body table-responsive">
-                Approve 5 or less debaters from this category based on your choice.
-                <table class="table table-hover table-condensed">
+              <div class="card-content">List of Debaters Showing Interest in Opposing
+
+                <p class="red-text">Approve 5 or less debaters from this category based on your choice.</p>
+                <table class="">
                   <thead>
                     <tr>
                       <th>Name</th>
@@ -88,86 +87,63 @@
                 </tbody>
                 </table>
               </div>
-            </div>
+            </div><!--  End of card -->
             {% endif %}
 
-            <div class="panel panel-default">
+          </div>
+          {% else %}
+          <p>No person has indicated interest in debate yet. Share debate on social media to get the attention it deserves </p>
+          {% endif %}
 
-              <div class="panel-heading">Change Debate Periods</div>
-
-              <div class="panel-body">
-                <ul>
-                  <li>Start Date should be earlier than end date</li>
-                  <li>Add/Edit End date when you want to end a debate</li>
-                  <li>Add date in which vote ends to display winner, after judges scores</li>
-                  <li>Dates should be in the following 24hr format YYYY/MM/DD HR:MIN:SEC e.g 2017-12-08 20:59:28</li>
-
-                <h4>Debate Period for: <br>
-                {{related_post.title}} </h4>
+          <div class="col m3">
+            <div class="card">
+              <div class="card-content">
+                <h6>Debate Period for: <br>
+                {{related_post.title}} </h6>
                 <br>
                 <form class="" action="." method="post">
                   {% csrf_token %}
-                  <div class="form-group">
+                  <div class="row">
                       <p>Debate Start Date/Time</p>
-                      <div class='input-group date datetimepicker1'>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                        {% render_field mod_form.begin class+="form-control datetimepicker1" %}<br>
-                      </div><br>
+                      <div class='input-field'>
+                        <i class="material-icons prefix">update</i>
+                        {% render_field mod_form.begin class+="datetimepicker" %}
+                      </div>
+
+                      <p>Debate End Date/Time</p>
+                      <div class='input-field'>
+                        <i class="material-icons prefix">update</i>
+                        {% render_field mod_form.end class+="datetimepicker" %}
+                      </div>
+
 
                   <p>Vote Start Date/Time</p>
-                  <div class='input-group date datetimepicker1'>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                    {% render_field mod_form.vote_starts class+="form-control datetimepicker1" %}<br>
-                  </div><br>
-                  <p>Debate End Date/Time</p>
-                  <div class='input-group date datetimepicker1'>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                    {% render_field mod_form.end class+="form-control datetimepicker1" %}<br>
+                  <div class='input-field'>
+                    <i class="material-icons prefix">update</i>
+                    {% render_field mod_form.vote_starts class+="datetimepicker" %}
                   </div>
+
                   {% for error in mod_form.errors %}
-                    <p class="text-danger">{{error}}</p>
+                    <p class="red-text">{{error}}</p>
                   {% endfor %}
                 </div>
 
-                <div class="form-group">
-                  <input type="submit" value="Update Debate Date/Time" class="btn btn-primary btn-block" />
+                  <input type="submit" value="Update Debate Date/Time" class="btn" />
                   <hr>
 
                   <p>Only edit necessary fields. Do not tamper with debate settings if unsure</p>
-                  <p>I believe you have discussed with co-moderators before changing settings.</p>
+                  <p>We believe you have discussed with co-moderators(if any) before changing settings.</p>
                   <p>Return to <a href="{{related_post.get_absolute_url }}">debate</a><p>
-                </div>
                 </form>
 
             </div>
           </div>
 
           </div>
-
-          <div class="col-md-3"></div>
         </div>
 
-        {% block extra-js %}
-      <script type="text/javascript">
-      $(document).ready(function(){
-          $(function () {
-              $('.datetimepicker1').datetimepicker(
-                {
-                        format:'YYYY-MM-DD HH:mm:ss'
-                  }
+    {% block extra-js %}
 
-              );
-          });
-        });
-
-      </script>
-      {% endblock extra-js %}
     <script>
     $('.approve').click(function(){
           $.ajax({
@@ -190,6 +166,7 @@
               });
     });
 </script>
+{% endblock extra-js %}
 
 
 {% endblock %}

@@ -5,49 +5,60 @@
 {% block title %}{% trans "Preview your comment" %}{% endblock %}
 
 {% block content %}
+
 <div class="row">
-  <h4 class="text-center">{% trans "Preview your comment" %}</h4>
-  <p class="text-center">
-    {% trans "Preview your comment for:" %}<br/>
-    <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
-  </p>
-</div>
-<div class="row">
+  <div class="col m3"></div>
+
+  <div class="col m6">
+    <div class="card">
+      <div class="card-content">
+        <h4 class="center-align">{% trans "Preview your comment" %}</h4>
+        <p class="center-align">
+          {% trans "Preview your comment for:" %}<br/>
+          <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+        </p>
+      </div>
+
   <!--div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8"-->
-    <div class="visible-lg-block visible-md-block">
+
+    <div class="hide-on-small-only">
       <hr/>
     </div>
-    <div class="media">
+
+    <div class="card-content">
       {% if not comment %}
       <em>{% trans "Empty comment." %}</em>
       {% else %}
-      <div class="media-left">
-        <a href="{{ form.cleaned_data.url }}">
-          {{ form.cleaned_data.email|xtd_comment_gravatar }}
+      <ul>
+      <li class="collection-item avatar">
+        <a href="{{ user.profile.get_absolute_url }}">
+          <img src="{{ user.profile.image.thumbnail.25x25 }}" alt="" class="circle"/></a>
         </a>
-      </div>
-      <div class="media-body">
-        <h6 class="media-heading">
+
+      <span class="title">
           {% now "N j, Y, P" %}&nbsp;-&nbsp;
           {% if form.cleaned_data.url %}
           <a href="{{ form.cleaned_data.url }}" target="_new">{% endif %}
             {{ form.cleaned_data.name }}
             {% if form.cleaned_data.url %}</a>{% endif %}
-        </h6>
+      </span>
+      </li>
+
         <p>{{ comment }}</p>
-      </div>
+      
+    </ul>
       {% endif %}
     </div>
-    <div class="visible-lg-block visible-md-block">
-      <hr/>
-    </div>
+
   <!--/div-->
 </div>
 <div class="row">
-  <!--div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8"-->
-    <div class="well well-lg">
+  <div class="card">
       {% include "comments/form.html" %}
-    </div>
-  <!--/div-->
+      <br>
+  </div>
+</div>
+
+</div>
 </div>
 {% endblock %}

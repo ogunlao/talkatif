@@ -2,12 +2,11 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<ul id="comments" class="media-list">
+<ul id="comments" class="collection-item">
   {% for comment in comment_list %}
-  <li class="media">
     <a name="c{{ comment.id }}"></a>
-    <div class="media-left">{{ comment.user_email|xtd_comment_gravatar }}</div>
-    <div class="media-body">
+    <li class="collection-item avatar">{{ comment.user_email|xtd_comment_gravatar }}</li>
+    <li class="collection-item">
       <div class="comment">
         <h6 class="media-heading">
           {{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
@@ -22,7 +21,7 @@
           <a class="small mutedlink" href="{{ comment.get_reply_url }}">
             {% trans "Reply" %}
           </a>
-          {% endif %}          
+          {% endif %}
         </p>
         {% endif %}
       </div>

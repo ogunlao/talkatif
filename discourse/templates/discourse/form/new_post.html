@@ -8,44 +8,71 @@
 {% block content %}
 
         <div class="row">
-          <div class="col-md-2"></div>
+          <div class="col m2"></div>
 
-          <div class="col-md-7">
-            <div class="panel panel-default">
-              <div class="panel-heading">Post or Edit</div>
-              <div class="panel-body">
+          <div class="col m7">
+            <div class="card">
+              <div class="card-content">Post or Edit
                 <form class="" enctype="multipart/form-data" action="." method="post">
                   {% csrf_token %}
-                  <div class="form-group">
 
-                    {% for field in form %}
-                    <p>
-                      {{ field.label_tag }}<br>
-                      {{ field|add_class:"form-control"}}
-                      {% if field.help_text %}
-                        <small class="text-muted">{{ field.help_text|markdownify }}</small>
-                      {% endif %}
-                      </p>
-                      {% for error in field.errors %}
-                    <p class="text-danger"><strong>{{error}}</strong></p>
-                      {% endfor%}
-                  <br/>
+                {% for field in form %}
+                  {% if field.name == "summary" %}
+                  <label for={{ field.auto_id }}>{{field.label_tag}}</label>
+                  {{ field|attr:"class:materialize-textarea"}}
+                  {% elif field.name == "attachment" %}
+                  <br>
+                  <div class="file-field input-field">
+                    <div class="btn">
+                      <span>File</span>
+                      <input accept="image/*" id="id_attachment" multiple="multiple" name="attachment" type="file">
+                    </div>
+                    <div class="file-path-wrapper">
+                      <input class="file-path validate" type="text">
+                    </div>
+                    {% if num_image_attached %}
+                      <p class="small red-text ">{{num_image_attached}} images already attached. <br>We encourage a maximum of 2 images per post</p>
+                    {% endif %}
+                  </div>
+
+                  {% else %}
+                  <div class="input-field">
+                    <label for={{ field.auto_id }}>{{field.label_tag}}</label>
+                    {{ field}}
+                  </div>
+                  {% endif %}
+
+
+                  <p>
+                    {% if field.help_text %}
+                        <small class="grey-text">{{ field.help_text|markdownify }}</small>
+                    {% endif %}
+                    {% for errror in field.errors %}
+                    <strong class="red-text">{{ error|escape }}</strong>
                     {% endfor %}
-                    </div>
-                    <div class="form-group">
-                      <input type="submit" value="submit post" class="btn btn-primary btn-block" />
-                    </div>
+                  </p>
+              {% endfor %}
+
+              {% if post_id %}
+              <div class="row">
+                <button type="submit" class="btn">Edit Discourse</button>
+              </div>
+              {% else %}
+              <div class="row">
+                <button type="submit" class="btn">Create Discourse</button>
+                OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
+              </div>
+              {% endif %}
 
                 </form>
 
 
           </div>
 
-        </div></div>
+        </div><!-- End of card -->
+      </div>
 
-          <div class="col-md-3">
-
-          </div>
+          <div class="col-md-3"></div>
         </div>
 
 {% endblock %}

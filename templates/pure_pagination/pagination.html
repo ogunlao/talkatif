@@ -1,30 +1,26 @@
 {% load i18n %}
 
+<ul class="pagination">
+  {% if page_obj.has_previous %}
+  <li class="waves-effect"><a href="?{{ page_obj.previous_page_number.querystring }}"><i class="material-icons">chevron_left</i></a></li>
+  {% else %}
+  <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+  {% endif %}
 
-<div class="container">
-  <ul class="pagination pagination-sm">
-      <li>
-    {% if page_obj.has_previous %}
-      <a href="?{{ page_obj.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "previous" %}</a>
-    {% else %}
-      <span class="disabled prev">&lsaquo;&lsaquo; {% trans "previous" %}</span>
-    {% endif %}
-      </li>
-      {% for page in page_obj.pages %}
-          {% if page %}
-              {% ifequal page page_obj.number %}
-    <li class="active"><span class="current page">{{ page }}<span class="sr-only">(current)</span></span></li>
-              {% else %}
-    <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
-              {% endifequal %}
+  {% for page in page_obj.pages %}
+      {% if page %}
+          {% ifequal page page_obj.number %}
+  <li class="waves-effect active"><a href="#!">{{ page }}</a></li>
           {% else %}
-    <li>...</li>
-          {% endif %}
-      {% endfor %}
+  <li class="waves-effect"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+          {% endifequal %}
+          {% else %}
+  <li>...</li>
+      {% endif %}
+  {% endfor %}
       {% if page_obj.has_next %}
-    <li><a href="?{{ page_obj.next_page_number.querystring }}" class="next" aria-label="Next">{% trans "next" %} &rsaquo;&rsaquo;</a></li>
+  <li class="waves-effect"><a href="?{{ page_obj.next_page_number.querystring }}"><i class="material-icons">chevron_right</i></a></li>
       {% else %}
-    <li><span class="disabled next" aria-hidden="true">{% trans "next" %} &rsaquo;&rsaquo;</span></li>
-    {% endif %}
-  </ul>
-</div>
+  <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+      {% endif %}
+</ul>

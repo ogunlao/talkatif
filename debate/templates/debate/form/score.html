@@ -7,23 +7,17 @@
 {% block content %}
 
         <div class="row">
-          <div class="col-md-2"></div>
+          <div class="col m3"></div>
 
-          <div class="col-md-7">
-            <div class="panel panel-default">
+          <div class="col m6">
+            <div class="card">
+              <div class="card-content">
               {% if scored %}
-              <div class="panel-heading">Debate Scores and Votes</div>
+              <h5>Debate Scores and Vote Count</h5>
               {% else %}
-              <div class="panel-heading">Score Debate for both teams</div>
+              <h5>Score Debate for both teams</h5>
               {% endif %}
 
-              <div class="panel-body">
-                <ul>
-                  <li>Scores should be on a scale of ten i.e. Highest score is 10.</li>
-                  <li>Any observation during debate should be written in the observation section</li>
-                  <li>Only one score is necessary and needed from judges.</li>
-                  <li>Scores should be fail and just</li>
-                </ul>
               {% if scored %}
                   <br/>
                   <h5>Debate Topic</h5>
@@ -65,37 +59,63 @@
                   <p>Return to <a href="{{ related_post.get_absolute_url }}">debate</a><p>
 
               {% else %}
-                <h4>Debate Topic:<br>
-                {{related_post.title}} </h4>
+                <h6 class="blue-text">Debate Topic:<br>
+                {{related_post.title}} </h6>
                 <br>
                 <form class="" action="." method="post">
                   {% csrf_token %}
-                  <div class="form-group">
-                  <p>Supporting Side Score</p>
-                  {% render_field score_form.supporting_score class+="form-control" %}<br>
-                  <p>Opposing Side Score</p>
-                  {% render_field score_form.opposing_score class+="form-control" %}<br>
-                  <p>Highest Score Possible (Default: 10)</p>
-                  {% render_field score_form.highest_score class+="form-control" %}<br>
-                  <p>Observations</p>
-                  {% render_field score_form.observation class+="form-control" placeholder="Comments not compulsory" %}<br>
-                  {{score_form.errors}}
+                  <div class="input-field">
+                  <p>Supporting Side Score:</p>
+                    <p class="range-field">
+                      <input type="range" name = "supporting_score" id="id_supporting_score" min="0.1" max="30" Step = 0.1 />
+                    </p>
                 </div>
-                <br><hr>
-                <div class="form-group">
-                <p>Voters Percent Share(Default: 70%)</p>
-                {% render_field score_form.vote_percent_share class+="form-control" %}<br>
-                <p>Judges Percent Share(Default: 30%)</p>
-                {% render_field score_form.judge_percent_share class+="form-control" %}<br>
-                <p>Both should total 100%</p>
-              </div>
-                <div class="form-group">
-                  <input type="submit" value="Send Scores" class="btn btn-primary btn-block" />
+                  <div class="input-field">
+                  <p>Opposing Side Score:</p>
+                  <p class="range-field">
+                    <input type="range" name = "opposing_score" id="id_opposing_score" min="0.1" max="30" Step = 0.1 />
+                  </p>
+                </div>
+                <div class="input-field">
+                  <p>Highest Score Possible (Default: 10):</p>
+                  <p class="range-field">
+                    <input type="range" name = "highest_score" id="id_highest_score" min="0" max="30" />
+                  </p>
+                </div>
+                <div class="input-field">
+                  {% render_field score_form.observation class+="materialize-textarea" %}<br>
+                  <label for="id_observation">Debate Score Summary and Observations.</label>
+                </div>
+                  {% for error in score_form.errors%}
+                  <p><strong class=red-text>{{error}}</strong></p>
+                  {% endfor%}
+                </div>
+
+                <div class="card-content">
+                    <div class="input-field">
+                    <p>Voters Percent Share(Default: 70%)</p>
+                    <p class="range-field">
+                      <input type="range" name = "vote_percent_share" disabled="disabled" id="id_vote_percent_share" min="0" max="100" />
+                    </p>
+                  </div>
+                  <div class="input-field">
+                    <p>Judges Percent Share(Default: 30%)</p>
+                    <p class="range-field">
+                      <input type="range" name = "judge_percent_share" disabled="disabled" id="id_judge_percent_share" min="0" max="100" />
+                    </p>
+                  </div>
+                  <p>Both currently disabled. Would be enabled in the future.</p>
+                <div class="row">
+                  <p>
+                    <input type="checkbox" id="verified" required />
+                    <label for="verified">I have verified the scores and willing to add it.</label>
+                  </p><br>
+                  <button type="submit" class="btn" >Add Scores</button>
                   <hr>
-                  <p>Values cannot be changed after submission</p>
-                  <p>Return to <a href="{% url 'debate:debate_detail' related_post.debate_category related_post.id related_post.slug %}">debate</a><p>
                 </div>
                 </form>
+                <p>Verify scores before submission since values cannot be changed after submission</p>
+                <p>Return to <a href="{% url 'debate:debate_detail' related_post.debate_category related_post.id related_post.slug %}">debate</a> without submitting.<p>
 
         {% endif %}
             </div>
@@ -103,21 +123,7 @@
 
           </div>
 
-          <div class="col-md-3">
-            <br>
-              <div class="panel panel-default">
-                <div class="panel-body">
-                  <p>Noting added yet</p>
-                  <button type="button" class="btn btn-success">Notify me via email</button>
-                </div>
-                <div class="panel-footer">
-                  <p>Invite friends to join debate</p>
-                  <button type="button" class="btn btn-primary">
-                    <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-                  </button>
-                </div>
-                </div>
-          </div>
+          <div class="col-md-3"></div>
         </div>
 
 {% endblock %}

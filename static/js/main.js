@@ -1,32 +1,34 @@
+//Side nav button
+
+$(".button-collapse").sideNav();
+
+//init for select button
 $(document).ready(function() {
-            var sideslider = $('[data-toggle=collapse-side]');
-            var sel = sideslider.attr('data-target');
-            var sel2 = sideslider.attr('data-target-2');
-            sideslider.click(function(event){
-                $(sel).toggleClass('in');
-                $(sel2).toggleClass('out');
-            });
-        });
+    $('select').material_select();
 
-$(document).ready(function(){
-  $().alert('close')
-});
 
-$(document).ready(function(){
-    $('[data-toggle="popover"]').popover();
-});
+    $('.datepicker').pickadate({
+       format: "yyyy-mm-dd",
+       selectMonths: true, // Creates a dropdown to control month
+       selectYears: 15, // Creates a dropdown of 15 years to control year,
+       today: 'Today',
+       clear: 'Clear',
+       close: 'Ok',
+       closeOnSelect: false, // Close upon selecting a date,
 
-$(document).ready(function () {
-  $('[data-toggle="tooltip"]').tooltip({html: true})
-});
 
-$(document).ready(function () {
-                $('.datetime-input').datetimepicker({
-                    format:'YYYY-MM-DD HH:mm:ss'
-                });
-            });
+     });
 
-            // To style all <select>s
-      $(document).ready(function(){
-         $('select').selectpicker();
-       });
+     $(".datetimepicker").flatpickr(
+       {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        altInput: true,
+        altFormat: "F j, Y H:i",
+        disableMobile: "true",
+
+
+    }
+     );
+
+ });

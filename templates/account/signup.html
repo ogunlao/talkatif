@@ -1,26 +1,64 @@
 {% extends "account/base.html" %}
 {% load widget_tweaks %}
-
 {% load i18n %}
+
+{% load account socialaccount %}
+{% providers_media_js %}
+<a href="{% provider_login_url "facebook" method="js_sdk" %}">Facebook Connect</a>
+
 
 {% block title %}{% trans "Signup" %}{% endblock %}
 
 {% block content %}
 
 <div class="row">
-  <div class="col-md-2"></div>
+  <div class="col m3"></div>
 
-  <div class="col-md-7">
-    <div class="panel panel-default">
-      <div class="panel-body">
-          <h1>{% trans "Sign Up" %}</h1>
+  <div class="col m6">
+    <div class="card">
+      <div class="card-content">
+          {% get_providers as socialaccount_providers %}
+          <div class="row">
+              <div class="col s12">
+                <p class="center-align">Login via your social account. Fast and Easy</p>
+              </div>
+          </div>
+          <div class="row">
+            <div class="col s4">
+              <a href="/accounts/facebook/login/?process=login" class="btn blue omb_btn-facebook">
+                <i class="fa fa-facebook show-on-small"></i>
+                <span class="hide-on-small-only">Facebook</span>
+              </a>
+            </div>
+            <div class="col s4">
+              <a href="#" class="btn blue omb_btn-twitter">
+                <i class="fa fa-twitter show-on-small"></i>
+                <span class="hide-on-small-only">Twitter</span>
+              </a>
+            </div>
+            <div class="col s4">
+              <a href="#" class="btn red omb_btn-google">
+                <i class="fa fa-google-plus show-on-small"></i>
+                <span class="hide-on-small-only">Google+</span>
+              </a>
+            </div>
+            {% include "socialaccount/snippets/login_extra.html" %}
+          </div>
+
+          <div class="row">
+              <div class="col s12">
+                <p class="center-align">OR</p>
+              </div>
+          </div>
+
+          <h3>{% trans "Sign Up" %}</h3>
 
           <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
           <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
             {% csrf_token %}
             {% for field in form %}
-            <div class="form-group">
+            <div class="input-field">
             <p>
               {{ field.label_tag }}<br>
               {{ field|add_class:"form-control"}}
@@ -29,21 +67,21 @@
                 <small style="color: grey">{{ field.help_text }}</small>
               {% endif %}
             </p>
-            <p><strong class="text-danger">{{ field.errors }}</strong></p>
+            <p><strong class="red-text">{{ field.errors }}</strong></p>
           </div>
           {% endfor %}
 
             {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
             {% endif %}
-            <button class="btn btn-primary" type="submit">{% trans "Sign Up" %} &raquo;</button>
+            <button class="btn" type="submit">{% trans "Sign Up" %} &raquo;</button>
           </form>
 
           </div>
         </div>
 
     </div>
-  <div class="col-md-3"></div>
+  <div class="col m3"></div>
 </div>
 
 {% endblock %}

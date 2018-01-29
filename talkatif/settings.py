@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'debate.apps.DebateConfig',
     'discourse.apps.DiscourseConfig',
     'mptt',
-    'zinnia_bootstrap',
+    'markdownx',
     'zinnia', #blog
     'tagging',
     'versatileimagefield',
@@ -110,7 +110,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        #'APP_DIRS': True,
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -118,15 +118,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
-                'zinnia.context_processors.version',
+                #'zinnia.context_processors.version', optional
                 'django.template.context_processors.media',
 
             ],
-            'loaders': [
-                'app_namespace.Loader',
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader'
-            ]
         },
     },
 ]
@@ -290,7 +285,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 }
 
 #Comment Threading settings
-COMMENTS_XTD_MAX_THREAD_LEVEL = 4  # default is 0
+COMMENTS_XTD_MAX_THREAD_LEVEL = 10  # default is 0
 COMMENTS_XTD_LIST_ORDER = ('thread_id', 'order')  # default is ('thread_id', 'order')
 
 #Disable comments confirmation for new users
@@ -323,7 +318,7 @@ PAGINATION_SETTINGS = {
 
 #django-el-pagination settings
 #used to paginate comments
-EL_PAGINATION_PER_PAGE = 5
+EL_PAGINATION_PER_PAGE = 20
 
 #django newsletter settings
 # Amount of seconds to wait between each email. Here 100ms is used.

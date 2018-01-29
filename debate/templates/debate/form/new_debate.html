@@ -8,41 +8,84 @@
 {% block content %}
 
         <div class="row">
-          <div class="col-md-2"></div>
+          <div class="col m3"></div>
 
-          <div class="col-md-7">
-            <div class="panel panel-default">
-              <div class="panel-heading">Post a topic for debate</div>
-              <div class="panel-body">
+          <div class="col m6">
+            <div class="card">
+              <div class="card-content">
+              <h5>Post a topic for debate</h5>
+
                 <form class="" enctype="multipart/form-data" action="." method="post">
                   {% csrf_token %}
                   {% for field in form %}
-                  <div class="form-group">
-                  <p>
-                    {{ field.label_tag }}<br>
-                    {{ field|add_class:"form-control"}}
-                    {% if field.help_text %}
-                      <small class="text-muted">{{ field.help_text|markdownify }}</small>
+
+
+                    {% if field.name == "summary" %}
+                    <label for={{ field.auto_id }}>{{field.label_tag}}</label>
+                    {{ field|attr:"class:materialize-textarea"}}
+                    {% elif field.name == "attachment" %}
+                    <br>
+                    <div class="file-field input-field">
+                      <div class="btn">
+                        <span>File</span>
+                        <input accept="image/*" id="id_attachment" multiple="multiple" name="attachment" type="file">
+                      </div>
+                      <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                      </div>
+                      {% if num_image_attached %}
+                      <p class="small red-text ">{{num_image_attached}} images already attached. <br>We encourage a maximum of 2 images per post</p>
+                      {% endif %}
+                    </div>
+
+                    {% else %}
+                    <div class="input-field">
+                      <label for={{ field.auto_id }}>{{field.label_tag}}</label>
+                      {{ field}}
+                    </div>
                     {% endif %}
+
+
+                    <p>
+                      {% if field.help_text %}
+                          <small class="grey-text">{{ field.help_text|markdownify }}</small>
+                      {% endif %}
+                      {% for errror in field.errors %}
+                      <strong class="red-text">{{ error|escape }}</strong>
+                      {% endfor %}
                     </p>
-                    {% for error in field.errors %}
-                    <p class="text-danger"><strong>{{error}}</strong></p>
-                    {% endfor%}
+                {% endfor %}
+
+                  {% if post_id %}
+                  <div class="row">
+                    <button type="submit" class="btn">Update Debate</button>
+                    OR <span><a href={% url "debate:debate_detail" post_id=post_id category=None post_slug=None  %}>Return to debate</a>
                   </div>
-                  <br/>
-                  {% endfor %}
-                </div><br>
-                <div class="form-group">
-                  <button type="submit" class="btn btn-primary btn-block">Add Debate</button>
-                  <hr>
-                  <p>Debate topic would be posted. Gracias</p>
+                  {% else %}
+                  <div class="row">
+                    <button type="submit" class="btn">Add Debate</button>
+                    OR <span><a href={% url "debate:debate_list" %}>Return to home</a>
+                  </div>
+                  {% endif %}
+
+
                 </div>
+
                 </form>
 
-            </div>
+            </div><!-- End of card -->
           </div>
 
           <div class="col-md-3"></div>
         </div>
 
+        <script>
+        //Init for chips for tags
+        $(document).ready(function() {
+        $('.chips-placeholder').material_chip({
+            placeholder: 'Enter a tag',
+            secondaryPlaceholder: 'Enter another tag',
+          });
+        });
+        </script>
 {% endblock %}

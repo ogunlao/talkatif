@@ -5,67 +5,65 @@
 
 {% block content %}
 
-        <div class="row">
-          <div class="col-md-2">
-          </div>
+<div class="row">
+  <div class="col m2 l2"></div>
 
-          <div class="col-md-7">
-            {% if created %}
-            <div class="alert alert-info alert-dismissible" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <p class="text-danger">Welcome to your profile! Quickly update your profile by clicking <a href="{% url 'update_profile'%}">edit profile</a></p>
-          </div>
-            {% endif %}
-            <div class="panel panel-default">
-              <div class="panel-heading">{{ profile_user_name|title }}
-                {% if profile_user == request.user %}
-                  <a href="{% url 'update_profile'%}">Edit Profile</a>
-                {% endif %}
-              </div>
-              <div class="panel-body">
-                  {% if profile_user.profile.image %}
-                  <img src="{{ profile_user.profile.image.thumbnail.100x100 }}" />
-                  {% else %}
-                  <img src="{{MEDIA_URL}}/images/profile/avatar2.png" width="100" height=100 />
+  <div class="col m7">
+
+            <div class="row">
+              <div class="col m7">
+                <div class="card">
+
+              <ul class="collection with-header">
+                <li class="collection-header"><h4>{{ profile_user_name|title }}</h4>
+                  {% if profile_user == request.user %}
+                    <a class="btn class="secondary-content"" href="{% url 'update_profile'%}">Edit Profile</a>
                   {% endif %}
+                </li>
+                <li class="collection-item">Username <span class="right">{{ profile_user.username }}</span></li>
+                <li class="collection-item">First Name <span class="right">{{ profile_user.first_name|capfirst }}</span></li>
+                <li class="collection-item">Last Name <span class="right">{{ profile_user.last_name|capfirst }}</span></li>
+                <li class="collection-item">Other Names <span class="right">{{ post.other_name|capfirst }}</span></li>
+              {% if profile_user == request.user %}
+                <li class="collection-item">Email:
+                  <p class="">{{ profile_user.email }}<br>
+                    <span class="blue-text"><a href={% url 'account_email'%}>Add<span></a></p></li>
 
-              <table class="table table-condensed">
-                <tbody>
-                  <tr>
-                    <td>Username</td>
-                    <td>{{ profile_user.username }}</td>
-                  </tr>
-                  <tr>
-                    <td>First Name</td>
-                    <td>{{ profile_user.first_name }}</td>
-                  </tr>
-                  <tr>
-                    <td>Last Name</td>
-                    <td>{{ profile_user.last_name }}</td>
-                  </tr>
-                  <tr>
-                    <td>Other Names</td>
-                    <td>{{ profile_user.middle_name }}</td>
-                  </tr>
-                  <tr>
-                    <td>Specialization</td>
-                    <td>{{ post.specialization }}</td>
-                  </tr>
-                  <tr>
-                    <td>Location</td>
-                    <td>{{ post.city }}, {{post.country.name}}</td>
-                  </tr>
-                  <tr>
-                    <td>Bio</td>
-                    <td>{{ post.bio }}</td>
-                  </tr>
+              {% endif %}
+                <li class="collection-item">Participating in
+                  <span class="right">
+                    {% if post.participation_type.all %}
+                      {% for participation in post.participation_type.all %}{{ participation }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    {% else %} Not set
+                    {% endif %}
+                  </span></li>
+                <li class="collection-item">Specialization <span class="right">{{ post.specialization }}</span></li>
+                <li class="collection-item">Location <span class="right">{{ post.city|capfirst }}, {{post.country.name}}</span></li>
+                <li class="collection-item">Bio <span class="right">{{post.bio}}</span></li>
+              </ul>
+            </div><!-- End of card -->
+          </div><!-- End of column -->
 
-                </tbody>
-              </table>
+              <div class="col m5">
+                    <div class="card">
+                      <div class="card-content">
+                        {% if profile_user.profile.image %}
+                        <img src="{{ profile_user.profile.image.thumbnail.200x200 }}" />
+                        {% else %}
+                        <img src="{{MEDIA_URL}}/images/profile/placeholder.png" width="100%" height=100% />
+                        {% endif %}
+                    </div>
+                  </div>
+              </div>
 
+            </div><!-- End of row -->
+
+          {% if supported or opposed or moderated or judged %}
+            <div class="row">
+              <div class="card">
+              <div class="card-content">
                 {% if supported %}
-                <hr>
-                <h5>Debate on Supporting Side <span class="badge">{{supported.count}}</span></h5>
+                <h5>Debate on Supporting Side <span class="new badge grey" data-badge-caption="">{{supported.count}}</span></h5>
                 {% for debate_list in supported %}
                   <p><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
                 {% endfor %}
@@ -97,38 +95,38 @@
                 {% endif %}
 
               </div>
-            </div>
+            </div><!-- End of card -->
+          </div><!-- End of row -->
+        {% endif %}
+      </div><!-- End of main colm7 -->
 
-        </div>
-      <div class="col-md-3">
+      <div class="col m3">
 
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <p>Stats</p>
-          </div>
-          <div class="panel-body">
-            <p><span class="badge">{{won.count}}</span> Won</p>
-            <p><span class="badge">{{lost.count}}</span> Lost</p>
-            <p><span class="badge">{{drew.count}}</span> Draw(s)</p>
-            <p><span class="badge">{{moderated.count}}</span> Moderated</p>
-            <p><span class="badge">{{judged.count}}</span> Judged</p>
+        <div class="card">
+          <div class="card-content">
+            <h6>Stats</h6>
+
+            <p>Won<span class="new badge grey" data-badge-caption="">{{won.count}}</span>
+            <br><br>Lost<span class="new badge grey" data-badge-caption="">{{lost.count}}</span>
+            <br><br>Draw(s)<span class="new badge grey" data-badge-caption="">{{drew.count}}</span>
+            <br><br>Moderated<span class="new badge grey" data-badge-caption="">{{moderated.count}}</span>
+            <br><br>Judged<span class="new badge grey" data-badge-caption="">{{judged.count}}</span> </p>
             <hr>
-            <p><span class="badge">{{supported.count}}</span> Debates in Supporting Team</p>
-            <p><span class="badge">{{opposed.count}}</span> Debates in Opposing Team</p>
+            <p>Debates in Supporting Team<span class="new badge grey" data-badge-caption="">{{supported.count}}</span>
+            <br><br>Debates in Opposing Team<span class="new badge grey" data-badge-caption="">{{opposed.count}}</span> </p>
           </div>
-          <div class="panel-footer">Active <span class="badge">{{debate_involved.count}}</span></div>
-          </div>
+          <div class="card-content">Active <span class="new badge grey" data-badge-caption="">{{debate_involved.count}}</span></div>
+        </div><!-- End of card -->
 
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <p>Badges</p>
-          </div>
-          <div class="panel-body">
+        <div class="card">
+          <div class="card-content">
+            <h6>Badges</h6>
+
             {% if badges %}
             {% for badge in badges %}
             <p>
               {% with ''|center:badge.rank as range %}
-                  {% for _ in range %}<span class="glyphicon glyphicon-star" aria-hidden="true"></span>{% endfor %}
+                  {% for _ in range %}<i class="material-icons">star</i>{% endfor %}
               {% endwith %}
               {{badge.category|capfirst}} - <a href="{{badge.get_absolute_url}}" data-toggle="tooltip" title="{{badge.description}}">{{badge.name|capfirst}}</a> </p>
             {% endfor %}
@@ -136,14 +134,13 @@
             <p>No badge earned yet.</p>
             {% endif %}
           </div>
-          <div class="panel-footer">Badges <span class="badge">{{badges.count}}</span>
+          <div class="card-content">Badges <span class="new badge grey" data-badge-caption="">{{badges.count}}</span></div>
 
 
 
 
           </div>
-          </div>
+        </div><!-- End of colm3 -->
 
-     </div>
    </div>
     {% endblock %}

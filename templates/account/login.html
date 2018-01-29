@@ -10,94 +10,91 @@
 
 {% block content %}
 
-{% get_providers as socialaccount_providers %}
+<div class="row">
+  <div class="col m3"></div>
 
-{% if socialaccount_providers %}
+<div class="col m7">
+  {% get_providers as socialaccount_providers %}
 
-<div class="omb_login">
-  <h3 class="omb_authTitle">Login or <a href="{{ signup_url }}">Sign up</a></h3>
-<div class="row omb_row-sm-offset-3 omb_socialButtons">
-      <div class="col-xs-4 col-sm-2">
-        <a href="/accounts/facebook/login/?process=login" class="btn btn-lg btn-block omb_btn-facebook">
-          <i class="fa fa-facebook visible-xs"></i>
-          <span class="hidden-xs">Facebook</span>
+  {% if socialaccount_providers %}
+    <div class="col m12">
+      <h4 class="title center-align">Login or <a href="{{ signup_url }}">Sign up</a></h3>
+    </div>
+    <div class="row">
+      <div class="col s4">
+        <a href="/accounts/facebook/login/?process=login" class="btn blue omb_btn-facebook">
+          <i class="fa fa-facebook show-on-small"></i>
+          <span class="hide-on-small-only">Facebook</span>
         </a>
       </div>
-      <div class="col-xs-4 col-sm-2">
-        <a href="#" class="btn btn-lg btn-block omb_btn-twitter">
-          <i class="fa fa-twitter visible-xs"></i>
-          <span class="hidden-xs">Twitter</span>
+      <div class="col s4">
+        <a href="#" class="btn blue omb_btn-twitter">
+          <i class="fa fa-twitter show-on-small"></i>
+          <span class="hide-on-small-only">Twitter</span>
         </a>
       </div>
-      <div class="col-xs-4 col-sm-2">
-        <a href="#" class="btn btn-lg btn-block omb_btn-google">
-          <i class="fa fa-google-plus visible-xs"></i>
-          <span class="hidden-xs">Google+</span>
+      <div class="col s4">
+        <a href="#" class="btn red omb_btn-google">
+          <i class="fa fa-google-plus show-on-small"></i>
+          <span class="hide-on-small-only">Google+</span>
         </a>
       </div>
       {% include "socialaccount/snippets/login_extra.html" %}
-</div>
+    </div>
 
-<div class="row omb_row-sm-offset-3 omb_loginOr">
-  <div class="col-xs-12 col-sm-6">
-    <hr class="omb_hrOr">
-    <span class="omb_spanOr">or</span>
+  <div class="row">
+      <div class="col s12">
+        <p class="center-align">OR</p>
+      </div>
   </div>
-</div>
 
 {% endif %}
 
-<div class="row omb_row-sm-offset-3">
-  <div class="col-xs-12 col-sm-6">
-      <form class="omb_loginForm" action="{% url 'account_login' %}" autocomplete="off" method="POST">
+<div class="row">
+  <div class="col m12">
+      <form action="{% url 'account_login' %}" autocomplete="off" method="POST">
         {% csrf_token %}
-      <div class="input-group">
-        <span class="input-group-addon"><i class="fa fa-user"></i></span>
-        {{ form.login|add_class:"form-control" }}
-      </div>
-      <span class="help-block"></span>
+        <div class="input-field">
+          <i class="material-icons prefix">account_circle</i>
+          {{ form.login }}
+          <label for="id_login">Username or Email</label>
+        </div>
 
-      <div class="input-group">
-        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-        {{ form.password|add_class:"form-control" }}
+      <div class="input-field">
+        <i class="material-icons prefix">lock</i>
+        {{ form.password }}
+        <label for="id_password">password</label>
       </div>
       <br/>
       {% if form.errors %}
         {% for field in form %}
             {% for error in field.errors %}
-                    <strong class="help-block">{{ error|escape }}</strong>
+                    <p><strong class="red-text">{{ error|escape }}</strong></p>
             {% endfor %}
         {% endfor %}
         {% for error in form.non_field_errors %}
-                <strong class="help-block">{{ error|escape }}</strong>
+      </p><strong class="red-text">{{ error|escape }}</strong></p>
         {% endfor %}
       {% endif %}
-              <!--  <span class="help-block">Password error</span> -->
 
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+      <button class="btn" type="submit">Get Inside</button>
       {% if redirect_field_value %}
         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
       {% endif %}
     </form>
-  </div>
+  </div><!-- End of col m7 -->
   </div>
 
-<div class="row omb_row-sm-offset-3">
-  <div class="col-xs-12 col-sm-3">
+  <div class="col m7">
+    <p>
+      <a href="{% url 'account_reset_password' %}">Forgot password?</a>
+    </p>
     <!--
     <label class="checkbox">
       <input type="checkbox" id="id_remember" name="remember" class="form-control" value="remember-me">Remember Me
     </label> -->
   </div>
-  <div class="col-xs-12 col-sm-3">
-    <p class="omb_forgotPwd">
-      <a href="{% url 'account_reset_password' %}">Forgot password?</a>
-    </p>
-  </div>
 </div>
-</div>
-
-
- <hr>
+</div><!-- End of main row -->
 
 {% endblock %}

@@ -87,27 +87,22 @@ def post_detail(request, post_id, post_slug):
             print("Yeah liked")
             break
 
-    # if request.method == 'POST':
-        # #Post method used to like a debate post using django-vote
-        # if 'like' in request.POST: #request was to like post
-        #     if liked: #user unclicked the like button
-        #         post.votes.down(user_id) #decrease likes
-        #         liked = []
-        #     else:
-        #         post.votes.up(user_id)
-        #         liked = post.votes.exists(user_id)
-        #         if liked:
-        #             liked = True
     like_count = post.total_likes #counts total likes on post
 
     context = {'post':post, 'like_count':like_count, 'liked':liked, 'attachments':attachments}
     return render(request, 'discourse/post/post_detail.html', context)
 
+
+
+from PIL import Image as Img
+
 @login_required
 def new_post(request, post_id = None):
     post = Post()
+    num_image_attached = 0
     if post_id: #if instance of post is to be edited
         post = get_object_or_404(Post, pk = post_id)
+        num_image_attached = Attachment.objects.filter(post = post).count()
 
     if request.method == 'POST':
         # Form was submitted
@@ -125,21 +120,29 @@ def new_post(request, post_id = None):
                     message_info = "Post has previously been saved."
                     messages.info(request, message_info )
                 return redirect('all_list')
+
+            post = get_object_or_404(Post, title = post.title )
             #Saves post attachments
             images_attached = form.cleaned_data['attachment']
+            print(images_attached)
             if images_attached:
-                for each in form.cleaned_data['attachment']:
+                for each in images_attached:
                     Attachment.objects.create(file=each, post = post)
+
+                for each in Attachment.objects.filter(post=post): #compress image
+                    print (settings.MEDIA_ROOT +"/"+ str(each))
+                    img = Img.open(settings.MEDIA_ROOT +"/"+ str(each))
+                    img.save(settings.MEDIA_ROOT +"/"+ str(each),quality=70,optimize=True)
 
             message_info = "Post saved! Come back for comments and responses."
             messages.info(request, message_info )
             post = get_object_or_404(Post, title = post.title )
             return redirect('discourse:post_detail', post_id=post.id, post_slug = post.slug )
         else:
-            print (form.errors)
+            messages.info(request, "We encourage a maximum of 2 images per post." )
     else:
         form = PostForm(instance=post)
-        return render(request, 'discourse/form/new_post.html', {'form': form})
+        return render(request, 'discourse/form/new_post.html', {'form': form, 'num_image_attached':num_image_attached, 'post_id':post_id})
 
 from django.http import HttpResponse
 try:
@@ -171,7 +174,24 @@ def like_post(request):
     # use mimetype instead of content_type if django < 5
     return HttpResponse(json.dumps(ctx), content_type='application/json')
 
+import base64
+from django.conf import settings
 
+@require_POST
+def load_image(request):
+    if request.method == 'POST':
+        post_id = int(request.POST.get('post_id', None))
+        image_id = int(request.POST.get('image_id', None))
+
+        post = get_object_or_404(Post, pk=post_id)
+        attachment = get_object_or_404(Attachment, pk=image_id)
+        attachment = settings.MEDIA_ROOT +"/"+ str(attachment)
+
+
+        with open(attachment, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+
+        return HttpResponse(encoded_string)
 
 def go_to_post(request, post_slug):
     goto_page_no = request.GET.get('goto')

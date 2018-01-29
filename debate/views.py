@@ -75,7 +75,7 @@ def debate_list(request, tag_slug = None, category = None):
     if category:
         object_list = object_list.filter(debate_category=category)
 
-    paginator = Paginator(object_list, 1) # Show 2 posts per page
+    paginator = Paginator(object_list, 20) # Show 20 posts per page
 
     try:
         page = request.GET.get('page', 1)
@@ -102,10 +102,10 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
-def debate_detail(request, category, post_id, post_slug):
+def debate_detail(request, post_id, category=None,  post_slug=None):
     post = get_object_or_404(PostDebate, pk=post_id)
     user_id = request.user.pk
-    status = Votes.objects.filter(voter = user_id).filter(post = post) #Checks if user has voted before
+
     attachments = Attachment.objects.filter(post = post)
 
     #Checks and increment count of visits
@@ -122,7 +122,8 @@ def debate_detail(request, category, post_id, post_slug):
 
     #Get what user voted for
     vote_message = ""
-    if status:
+    if Votes.objects.filter(post = post).filter(voter = user_id).exists():
+        status = Votes.objects.filter(post = post).get(voter = user_id) #Checks if user has voted before
         if status.support == True:
             vote_message = "You have voted for the supporting team"
         elif status.oppose == True:
@@ -189,7 +190,7 @@ def debate_detail(request, category, post_id, post_slug):
         if timezone.now() > post.end:
             debate_has_ended = True
 
-    if post.begin:
+    elif post.begin:
         if timezone.now() > post.begin:
             debate_in_progress = True
 
@@ -214,7 +215,6 @@ def debate_detail(request, category, post_id, post_slug):
     user_is_moderator = post.moderator.all().filter(id=request.user.id)
     user_is_judge = post.judges.all().filter(id=request.user.id)
 
-    print(user_is_moderator, "|", user_in_opposing_team,"|", user_in_supporting_team)
     context = {'post': post, 'meta' : meta, 'like_count' : like_count, 'liked' : liked, 'vote_message' : vote_message,
             'total_support_vote' : total_support_vote, 'total_oppose_vote' : total_oppose_vote, 'notify_status' : notify_status,
             'debate_in_progress': debate_in_progress, 'debate_has_ended':debate_has_ended, 'deb_stat':deb_stat, \
@@ -255,8 +255,10 @@ from PIL import Image as Img
 def new_post(request, post_id = None):
     sent = False
     post = PostDebate()
+    num_image_attached = 0 #checks if some images have been previously added
     if post_id: #if instance of post is to be edited
         post = get_object_or_404(PostDebate, pk = post_id)
+        num_image_attached = Attachment.objects.filter(post = post).count()
 
     if request.method == 'POST':
         # Form was submitted
@@ -283,10 +285,10 @@ def new_post(request, post_id = None):
             #Saves post attachments
             images_attached = form.cleaned_data['attachment']
             if images_attached:
-                for each in form.cleaned_data['attachment']:
+                for each in images_attached:
                     Attachment.objects.create(file=each, post = post)
 
-                for each in Attachment.objects.filter(post=post):
+                for each in Attachment.objects.filter(post=post): #Compress image
                     print (settings.MEDIA_ROOT +"/"+ str(each))
                     img = Img.open(settings.MEDIA_ROOT +"/"+ str(each))
                     img.save(settings.MEDIA_ROOT +"/"+ str(each),quality=70,optimize=True)
@@ -294,21 +296,25 @@ def new_post(request, post_id = None):
             post.moderator.add(request.user)
             post.save()
             message_info = "Debate uploaded Successfully! You have been made a debate moderator. Choose time to start and end debate"
-            if post.debate_category == "closed":
-                message_info = "Debate Uploaded Successfully. Debaters can now add theselves to debate."
             messages.info(request, message_info )
+            if post.debate_category == "closed":
+                message_info = "Debaters can now add theselves to debate."
+                messages.info(request, message_info )
             return redirect('debate:debate_detail', category = post.debate_category, post_id=post.id, \
                     post_slug = post.slug )
-        else:
-            print (form.errors)
     else:
         form = PostDebateForm(instance=post)
-        return render(request, 'debate/form/new_debate.html', {'form': form, 'sent': sent})
+        content = {'form': form, 'sent': sent, 'post_id':post_id, 'num_image_attached':num_image_attached}
+        return render(request, 'debate/form/new_debate.html', content)
 
 @login_required
 def profile(request, username):
     profile_user = get_object_or_404(User, username=username)
     post, created = Profile.objects.get_or_create(user=profile_user)
+
+    if created:
+        message_info = 'Welcome to your profile! Quickly update your profile picture and details'
+        message.info(request, message_info)
 
     #Get various posts accourding to categories
     debate_involved = Stat.objects.filter(person = profile_user)
@@ -331,10 +337,10 @@ def profile(request, username):
         track_badge = TrackedBadge() #instance to track badges esp latest badges
         #Time to assign new badges for profile if found worthy
         #Get ids of categories
-        id_debater = get_object_or_404(Participation, name = "debater")
-        id_moderator = get_object_or_404(Participation, name = "moderator")
-        id_suggester = get_object_or_404(Participation, name = "post debate topics")
-        id_judge = get_object_or_404(Participation, name = "judge")
+        id_debater = Participation.objects.get(name = "debater")
+        id_moderator = Participation.objects.get(name = "moderator")
+        id_suggester = Participation.objects.get(name = "post debate topics")
+        id_judge = Participation.objects.get(name = "judge")
 
         debater_badge = all_badge.filter(category = id_debater.pk)
         moderator_badge = all_badge.filter(category = id_moderator.pk)
@@ -567,7 +573,7 @@ def update_profile(request):
             return redirect('profile', username =request.user.username)
 
         else:
-            messages.error(request, _('Please correct the error below.'))
+            messages.error(request, _('Please correct the error in red text.'))
     else:
         user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
@@ -576,9 +582,9 @@ def update_profile(request):
         'profile_form': profile_form
     })
 
-@login_required
-def see_badge(request, badge_type):
-    post = get_object_or_404(Badge, name = badge_type)
+def see_badge(request):
+
+    post = Badge.objects.all()
 
     return render(request, 'debate/post/badge.html', {
         'post':post
@@ -670,7 +676,6 @@ def vote(request):
 
 import base64
 from django.conf import settings
-from PIL import Image
 
 @require_POST
 def load_image(request):

@@ -242,7 +242,7 @@ class Badge(models.Model):
     judged = models.PositiveIntegerField(default=0, blank=True)
 
     def get_absolute_url(self):
-        return reverse('debate:see_badge', args=[self.name,])
+        return reverse('debate:see_badge')
     def __str__(self):
         """
         String for representing the Badge Model object. Returns Badge Name and Category
