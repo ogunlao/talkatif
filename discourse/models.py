@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField #For Profile
 from django.core.validators import MaxValueValidator, MinValueValidator
+from markdownx.models import MarkdownxField
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -20,9 +21,11 @@ class Post(models.Model):
     show = models.BooleanField('Post Enabled/Disabed', default=True)
     category = models.BooleanField('A field used to separate discourse from debates', default=True, blank = True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='author', default = User)
-    summary = models.TextField('What is your inspiraion?', max_length=1000, help_text="Create a post. <a href='http://commonmark.org/help/' target='_blank'>Markdown supported<a/>")
+    summary = MarkdownxField('What are we discussing today?', \
+                    max_length=1000, help_text="Be brief and cogent. Keep it hot. <a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported. You can \
+                    drag images here from your desktop.")
     allow_comments = models.BooleanField('allow comments', default=True)
-    tags = TaggableManager()
+    tags = TaggableManager(blank = True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes_post')
@@ -53,12 +56,6 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-class Attachment(models.Model):
-    post = models.ForeignKey(Post)
-    file = models.FileField(upload_to='attachments/discourse', help_text="Add Pictures")
-    def __str__(self):
-        return self.file.name
-
 class TrackedPost(models.Model):
     """
     Model used to track total unique visitors to a debate.
@@ -67,7 +64,7 @@ class TrackedPost(models.Model):
     ip = models.CharField(max_length=16) #only accounting for ipv4
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name ="visits") #if you want to track logged in or anonymous
 
-# Below the other imports:
+# Comment Moderation
 from django_comments_xtd.moderation import moderator, SpamModerator
 from discourse.badwords import badwords
 

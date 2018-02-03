@@ -1,6 +1,7 @@
 {% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
 {% load comments_xtd %}
+{% load md2 %}
 
 {% block title %}{% trans "Remove comment" %}{% endblock %}
 
@@ -9,48 +10,59 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="row">
-  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">
-    <h4 class="text-center">{% trans "Remove this comment?" %}</h4>
+<div class="col m3"></div>
+
+<div class="col m6">
+  <div class="card">
+    <div class="card-content">
+
+    <h5 class="center-align">{% trans "Remove this comment?" %}</h5>
     <p>{% trans "As the comment owner or a moderator you can delete comments. Deleting a comment does not remove it from the site, only prevents talkatif from showing the text. Click on the remove button to delete the following comment:" %}</p>
-    <div class="well well-lg">
+
       <div class="media">
         <div class="media-left">
           {% if comment.user.profile.image %}
           <img src="{{ item.comment.user.profile.image.thumbnail.25x25 }}"/>
-          {% else %}
-          <img src="{{MEDIA_URL}}/__placeholder__/placeholder.png" width=25, height=25/>
           {% endif %}
         </div>
         <div class="media-body">
           <h6 class="media-heading">
             {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-            {% if comment.user_url %}
-            <a href="{{ comment.user_url }}" target="_new">{% endif %}
+            {% if comment.user.profile.get_absolute_url %}
+            <a href="{{ comment.user.profile.get_absolute_url }}" target="_new">{% endif %}
               {{ comment.user_name }}
-              {% if comment.user_url %}
+              {% if comment.user.profile.get_absolute_url%}
             </a>{% endif %}
           </h6>
-          <p>{{ comment.comment }}</p>
+          <p>{{ comment.comment|markdown:"safe, code-friendly, code-color" }}</p>
         </div>
       </div>
-    </div>
-    <div class="visible-lg-block visible-md-block">
+
+    <div class="hide-on-small-only">
       <hr/>
     </div>
   </div>
-</div>
+
+
 <div class="row">
-  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
     <form action="." method="post" class="form-horizontal">{% csrf_token %}
       <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
       <div class="form-group">
-        <div class="text-center">
+        <div class="row center-align">
           <input type="submit" name="submit" class="btn btn-danger" value="{% trans "Remove" %}"/>
           <a class="btn btn-default" href="{{ comment.get_absolute_url }}">cancel</a>
         </div>
       </div>
     </form>
-  </div>
 </div>
+
+</div>
+</div>
+
+
+</div><!-- End of row -->
+
+
 {% endblock %}

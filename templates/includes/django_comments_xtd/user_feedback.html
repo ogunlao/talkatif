@@ -1,16 +1,16 @@
 {% if allow_feedback %}
 <span class="small">
-  {% if show_feedback and item.likedit_users %}
-  <a data-toggle="tooltip" title="{{ item.likedit_users|join:'<br/>' }}"><span class="small">{{ item.likedit_users|length }}</span></a>
+  {% if show_feedback %}
+  <a data-toggle="tooltip" title="{{ item.likedit_users|join:'<br/>' }}"><span class="small" id="liked_{{item.comment.pk}}">{{ item.likedit_users|length }}</span></a>
   {% endif %}
 
-  <a href="{% url 'comments-xtd-like' item.comment.pk %}" class="{% if not item.likedit %}mutedlink{% endif %}"><i class="tiny material-icons grey-text">thumb_up</i></a>
+  <a id={{item.comment.pk}} class="like-comment {% if not item.likedit %}mutedlink{% endif %}"><i class="tiny material-icons">thumb_up</i></a>
   <span class="text-muted">|</span>
 
-  {% if show_feedback and item.dislikedit_users %}
-  <a data-toggle="tooltip" title="{{ item.dislikedit_users|join:'<br/>' }}"><span class="small">{{ item.dislikedit_users|length }}</span></a>
+  {% if show_feedback %}
+  <a data-toggle="tooltip" title="{{ item.dislikedit_users|join:'<br/>' }}"><span class="small" id="disliked_{{item.comment.pk}}">{{ item.dislikedit_users|length }}</span></a>
   {% endif %}
 
-  <a href="{% url 'comments-xtd-dislike' item.comment.pk %}" class="{% if not item.dislikedit %}mutedlink{% endif %}"><i class="tiny material-icons grey-text">thumb_down</i></a>
+  <a id={{item.comment.pk}} class="dislike-comment {% if not item.dislikedit %}mutedlink{% endif %}"><i class="tiny material-icons blue-text">thumb_down</i></a>
 </span>
 {% endif %}

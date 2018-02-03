@@ -1,13 +1,14 @@
 {% extends "discourse/base.html" %}
 {% load humanize %}
 {% load md2 %}
+{% load markdownify %}
 {% load comments %}
 {% load comments_xtd %}
 {% load widget_tweaks %}
 
 {% load staticfiles %}
 
-{% block title %}Discourse Topic{% endblock %}
+{% block title %}{{post.title}}{% endblock %}
 
 {% block extra_nav %}
   {% if post.author == user %}
@@ -24,15 +25,15 @@
 {% block content %}
 
 <div class="row">
-  <div class="col m2"></div>
 
-  <div class="col m7">
+
+  <div class="col m7 offset-m2">
     {% if post %}
 
     <div class="card">
         <div class="card-content">
           {% for tag in post.tags.all %}
-            <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}"><span class="new badge grey" data-badge-caption="">{{ tag.name }}</span></a>
+            <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
           {% endfor %}
           {% if post.updated != post.created %}<p class="small">Edited</p>{% endif %}
           <h5 class="">{{post.title}}</h5>
@@ -51,79 +52,24 @@
 
           <span class="right">
               {% if user.is_authenticated %}
-                {% if liked %}
-                  <a class="btn-floating white"><i class="material-icons like-button red-text" name="{{ post.slug }}" value="Like">thumb_up</i></a>
-                {% else %}
-                  <a class="btn-floating white"><i class="tiny material-icons like-button grey-text" name="{{ post.slug }}" value="Like">thumb_up</i></a>
-                {% endif %}
 
-              <span class="total_likes right">{{ post.total_likes }}</span>
+                  <span class="total_likes right">{{ post.total_likes }}</span>
+                  <a class="btn-floating waves-effect white"><i class="material-icons like-button
+                    {% if liked %} blue-text {% else %} grey-text {% endif %} " name="{{ post.slug }}" value="Like">thumb_up</i></a>
 
             {% else %}
             <a class="btn-floating tooltipped" data-position="top" data-delay="50" data-tooltip="Login or Signup to like.">
-              <i class="tiny material-icons">thumb_up</i></a>
+              <i class="material-icons">thumb_up</i></a>
             <span>{{post.total_likes}}</span>
             {% endif %}
           </span>
 
-          <div class="fixed-action-btn horizontal">
-            <a class="btn-floating btn-large red pulse">
-              <i class="large material-icons">share</i>
-            </a>
-            <ul>
-              <li><a href="http://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}"
-                 class="waves-effect waves-light btn-floating social facebook">
-                      <i class="fa fa-facebook"></i></a></li>
-              <li><a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}"
-                class="waves-effect waves-light btn-floating social twitter">
-                      <i class="fa fa-twitter"></i></a></li>
-              <li><a href="http://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri|urlencode }}&title={{post.title}}&summary={{post.summary}}&source={{ request.get_host }}"
-                class="waves-effect waves-light btn-floating social linkedin">
-                      <i class="fa fa-linkedin"></i></a></li>
-              {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
-              <li><a href="whatsapp://send?text='{{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}'" data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
-                      <i class="fa fa-whatsapp"></i></a></li>
-              {% endif %}
-            </ul>
-          </div>
+          {% include "share_button.html" %}
 
             <p class="grey-text">
             Posted {{post.created|naturaltime}},
             By {{post.author.get_full_name}}</p>
         </div>
-
-
-        {%if attachments%}
-        <div class="row">
-          <div class="card-image">
-        {%for image in attachments%}
-          {% if attachments.count == 1 %}
-              <div class="row">
-                <div class="col m3"></div>
-                <div class="col m6">
-                  <span id="image{{forloop.counter}}" post_id ={{post.id}} image_id = {{image.id}} >
-                    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-                      <span class="sr-only">Loading...</span>
-                  </span>
-                </div>
-              </div>
-
-          {% else %}
-
-            <div class="col l6 ">
-            <span id="image{{forloop.counter}}" post_id ={{post.id}} image_id = {{image.id}} >
-              <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-                <span class="sr-only">Loading...</span>
-            </span>
-            </div>
-
-
-          {% endif %}
-          {% endfor %}
-          </div>
-          </div>
-        {% endif %}
-
 
       </div><!-- End of card -->
 
@@ -143,13 +89,14 @@
 
           <div class="row">
             <div class="input-field col s12 {% if 'comment' in form.errors %}has-error{% endif %}">
+              {% include "button_click.html" %}
               {% render_field form.comment class="materialize-textarea" data-length="3000" %}
               <label for="id_comment">Comment on post. Be concise and cogent.</label>
             </div>
           </div>
 
           <div>
-              <input type="submit" name="post" value='send' class="btn" />
+              <input type="submit" name="post" value='send' class="blue btn" />
               <input type="submit" name="preview" value="preview" class="btn grey" />
           </div>
 
@@ -170,25 +117,23 @@
     {% endif %}
 
     {% endif %}
+
   </div><!-- End of colm7 -->
 
   <div class="col s12 m3">
     <div class="row">
       <br>
         <a href="{% url 'discourse:new_post' %}">
-      <button class="btn">Create New Discourse</button></a>
+      <button class="yellow btn black-text">Create New Discourse</button></a>
     </div>
 
 
     {% if post.count %}
-    <div class="card">
-      <div class="card-content">
+          <div class="card-panel">
+        Total Followers : <br>{{post.count}} person{{ post.count|pluralize }}.
+          </div>
 
-        <p>Page Views : <br>{{post.count}}</p>
-
-      </div>
-    </div>
-      {% endif %}
+    {% endif %}
 
 
  </div>
@@ -210,10 +155,10 @@ $('.like-button').click(function(){
                       $(".total_likes").text(response.likes_count);
                       if (response.liked){
                         if($(".like-button").hasClass("grey-text")){
-                             $(".like-button").removeClass("grey-text").addClass("red-text");
+                             $(".like-button").removeClass("grey-text").addClass("blue-text");
                            };
                       }else{
-                        $(".like-button").removeClass("red-text").addClass("grey-text");
+                        $(".like-button").removeClass("blue-text").addClass("grey-text");
                       };
                 },
                 error: function(rs, e) {

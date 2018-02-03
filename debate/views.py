@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse, reverse
 from django.contrib.auth.decorators import login_required
 from .models import PostDebate, Profile, Votes, Notifyme, Stat,\
-                Scores, Badge, Participation, TrackedPost, TrackedBadge, Attachment, PostDebater
-import discourse
+                Scores, Badge, Participation, TrackedPost, TrackedBadge, PostDebater
+#import discourse
 from discourse.models import Post
 from django.contrib.auth.models import User
 from .forms import PostDebateForm, UserForm, ProfileForm, ScoresForm, ModeratorForm
@@ -14,7 +14,8 @@ from meta.views import Meta #to include metatags in view for display, check djan
 from taggit.models import Tag
 import random
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
-#from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from markdownx.forms import ImageForm
 
 def index(request):
     if request.user.is_authenticated():
@@ -46,7 +47,7 @@ def all_list(request):
     last_5_badges = TrackedBadge.objects.all()[:5]
 
 
-    paginator = Paginator(merged_list, 4) # Show 4 posts per page
+    paginator = Paginator(merged_list, 50) # Show 50 posts per page
     try:
         page = request.GET.get('page', 1)
     except PageNotAnInteger:
@@ -64,8 +65,6 @@ def all_list(request):
 
 def debate_list(request, tag_slug = None, category = None):
     object_list = PostDebate.published.all()
-
-    form = PostDebateForm()
     tag = None
     section = None
     if tag_slug:
@@ -75,7 +74,7 @@ def debate_list(request, tag_slug = None, category = None):
     if category:
         object_list = object_list.filter(debate_category=category)
 
-    paginator = Paginator(object_list, 20) # Show 20 posts per page
+    paginator = Paginator(object_list, 50) # Show 50 posts per page
 
     try:
         page = request.GET.get('page', 1)
@@ -88,8 +87,7 @@ def debate_list(request, tag_slug = None, category = None):
     last_5_badges = TrackedBadge.objects.all()[:5]
 
     template = 'debate/post/debate_list.html'
-    context = {'object_list': object_list, 'tag':tag,  'page': page, 'last_5_badges':last_5_badges, \
-            'form':form,}
+    context = {'object_list': object_list, 'tag':tag,  'page': page, 'last_5_badges':last_5_badges }
     return render(request, template , context)
 
 #A function to get the ip host of loggen in user
@@ -105,8 +103,6 @@ def get_client_ip(request):
 def debate_detail(request, post_id, category=None,  post_slug=None):
     post = get_object_or_404(PostDebate, pk=post_id)
     user_id = request.user.pk
-
-    attachments = Attachment.objects.filter(post = post)
 
     #Checks and increment count of visits
     #you could check for logged in users as well
@@ -215,12 +211,22 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
     user_is_moderator = post.moderator.all().filter(id=request.user.id)
     user_is_judge = post.judges.all().filter(id=request.user.id)
 
+    #Check to see if comment form can be enabled
+    if post.debate_category == "open" or user_is_moderator:
+        open_comment = True
+    elif (user_in_supporting_team or user_in_opposing_team or user_is_judge) and debate_in_progress:
+        open_comment = True
+    elif debate_has_ended and request.user.is_authenticated() and allow_follower_comment:
+        open_comment = True
+    else:
+        open_comment = False
+
     context = {'post': post, 'meta' : meta, 'like_count' : like_count, 'liked' : liked, 'vote_message' : vote_message,
             'total_support_vote' : total_support_vote, 'total_oppose_vote' : total_oppose_vote, 'notify_status' : notify_status,
             'debate_in_progress': debate_in_progress, 'debate_has_ended':debate_has_ended, 'deb_stat':deb_stat, \
-            'attachments':attachments, 'user_in_supporting_team':user_in_supporting_team, \
+            'user_in_supporting_team':user_in_supporting_team, \
             'user_in_opposing_team':user_in_opposing_team, 'user_is_moderator':user_is_moderator, \
-            'user_is_judge':user_is_judge }
+            'user_is_judge':user_is_judge, 'open_comment':open_comment, }
     return render(request, 'debate/post/debate_detail.html', context)
 
 
@@ -255,17 +261,24 @@ from PIL import Image as Img
 def new_post(request, post_id = None):
     sent = False
     post = PostDebate()
-    num_image_attached = 0 #checks if some images have been previously added
     if post_id: #if instance of post is to be edited
         post = get_object_or_404(PostDebate, pk = post_id)
-        num_image_attached = Attachment.objects.filter(post = post).count()
 
     if request.method == 'POST':
         # Form was submitted
-        form = PostDebateForm(request.POST, request.FILES, instance=post)
+        form = PostDebateForm(request.POST, instance=post)
+
         if form.is_valid():
             # Form fields passed validation
             post = form.save(commit=False)
+            if request.FILES:
+                image_form = ImageForm(request.POST, request.FILES)
+                if image_form.is_valid:
+                    file = image_form.save()
+                    if file:
+                        image_tag = "\n\n![](" + file +")\n"
+                        post.summary = post.summary + image_tag
+
             post.author = request.user
             if post.debate_category == "open":
                 post.begin = timezone.now()
@@ -282,16 +295,6 @@ def new_post(request, post_id = None):
             sent = True
 
             post = get_object_or_404(PostDebate, title = post.title )
-            #Saves post attachments
-            images_attached = form.cleaned_data['attachment']
-            if images_attached:
-                for each in images_attached:
-                    Attachment.objects.create(file=each, post = post)
-
-                for each in Attachment.objects.filter(post=post): #Compress image
-                    print (settings.MEDIA_ROOT +"/"+ str(each))
-                    img = Img.open(settings.MEDIA_ROOT +"/"+ str(each))
-                    img.save(settings.MEDIA_ROOT +"/"+ str(each),quality=70,optimize=True)
 
             post.moderator.add(request.user)
             post.save()
@@ -304,8 +307,10 @@ def new_post(request, post_id = None):
                     post_slug = post.slug )
     else:
         form = PostDebateForm(instance=post)
-        content = {'form': form, 'sent': sent, 'post_id':post_id, 'num_image_attached':num_image_attached}
-        return render(request, 'debate/form/new_debate.html', content)
+        image_form = ImageForm()
+        context = {'form': form, 'sent': sent, 'post_id':post_id,\
+            'image_form':image_form,}
+        return render(request, 'debate/form/new_debate.html', context)
 
 @login_required
 def profile(request, username):
@@ -446,6 +451,14 @@ def mod_debate(request, post_id):
 
     if request.method == 'POST':
         mod_form = ModeratorForm(request.POST, instance=related_post)
+
+        #Get checkbox status to allow outside comments
+        allow_follower_comment = request.POST.get("allow_follower_comment", None)
+        if not allow_follower_comment:
+            related_post.allow_follower_comment = False
+            related_post.save()
+            messages.success(request, 'Comments disabled from followers')
+
         if mod_form.is_valid():
             mod_form.save()
             messages.success(request, 'Date Changes applied.')
@@ -455,8 +468,9 @@ def mod_debate(request, post_id):
             messages.error(request, _('Date update failed. Dates are invalid.'))
     else:
         mod_form = ModeratorForm(instance=related_post)
+        postdebate_form = PostDebateForm(instance=related_post)
     context = {'mod_form': mod_form, 'related_post':related_post, 'debaters_supporting':debaters_supporting,\
-    'debaters_opposing':debaters_opposing, }
+    'debaters_opposing':debaters_opposing, 'postdebate_form':postdebate_form }
     return render(request, 'debate/form/mod_panel.html', context)
 
 
@@ -594,6 +608,8 @@ def see_badge(request):
 def rules_guidelines(request):
     return render(request, 'debate/post/rules_guidelines.html', { })
 
+def faq(request):
+    return render(request, 'faq.html', { })
 
 from django.http import HttpResponse
 try:
@@ -674,25 +690,6 @@ def vote(request):
     # use mimetype instead of content_type if django < 5
     return HttpResponse(json.dumps(ctx), content_type='application/json')
 
-import base64
-from django.conf import settings
-
-@require_POST
-def load_image(request):
-    if request.method == 'POST':
-        post_id = int(request.POST.get('post_id', None))
-        image_id = int(request.POST.get('image_id', None))
-
-        post = get_object_or_404(PostDebate, pk=post_id)
-        attachment = get_object_or_404(Attachment, pk=image_id)
-        attachment = settings.MEDIA_ROOT +"/"+ str(attachment)
-
-
-        with open(attachment, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-
-        return HttpResponse(encoded_string)
-
 @login_required
 @require_POST
 def notify(request):
@@ -751,22 +748,25 @@ def approve(request):
     return HttpResponse(json.dumps(ctx), content_type='application/json')
 
 
-# from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
-#                                  get_model as get_comment_model)
+
+# from django_comments_xtd import get_form
 # XtdComment = get_comment_model()
-# from django_comments_xtd.forms import XtdCommentForm
+#
+# import django_comments
 # @login_required
 # def edit_own_comment(request, comment_id):
-#     comment = get_object_or_404(get_comment_model(),
-#                                 pk=comment_id, site__pk=settings.SITE_ID)
+#     #comment = get_object_or_404(get_comment_model(),
+#                                 #pk=comment_id, site__pk=settings.SITE_ID)
+#     comment = XtdComment.objects.get(pk=comment_id)
+#     form = get_form()(comment.content_object, comment=comment)
+#     next = request.get_full_path()
+#     print(next)
 #
-#     #form = get_comment_model
-#     form = XtdCommentForm(comment.content_object, comment = comment)
-#     #form = get_form()(comment.content_object)
-#     print(comment)
-#     template_arg = 'comments/edit_comment_form.html'
+#     template_arg = 'comments/preview.html'
 #     return render(request, template_arg,
-#                   {"comment": comment, "form": form, "cid": comment_id})
+#                   {"comment": comment, "form": form, "cid": comment_id, "next": next})
+
+
 from django_comments_xtd import (comment_was_posted, signals, signed, get_model )
 
 @login_required

@@ -1,4 +1,4 @@
-from debate.models import PostDebate, Attachment
+from debate.models import PostDebate
 from .models import Post
 from django import forms
 from django.contrib.auth.models import User
@@ -6,7 +6,6 @@ from django_countries.fields import LazyTypedChoiceField
 from django_countries import countries #country dropdown
 from django.contrib.auth.hashers import make_password #used to hash passwords
 from multiupload.fields import MultiImageField
-
 
 class PostDebateForm(forms.ModelForm):
     class Meta:
@@ -17,7 +16,6 @@ class PostDebateForm(forms.ModelForm):
 
 
 class PostForm(forms.ModelForm):
-    attachment = MultiImageField(min_num=0, max_num=2, max_file_size=1024*1024*5, required = False)
     class Meta:
         model = Post
         fields = ('title', 'summary', 'tags',)

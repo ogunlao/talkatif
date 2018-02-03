@@ -6,18 +6,17 @@
 {% block content %}
 
 <div class="row">
-  <div class="col m2 l2"></div>
 
-  <div class="col m7">
+  <div class="col m7 offset-m1">
 
             <div class="row">
-              <div class="col m7">
+              <div class="col s12 m7">
                 <div class="card">
 
               <ul class="collection with-header">
                 <li class="collection-header"><h4>{{ profile_user_name|title }}</h4>
                   {% if profile_user == request.user %}
-                    <a class="btn class="secondary-content"" href="{% url 'update_profile'%}">Edit Profile</a>
+                    <a class="yellow btn black-text" href="{% url 'update_profile'%}">Edit Profile</a>
                   {% endif %}
                 </li>
                 <li class="collection-item">Username <span class="right">{{ profile_user.username }}</span></li>
@@ -45,25 +44,24 @@
           </div><!-- End of column -->
 
               <div class="col m5">
-                    <div class="card">
-                      <div class="card-content">
+
+                      <div class="card-panel">
                         {% if profile_user.profile.image %}
                         <img src="{{ profile_user.profile.image.thumbnail.200x200 }}" />
                         {% else %}
                         <img src="{{MEDIA_URL}}/images/profile/placeholder.png" width="100%" height=100% />
                         {% endif %}
                     </div>
-                  </div>
+
               </div>
 
             </div><!-- End of row -->
 
           {% if supported or opposed or moderated or judged %}
             <div class="row">
-              <div class="card">
-              <div class="card-content">
+              <div class="card-panel">
                 {% if supported %}
-                <h5>Debate on Supporting Side <span class="new badge grey" data-badge-caption="">{{supported.count}}</span></h5>
+                <h5>Debate on Supporting Side <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{supported.count}}</span></h5>
                 {% for debate_list in supported %}
                   <p><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
                 {% endfor %}
@@ -71,7 +69,7 @@
 
                 {% if opposed %}
                 <hr>
-                <h5>Debate on Opposing Side <span class="badge">{{opposed.count}}</span></h5>
+                <h5>Debate on Opposing Side <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{opposed.count}}</span></h5>
                 {% for debate_list in opposed %}
                   <p><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
                 {% endfor %}
@@ -80,7 +78,7 @@
 
                 {% if moderated %}
                 <hr>
-                <h5>Moderated <span class="badge">{{moderated.count}}</span></h5>
+                <h5>Moderated <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{moderated.count}}</span></h5>
                 {% for debate_list in moderated %}
                   <p><a href="">{{debate_list.post}}</a></p>
                 {% endfor %}
@@ -88,34 +86,33 @@
 
                 {% if judged %}
                 <hr>
-                <h5>Judged <span class="badge">{{judged.count}}</span></h5>
+                <h5>Judged <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{judged.count}}</span></h5>
                 {% for debate_list in judged %}
                   <p><a href="">{{debate_list.post}}</a></p>
                 {% endfor %}
                 {% endif %}
 
-              </div>
             </div><!-- End of card -->
           </div><!-- End of row -->
         {% endif %}
       </div><!-- End of main colm7 -->
 
-      <div class="col m3">
+      <div class="col s12 m3">
 
         <div class="card">
           <div class="card-content">
             <h6>Stats</h6>
 
-            <p>Won<span class="new badge grey" data-badge-caption="">{{won.count}}</span>
-            <br><br>Lost<span class="new badge grey" data-badge-caption="">{{lost.count}}</span>
-            <br><br>Draw(s)<span class="new badge grey" data-badge-caption="">{{drew.count}}</span>
-            <br><br>Moderated<span class="new badge grey" data-badge-caption="">{{moderated.count}}</span>
-            <br><br>Judged<span class="new badge grey" data-badge-caption="">{{judged.count}}</span> </p>
+            <p>Won<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{won.count}}</span>
+            <br><br>Lost<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{lost.count}}</span>
+            <br><br>Draw(s)<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{drew.count}}</span>
+            <br><br>Moderated<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{moderated.count}}</span>
+            <br><br>Judged<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{judged.count}}</span> </p>
             <hr>
-            <p>Debates in Supporting Team<span class="new badge grey" data-badge-caption="">{{supported.count}}</span>
-            <br><br>Debates in Opposing Team<span class="new badge grey" data-badge-caption="">{{opposed.count}}</span> </p>
+            <p>Debates in Supporting Team<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{supported.count}}</span>
+            <br><br>Debates in Opposing Team<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{opposed.count}}</span> </p>
           </div>
-          <div class="card-content">Active <span class="new badge grey" data-badge-caption="">{{debate_involved.count}}</span></div>
+          <div class="card-content">Active <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{debate_involved.count}}</span></div>
         </div><!-- End of card -->
 
         <div class="card">
@@ -134,12 +131,9 @@
             <p>No badge earned yet.</p>
             {% endif %}
           </div>
-          <div class="card-content">Badges <span class="new badge grey" data-badge-caption="">{{badges.count}}</span></div>
+          <div class="card-content">Badges <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{badges.count}}</span></div>
+        </div>
 
-
-
-
-          </div>
         </div><!-- End of colm3 -->
 
    </div>

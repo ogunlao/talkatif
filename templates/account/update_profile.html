@@ -40,11 +40,12 @@
                     {{ field|add_class:"materialize-textarea"}}
                   </div>
               {% elif field.name == "image" %}
-              <p>"Nothing yet"</p><br>
+
               {% elif field.name == "date_of_birth" %}
               <div class="input-field">
                 {{ field.label_tag }}
                 {{ field|add_class:"datepicker"}}
+                <small>Not visible to others. Used to celebrate birthdays</small>
               </div>
               {% elif field.name == "notify" %}
               <!-- Switch -->
@@ -71,9 +72,9 @@
                   {% endfor %}
 
             {% endfor %}
-
+                <div class="row">
                   <button class="btn" type="submit">Save changes</button><br/>
-
+                </div>
               </div>
             </div>
           </div>

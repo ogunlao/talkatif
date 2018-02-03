@@ -1,52 +1,84 @@
 {% extends "debate/base.html" %}
 {% load comments %}
 {% load el_pagination_tags %}
+{% load markdownify %}
+{% load comments_xtd %}
+{% load humanize %}
 
 
-
-{% block title %}Puto - Search{% endblock %}
+{% block title %}Search Result for {{query}}{% endblock %}
 {% load staticfiles %}
 
 {% block content %}
 
-<div class="container">
 <div class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-7">
+  <div class="col s12 m6 offset-m2">
     {% if query %}
 
         {% for result in page.object_list %}
-    <div class="panel panel-default">
-      <div class="panel-body">
+
+
+    <div class="card">
+      <div class="card-content">
+
+
         {% if result.debate_category %}
-          <p class="pull-right">Starts: {{result.begin}}</p>
-          <p>{% for tag in result.tags %}
-            <a href="{% url 'debate:debate_list_by_tag' tag   %}"><span class="badge">{{tag}}</span></a>{% endfor %}
-          <p>
-          <p>Suggested by {{result.author}}</p>
-          <h4><a href="{{ result.object.get_absolute_url }}">{{result.title}} </a><span class="label label-default">New</span></h4>
-          <p>
-            {{ result.summary|truncatewords:300|linebreaks }}
-          </p>
-          <p><strong>Debaters:</strong>
-            {% for names in result.supporting_debaters %} {{ names }},{% endfor %}
-            {% for names in result.opposing_debaters %} {{ names }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-          </p>
-        {% else %}
-        <p class="pull-right">Created {{result.created}}</p>
-        <p>{% for tag in result.tags %}
-          <a href="{% url 'opine:post_list_by_tag' tag   %}"><span class="badge">{{tag}}</span></a>{% endfor %}
-        <p>
-        <p>Suggested by {{result.author}}</p>
-        <h4><a href="{{ result.object.get_absolute_url }}">{{result.title}} </a><span class="label label-default">New</span></h4>
-        <p>
-          {{ result.summary|truncatechars:300|linebreaks }}
+        {% for tag in result.tags %}
+          <a href="{% url 'debate:debate_list_by_tag' tag|slugify  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag }}</span></a>
+        {% endfor %}
+        <h5 class=""><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></h5>
+        <p>{{result.summary|truncatechars:300|markdownify}}</p>
+        <small>
+        {% if result.end %} Ends {{result.end|naturaltime}}
+          {% elif result.begin %}
+          Began {{result.begin|naturaltime}}
+          {% else %} Debate starts soon.
+        {% endif %}
+
+        by <a href="{{result.object.author.profile.get_absolute_url}}">{{result.object.author.get_full_name}}</a>
+        <p><strong>Debaters:</strong>
+        {% if result.debate_category == "closed" and result.supporting_debaters or result.opposing_debaters %}
+          {% for author in result.supporting_debaters %} <a href="{{result.object.author.profile.get_absolute_url}}">{{ author}}</a>{% endfor %}
+          {% for author in result.opposing_debaters %}{% if forloop.first %}, {% endif %}<a href="{{result.object.author.profile.get_absolute_url}}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+          {% elif result.debate_category == "open" %}
+          Debate open for comments from all.
+          {% else %}
+          No debaters yet.
+        {% endif %}
+      </small>
+
+          {% get_comment_count for result.object as comment_count %}
+          <span class="right">
+            {{ comment_count }}
+            <i class="tiny material-icons">comment</i>
+            {{ result.object.total_likes }}
+            <i class="tiny material-icons">thumb_up</i>
+          </span>
         </p>
+
+        {% else %}
+
+        {% for tag in result.tags %}
+          <a href="{% url 'discourse:post_list_by_tag' tag|slugify  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag }}</span></a>
+        {% endfor %}
+        <h5 class=""><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></h5>
+        <p>{{result.summary|truncatechars:300|markdownify|linebreaks}}</p>
+        <small>Created {{result.created|naturaltime}}
+          by <a href="{{result.object.author.profile.get_absolute_url}}">{{result.object.author.get_full_name}}</a>
+
+          {% get_comment_count for result.object as comment_count %}
+          <span class="right">
+            {{ comment_count }}
+            <i class="tiny material-icons">comment</i>
+            {{ result.object.total_likes }}
+            <i class="tiny material-icons">thumb_up</i>
+          </span>
+
+        </small>
+
         {% endif %}
         </div>
-          <!-- <div class="panel-footer">
-          </div> -->
-        </div>
+      </div><!-- End of card -->
 
           {% endfor %}
 
@@ -55,9 +87,6 @@
           {% endif %}
 </div>
 
-  <div class="col-md-3">
-
-  </div>
 </div>
 
 {% endblock %}

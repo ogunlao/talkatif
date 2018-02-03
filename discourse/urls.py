@@ -9,7 +9,6 @@ urlpatterns = [
     url(r'^edit/(?P<post_id>\d+)/$', views.new_post, name='edit_post'),
     url(r'^new/$', views.new_post, name='new_post'),
     url(r'^like-post/$', views.like_post, name='like-post'),
-    url(r'^load_image/$', views.load_image, name='load_post_image'),
     url(r'^tag/(?P<tag_slug>[-\w]+)/$', views.post_list, name='post_list_by_tag'),
     url(r'^(?P<post_id>\d+)/(?P<post_slug>[-\w]+)/$', views.post_detail, name='post_detail'),
     url(r'^(?P<post_id>\d+)/(?P<post_slug>[-\w]+)/$', views.go_to_post, name='goto_post_page'),

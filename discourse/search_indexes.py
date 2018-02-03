@@ -20,7 +20,7 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_tags(self, object):
         tag_object = object.tags.all()
         if tag_object:
-            return [tag.name for tag in tag_object]
+            return [tag for tag in tag_object]
         else:
             return None
 
@@ -32,5 +32,6 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
 
     def get_model(self):
         return Post
+
     def index_queryset(self, using=None):
           return self.get_model().objects.filter(show = True)

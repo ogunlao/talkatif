@@ -9,27 +9,27 @@
 {% block content %}
 
 <div class="row">
-  <div class="col m2">
 
-  </div>
-  <div class="col m7">
+  <div class="col m6 offset-m2">
       {% if post %}
 
       {% for badge in post %}
 
-    <div class="card">
-      <div class="card-content">
+      <div class="card-panel">
         <h4>Badge: {{badge.name|capfirst}} <span class="badge"></span></h4>
 
-          <p>Decription: {{badge.description|capfirst}}</p>
-          <p>Badge Category: {{badge.category|capfirst}}</p>
-          <p>Badge Rank: {{badge.rank}}</p>
-          <p>Badge Owned by
+          <p>Decription: {{badge.description|capfirst}}
+          <br>Badge Category: {{badge.category|capfirst}}
+          <br>Badge Rank:
+            {% with ''|center:badge.rank as range %}
+                {% for _ in range %}<i class="blue-text material-icons">star</i></span>{% endfor %}
+            {% endwith %}
+
+          <br>Badge Owned by
           <span>{% for person in badge.collected_by.all %}
             <a href="{{ person.profile.get_absolute_url }}">{{person.username}}</a>{% if not forloop.last %},{% endif %}{% endfor %}
           <span></p>
 
-        </div>
     {% endfor %}
     {% else %}
       <h5>There are no badges registered</h5>
@@ -39,7 +39,6 @@
 
 </div>
 
-  <div class="col-md-3"></div>
 </div>
 
 {% endblock %}

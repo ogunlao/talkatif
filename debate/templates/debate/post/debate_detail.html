@@ -2,11 +2,14 @@
 {% load staticfiles %}
 {% load humanize %}
 {% load md2 %}
+{% load markdownify %}
 {% load comments %}
 {% load comments_xtd %}
 {% load widget_tweaks %}
 {% load debate_filter %}
 
+
+{% block title %}{{post.title}}{% endblock title %}
 {% block extra_nav %}
 
       {% if user_is_moderator %}
@@ -17,13 +20,13 @@
         <li class="divider"></li>
 
         <li><a href="{% url 'debate:mod_debate' post.pk %}">
-          Go to Mod</a></li>
+          Go to Mod<i class="material-icons">remove_red_eye</i></a></li>
       {% endif %}
 
       {% if user_is_judge %}
           <li class="divider"></li>
         <li><a href="{% url 'debate:score_debate' post.pk %}">
-          Score Debate</a></li>
+          Score Debate<i class="material-icons">playlist_add_check</i></a></li>
       {% endif %}
 
 {% endblock extra_nav %}
@@ -34,30 +37,28 @@
 
 <div class="row">
   <div class="col m2 l2">
+    <div class="hide-on-small-only">
         {% if user_is_moderator %}
-          <p>
-            Moderator Panel
-          <div class="panel-body">
-              <a href="{% url 'debate:mod_debate' post.pk %}">
-                <button type="button" class="btn btn-primary">Go to Mod</button></a>
-              <hr/>
-              <p>Approve debaters and edit debate start and end times.</p>
-          </div>
-        </p>
+
+          <div class="card-panel">
+                <h6>Moderator Panel</h6>
+                  <a class="blue btn tooltipped" href="{% url 'debate:mod_debate' post.pk %}"
+                      data-position="top" data-delay="50" data-tooltip="Approve debaters and edit debate start and end times.">Goto Mod</a>
+                </div>
+
         {% endif %}
 
 
         {% if user_is_judge %}
-            Judges Panel
-          <div class="panel-body">
-              <a href="{% url 'debate:score_debate' post.pk %}">
-                <button type="button" class="btn btn-primary">Score Debate</button>
-              </a><hr/>
-              <p>Use panel to score debates if debate has ended.</p>
+
+          <div class="card-panel">
+              <h5>Judges Panel</h5>
+              <a class="blue btn" href="{% url 'debate:score_debate' post.pk %}"
+              data-position="top" data-delay="50" data-tooltip="Input debate score when it ends.">Score Debate</a>
             </div>
 
           {% endif %}
-
+      </div>
     </div>
 
 
@@ -67,11 +68,11 @@
     <div class="card">
       <div class="card-content">
         {% for tag in post.tags.all %}
-          <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}"><span class="new badge grey" data-badge-caption="">{{ tag.name }}</span></a>
+          <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
         {% endfor %}
         {% if post.updated != post.created %}<p class="small">Edited</p>{% endif %}
         <h5 class="">{{post.title}}</h5>
-        <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"|linebreaks}}</p>
+        <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"}}</p>
         {% if user_is_moderator %}
           <a href="{% url 'debate:edit_debate_post' post.id %}">
               <span class="small">Edit Debate</span></a>
@@ -84,42 +85,20 @@
 
     <span class="right">
         {% if user.is_authenticated %}
-          {% if liked %}
-          <a class="btn btn-floating white">
-            <i class="material-icons like-button blue-text" name="{{ post.slug }}" value="Like">thumb_up</i></a>
-          {% else %}
-          <a class="btn btn-floating white"><i class="material-icons like-button grey-text" name="{{ post.slug }}" value="Like">thumb_up</i></a>
-          {% endif %}
+
+          <a class="btn btn-floating waves-effect white">
+            <i class="tiny material-icons like-button {% if liked %} blue-text {% else %}grey-text {% endif %} " name="{{ post.slug }}" value="Like">thumb_up</i></a>
 
         <span class="total_likes right">{{ post.total_likes }}</span>
 
       {% else %}
       <a class="btn btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Login or Signup to like.">
-        <i class="tiny material-icons ">thumb_up</i></a>
+        <i class="tiny material-icons">thumb_up</i></a>
       <span>{{post.total_likes}}</span>
       {% endif %}
     </span>
 
-          <div class="fixed-action-btn horizontal">
-            <a class="btn-floating btn-large red pulse">
-              <i class="large material-icons">share</i>
-            </a>
-            <ul>
-              <li><a href="http://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}"
-                 class="waves-effect waves-light btn-floating social facebook">
-                      <i class="fa fa-facebook"></i></a></li>
-              <li><a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}"
-                class="waves-effect waves-light btn-floating social twitter">
-                      <i class="fa fa-twitter"></i></a></li>
-              <li><a href="http://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri|urlencode }}&title={{post.title}}&summary={{post.summary}}&source={{ request.get_host }}"
-                class="waves-effect waves-light btn-floating social linkedin">
-                      <i class="fa fa-linkedin"></i></a></li>
-              {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
-              <li><a href="whatsapp://send?text='{{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}'" data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
-                      <i class="fa fa-whatsapp"></i></a></li>
-              {% endif %}
-            </ul>
-          </div>
+        {% include "share_button.html" %}
       </div>
       <div class="card-tabs">
         <ul class="tabs tabs-fixed-width">
@@ -145,7 +124,8 @@
           {% if debate_has_ended %}
           Status: Debate had ended
           {% endif %}
-
+          Comment Settings: {% if post.allow_follower_comments %} Comments opened after close of debate {% else %}
+          Debate is closed to all form of comments {% endif %}
 
         </div>
 
@@ -169,13 +149,13 @@
               <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a> <br>
                  Speaker {{forloop.counter}}
               </p>
-              <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+
             </li>
             {% endfor %}
             </ul>
         {%endif%}
 
-        {% if user.is_authenticated and not debate_in_progress and post.debate_category == "closed"  %}
+        {% if user.is_authenticated and not user_is_moderator and not debate_in_progress and post.debate_category == "closed"  %}
         <a href={% url 'debate:join_participants' post_id=post.id position="supporting"  %}>
           Apply to join supporting team.
         </a>
@@ -197,19 +177,23 @@
               <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a> <br>
                  Speaker {{forloop.counter}}
               </p>
-              <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+
             </li>
             {% endfor %}
             </ul>
           {%endif%}
 
-        {% if user.is_authenticated and not debate_in_progress and post.debate_category == "closed"%}
+        {% if user.is_authenticated and not user_is_moderator and not debate_in_progress and post.debate_category == "closed"%}
         <a href={% url 'debate:join_participants' post_id=post.id position="opposing"  %}>
           Apply to join opposing team.
         </a>
         {% endif %}
         </div>
       {% endif %}
+
+          {% if user_is_moderator and not debate_in_progress %}
+            Share post amidst your friends and colleagues to gain the audience it deserves.
+          {% endif %}
       </div><!-- End of row div -->
     </div><!-- End of debaters div -->
 
@@ -230,7 +214,7 @@
                   <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a> <br>
                      Mod {{forloop.counter}}
                   </p>
-                  <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+
                 </li>
                 {% endfor %}
               </ul>
@@ -251,7 +235,7 @@
                     <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a> <br>
                        Judge {{forloop.counter}}
                     </p>
-                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+
                   </li>
                   {% endfor %}
                 </ul>
@@ -265,62 +249,18 @@
         </div>
       </div>
 
-
-      {%if attachments%}
-      <div class="row">
-        <div class="card-image">
-      {%for image in attachments%}
-        {% if attachments.count == 1 %}
-            <div class="row">
-              <div class="col m3"></div>
-              <div class="col m6">
-                <span id="image{{forloop.counter}}" post_id ={{post.id}} image_id = {{image.id}} >
-                  <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-                    <span class="sr-only">Loading...</span>
-                </span>
-              </div>
-            </div>
-
-        {% else %}
-
-          <div class="col l6 ">
-          <p id="image{{forloop.counter}}" post_id ={{post.id}} image_id = {{image.id}} >
-            <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-              <span class="sr-only">Loading...</span>
-          </p>
-          </div>
-
-
-        {% endif %}
-        {% endfor %}
-        </div>
-        </div>
-      {% endif %}
-
-
     </div> <!-- End of card -->
 {% endif %}
-      <p>Confused? Read our <a href="">FAQs</a> and <a href="{% url 'debate:rules_guidelines' %}">Rules</a> to understand how things work here</p>
-      {% get_comment_form for post as form %}
-      {% if post.debate_category == "open" or user_is_moderator %}
+      <p>Confused? Read our <a href="">FAQs</a> and <a href="{% url 'debate:rules_guidelines' %}">Rules</a> to understand how things work here.</p>
+
+  {% get_comment_form for post as form %}
+  {% if open_comment %}
     <div class="card">
       <div class="row">
-        <form class="col s12" method="POST" action="{% comment_form_target %}">
-          {% csrf_token %}
-          <div class="row">
-            {% if post.debate_category == "open" %}
-            <div class="input-field col s12 m4 right">
-              <select name="debate_option" id = "debate_option">
-                <option value="" disabled selected>Choose a side</option>
-                <option value="I agree">agree</option>
-                <option value="I disagree">disagree</option>
-              </select>
-              <label>Debate Position</label>
-            </div>
-            {% endif %}
-          </div>
 
+        <form class="col s12" method="POST" action="{% comment_form_target %}">
               <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
+              {% csrf_token %}
               <div class="red-text hidden" data-comment-element="errors"></div>
               {% for field in form %}
                 {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
@@ -328,14 +268,15 @@
               <div style="display:none">{{ form.honeypot }}</div>
 
           <div class="row">
+
             <div class="input-field col s12 {% if 'comment' in form.errors %}has-error{% endif %}">
+              {% include "button_click.html" %}
               {% render_field form.comment class="materialize-textarea" data-length="3000" %}
-              <label for="id_comment">Enter your comment</label>
             </div>
           </div>
 
           <div>
-              <input type="submit" name="post" value='send' class="btn" />
+              <input type="submit" name="post" value='send' class="blue btn" />
               <input type="submit" name="preview" value="preview" class="btn grey" />
           </div>
 
@@ -347,108 +288,10 @@
         </div>
 
         </form>
+          {{form.media}}
       </div>
     </div>
-      {% endif %}
-
-
-      {% if user_in_opposing_team or user_in_supporting_team or user_is_judge and debate_in_progress %}
-      <div class="card">
-        <div class="row">
-          <form class="col s12" method="POST" action="{% comment_form_target %}">
-            {% csrf_token %}
-            <div class="row">
-              {% if post.debate_category == "open" %}
-              <div class="input-field col s12 m4 right">
-                <select name="debate_option" id = "debate_option">
-                  <option value="" disabled selected>Choose a side</option>
-                  <option value="I agree">agree</option>
-                  <option value="I disagree">disagree</option>
-                </select>
-                <label>Debate Position</label>
-              </div>
-              {% endif %}
-            </div>
-
-                <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
-                <div class="red hidden" data-comment-element="errors"></div>
-                {% for field in form %}
-                  {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
-                {% endfor %}
-                <div style="display:none">{{ form.honeypot }}</div>
-
-            <div class="row">
-              <div class="input-field col s12 {% if 'comment' in form.errors %}has-error{% endif %}">
-                <label for="id_comment">Enter your comment</label>
-                {% render_field form.comment class="materialize-textarea" placeholder="Be concise and cogent." %}
-              </div>
-            </div>
-
-            <div>
-                <input type="submit" name="post" value='send' class="btn" />
-                <input type="submit" name="preview" value="preview" class="btn grey" />
-            </div>
-
-            <div class="row">
-            <p class="small">
-              <a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported in comments.
-              <br>For open debate, indicate if supporting or opposing at top of comment.
-            </p>
-          </div>
-
-          </form>
-        </div>
-      </div>
-      {% endif %}
-
-      {% if user.is_authenticated and debate_has_ended and not user_is_judge and not user_is_moderator and not user_in_opposing_team and not user_in_supporting_team %}
-      <div class="card">
-        <div class="row">
-          <form class="col s12" method="POST" action="{% comment_form_target %}">
-            {% csrf_token %}
-            <div class="row">
-              {% if post.debate_category == "open" %}
-              <div class="input-field col s12 m4 right">
-                <select name="debate_option" id = "debate_option">
-                  <option value="" disabled selected>Choose a side</option>
-                  <option value="I agree">agree</option>
-                  <option value="I disagree">disagree</option>
-                </select>
-                <label>Debate Position</label>
-              </div>
-              {% endif %}
-            </div>
-
-                <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
-                <div class="red hidden" data-comment-element="errors"></div>
-                {% for field in form %}
-                  {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
-                {% endfor %}
-                <div style="display:none">{{ form.honeypot }}</div>
-
-            <div class="row">
-              <div class="input-field col s12 {% if 'comment' in form.errors %}has-error{% endif %}">
-                <label for="id_comment">Enter your comment</label>
-                {% render_field form.comment class="materialize-textarea" placeholder="Be concise and cogent." %}
-              </div>
-            </div>
-
-            <div>
-                <input type="submit" name="post" value='send' class="btn " />
-                <input type="submit" name="preview" value="preview" class="btn grey" />
-            </div>
-
-            <div class="row">
-            <p class="small">
-              <a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported in comments.
-              <br>For open debate, indicate if supporting or opposing at top of comment.
-            </p>
-          </div>
-
-          </form>
-        </div>
-      </div>
-      {% endif %}
+  {% endif %}
 
       {% if comment_count %}
             {% render_xtdcomment_tree for post allow_flagging allow_feedback show_feedback  %}
@@ -457,16 +300,15 @@
 {% if not post %}
   <p>There are currently no debates posted. You can add a debate or check back</p>
 {% endif %}
-</div>
+
+</div><!-- End of col -->
 
   <div class="col m3 l3">
     <p>
-      <a href="{% url 'debate:suggest_post' %}">
-    <button class="btn">Create a new debate</button></a>
+      <a class="yellow btn black-text" href="{% url 'debate:suggest_post' %}">Create a new debate</a>
     </p>
 
-    <div class="card">
-      <div class="card-content">
+    <div class="card-panel">
         <div class="row">
         {% if voted_before or not post.begin or debate_in_progress or not user.is_authenticated %}
         <div class="col s12 m6">
@@ -482,12 +324,12 @@
         {% else %}
         <div class="col s12 m6">
           <a name="{{ post.slug }}" value="support" class="waves-effect waves-light vote btn-floating">
-            <i class="material-icons">thumbs_up_down</i></a>
+            <i class="blue material-icons">thumbs_up_down</i></a>
             Support
         </div>
         <div class="col s12 m6">
           <a name="{{ post.slug }}" value="oppose" class="waves-effect waves-light vote btn-floating">
-            <i class="material-icons">thumbs_up_down</i></a>
+            <i class="blue material-icons">thumbs_up_down</i></a>
             Oppose
         </div>
 
@@ -509,7 +351,6 @@
             {% if post.end %}{{post.end}}{% else %}Not yet set by Mod{%endif%}<br>
           Result displayed afterwards. Please be patient.</p>
       </div>
-    </div>
 
 
       {% if debate_has_ended %}
@@ -523,20 +364,18 @@
 
 
     {% if post.count %}
-        <div class="card">
-          <div class="card-content">
-        Total Followers : <br>{{post.count}}
+          <div class="card-panel">
+        Total Followers : <br>{{post.count}} person{{ post.count|pluralize }}.
           </div>
-        </div>
+
     {% endif %}
 
-    <div class="card">
-      <div class="card-content">
+      <div class="card-panel">
           <i class="small material-icons">access_alarm</i>
           {% if notify_status or not user.is_authenticated %}
-            <button  name="{{ post.slug }}" value="notify" class="btn disabled notify">Notify Me</button>
+            <button  name="{{ post.slug }}" value="notify" class="small yellow btn black-text disabled notify">Notify Me</button>
           {% else %}
-            <button  name="{{ post.slug }}" value="notify" class="btn notify">Notify Me</button>
+            <button  name="{{ post.slug }}" value="notify" class="small yellow btn black-text btn notify">Notify Me</button>
           {% endif %}
           <hr>
           {% if notify_status %}
@@ -545,12 +384,10 @@
             <p class="has_set_notification small">Enable alert for debate to get notified before debate starts. {%if not user.is_authenticated %}You must be <a href="{% url 'account_login' %}">logged in</a>.{%endif%}</p><br>
           {% endif %}
       </div>
-    </div>
 
  </div>
 
  </div>
-
 
 {% endblock %}
 
@@ -565,8 +402,6 @@ $(document).ready(function(){
     });
 });
 
-</script>
-<script>
 $('.like-button').click(function(){
       $.ajax({
                type: "POST",
@@ -586,12 +421,9 @@ $('.like-button').click(function(){
                       };
                 },
                 error: function(rs, e) {
-                       //alert(rs.responseText);
+                       console.log(rs.responseText);
                 }
-
           });
-
-
 });
 
 $('.vote').click(function(){
@@ -631,27 +463,6 @@ $('.notify').click(function(){
 });
 
 
-{% for image in attachments %}
-
-$(document).ready(function(){
-  var id = {{forloop.counter}}
-  var img_css_id = "image"+id.toString()
-  //console.log(img_css_id)
-  $.ajax({
-           type: "POST",
-           url: "{% url 'debate:load_image' %}",
-           data: {'csrfmiddlewaretoken': '{{ csrf_token }}', 'post_id':$("#"+img_css_id).attr('post_id'),'image_id':$("#"+img_css_id).attr('image_id'), },
-           success: function(response) {
-                  $('#'+img_css_id).html('<img class="responsive-img", src="data:image/png;base64,' + response + '" />');
-
-            },
-            error: function(rs, e) {
-                   //alert(rs.responseText);
-            }
-      });
-});
-
-{% endfor %}
 
 </script>
 {% endblock %}

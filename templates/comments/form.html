@@ -8,7 +8,7 @@
   <fieldset>
     <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
 
-    <div class="alert alert-danger hidden" data-comment-element="errors">
+    <div class="red-text hidden" data-comment-element="errors">
     </div>
 
     {% for field in form %}
@@ -18,9 +18,9 @@
     <div style="display:none">{{ form.honeypot }}</div>
 
     <div class="{% if 'comment' in form.errors %}has-error{% endif %}">
-      <div class="input-field">
+        {% include "button_click.html" %}
         {% render_field form.comment class+="materialize-textarea" data-length="3000" %}
-      </div>
+
     </div>
 
     {% if not request.user.is_authenticated %}
@@ -64,10 +64,10 @@
     <div class="row">
       <br>
         <div class="col m6">
-          <input type="submit" name="post" value="{% trans 'send' %}" class="btn btn-primary" />
+          <input type="submit" name="post" value="{% trans 'send' %}" class="btn" />
         </div>
         <div class="col m6">
-          <input type="submit" name="preview" value="{% trans 'preview' %}" class="btn btn-default" />
+          <input type="submit" name="preview" value="{% trans 'preview' %}" class="btn grey" />
         </div>
     </div>
 

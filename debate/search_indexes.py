@@ -70,7 +70,7 @@ class PostDebateIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_tags(self, object):
         tag_object = object.tags.all()
         if tag_object:
-            return [tag.name for tag in tag_object]
+            return [tag for tag in tag_object]
         else:
             return None
 

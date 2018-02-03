@@ -12,6 +12,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from versatileimagefield.fields import VersatileImageField
 from versatileimagefield.placeholder import OnDiscPlaceholderImage
 import os
+from markdownx.models import MarkdownxField
 
 #For comment moderation
 from django_comments_xtd.moderation import moderator, SpamModerator
@@ -42,12 +43,13 @@ class PostDebate(models.Model):
     title = models.CharField(max_length=500, help_text="Title of Debate")
     slug = models.SlugField(max_length=250, unique=True)
     show = models.BooleanField('Can debate be viewed online ?', default=True)
-    debate_category = models.CharField(max_length=6, choices=DEBATE_CATEGORY, default='open')
+    debate_category = models.CharField(max_length=6, choices=DEBATE_CATEGORY, default='open', help_text="Open debates do not require predefined debaters and judges. Reverse for closed debates.")
     status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='st')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='suggested_post')
-    summary = models.TextField('What is your inspiration for the debate?', max_length=1000, help_text="Enter a brief summary. <a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported.")
+    summary = MarkdownxField('What is your inspiration for the debate?', max_length=1000, help_text="<a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported. You can \
+    drag images here from your desktop.")
     allow_comments = models.BooleanField('allow comments', default=True)
-    tags = TaggableManager()
+    tags = TaggableManager(blank = True)
     begin = models.DateTimeField(null=True, blank = True)
     end = models.DateTimeField(null=True, blank = True)
     vote_starts = models.DateTimeField(null=True, blank = True)
@@ -65,6 +67,7 @@ class PostDebate(models.Model):
     stats_updated = models.BooleanField('Has Statistics been updated', default=False)
     winner_updated = models.BooleanField('Has winner been declared', default=False)
     debate_notification = models.BooleanField('Has debaters, moderators and judges been notified', default=False)
+    allow_follower_comment = models.BooleanField('Can non participants comment after debate?', default=True)
 
     winner = models.CharField(max_length=10, blank=True, null=True, default = 'InProgress', choices=WINNER)
     count = models.PositiveIntegerField(default = 0)
@@ -93,16 +96,6 @@ class PostDebate(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class Attachment(models.Model):
-    post = models.ForeignKey(PostDebate, related_name="attachment")
-    file = models.ImageField('Image Attachments', blank=True, null=True,\
-        upload_to='attachments/debate', help_text="Add Pictures")
-
-    #file = models.FileField(upload_to='attachments/debate', help_text="Attach images to post. 2 max")
-    def __str__(self):
-        return self.file.name
 
 class Stat(models.Model):
     """
@@ -157,7 +150,7 @@ class Scores(models.Model):
             MinValueValidator(0)
         ], blank = True, help_text="Score for Opposing Side on a scale of 10")
     highest_score = models.PositiveSmallIntegerField(default=10,blank = True, help_text="Highest Possible Score Possible")
-    observation = models.TextField(max_length=1000, null=True, blank = True, help_text="If anomalies observed or comments, write here")
+    observation = MarkdownxField(max_length=1000, null=True, blank = True, help_text="Give brief summary of scores. Markdown supported.")
 
     supporting_vote = models.PositiveIntegerField(default = 0, blank = True,)
     opposing_vote = models.PositiveIntegerField(default = 0, blank = True,)

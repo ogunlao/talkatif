@@ -1,15 +1,1 @@
 
-body {
-    background-color:	#F5F5F5
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
-
-  main {
-    flex: 1 0 auto;
-  }
-
-.justify {
-  text-align:justify;
-}

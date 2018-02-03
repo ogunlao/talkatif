@@ -1,23 +1,16 @@
 from django.contrib import admin
+from markdownx.admin import MarkdownxModelAdmin #used by markdown editor
 
-# Register your models here.
 from .models import PostDebate, Profile, Participation, Suggest, Votes, \
-            Notifyme, Stat, Scores, Badge, TrackedPost, Attachment, PostDebater
+            Notifyme, Stat, Scores, Badge, TrackedPost, PostDebater
 
 admin.site.register(Participation)
 
 admin.site.register(Suggest)
 
-class AttachmentInline(admin.StackedInline):
-    model = Attachment
-    #can_delete = False
-    verbose_name_plural = 'Attached Images'
-    fk_name = 'post'
-
 @admin.register(PostDebate)
 class PostDebateAdmin(admin.ModelAdmin):
-    inlines = (AttachmentInline, )
-    list_display = ('title', 'winner', 'slug', 'get_likes','show', 'debate_notification','debate_category', 'allow_comments', 'status', 'author', 'created', 'begin', 'end', 'vote_starts', 'stats_updated',)
+    list_display = ('title', 'winner', 'slug', 'get_likes','show', 'debate_notification', 'allow_follower_comment','debate_category', 'allow_comments', 'status', 'author', 'created', 'begin', 'end', 'vote_starts', 'stats_updated',)
     list_filter = ('created', 'debate_category',)
     search_fields = ('title', 'summary',)
     prepopulated_fields = {'slug': ('title',)}
@@ -33,7 +26,7 @@ class PostDebateAdmin(admin.ModelAdmin):
             'author', )
         }),
         ('Ticks', {
-            'fields': ('show', 'stats_updated', 'winner_updated', 'debate_notification',)
+            'fields': ('show', 'allow_follower_comment', 'stats_updated', 'winner_updated', 'debate_notification',)
         }),
         ('Dates', {
             'fields': ('begin', 'end', 'vote_starts')
@@ -42,6 +35,16 @@ class PostDebateAdmin(admin.ModelAdmin):
             'fields': ('supporting_debaters', 'opposing_debaters', 'moderator', 'judges',)
         }),
     )
+
+
+class MarkdownPostDebate(PostDebate):
+    """
+    Custom admin to preview and edit postdebate in markdown.
+    """
+    class Meta:
+        proxy = True
+
+admin.site.register(MarkdownPostDebate, PostDebateAdmin)
 
 @admin.register(Scores)
 class ScoresAdmin(admin.ModelAdmin):

@@ -2,77 +2,84 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 {% load markdownify %}
-
+{% block extra_head %} {% endblock extra_head %}
 {% block title %}New Discourse{% endblock %}
 
 {% block content %}
 
         <div class="row">
-          <div class="col m2"></div>
 
-          <div class="col m7">
-            <div class="card">
-              <div class="card-content">Post or Edit
+
+          <div class="col m6 offset-m3">
+            <div class="card-panel">
+              <h5>Post or Edit a discourse</h5>
+
                 <form class="" enctype="multipart/form-data" action="." method="post">
                   {% csrf_token %}
 
-                {% for field in form %}
-                  {% if field.name == "summary" %}
-                  <label for={{ field.auto_id }}>{{field.label_tag}}</label>
-                  {{ field|attr:"class:materialize-textarea"}}
-                  {% elif field.name == "attachment" %}
-                  <br>
-                  <div class="file-field input-field">
-                    <div class="btn">
-                      <span>File</span>
-                      <input accept="image/*" id="id_attachment" multiple="multiple" name="attachment" type="file">
+                    <div class="input-field">
+                      {{ form.title|safe}}
+                      <label for="{{ form.title.auto_id }}">{{form.title.label_tag}}</label>
                     </div>
-                    <div class="file-path-wrapper">
-                      <input class="file-path validate" type="text">
-                    </div>
-                    {% if num_image_attached %}
-                      <p class="small red-text ">{{num_image_attached}} images already attached. <br>We encourage a maximum of 2 images per post</p>
+                    {% if form.title.help_text %}
+                    <p><small class="grey-text">{{ form.title.help_text }}</small></p>
                     {% endif %}
-                  </div>
+                    <!-- Text Editor -->
+                    <div class="row">
 
+                    <div class="collection">
+                      {% include "button_click.html" %}
+                      {{ form.summary|attr:"class:materialize-textarea"}}
+                    </div>
+                  </div>
+                    <label for="{{ form.summary.auto_id }}">{{form.summary.label_tag}}</label>
+                    {% if form.summary.help_text %}
+                    <p><small class="grey-text">{{ form.summary.help_text|markdownify }}</small></p>
+                    {% endif %}
+
+                    <div class="input-field">
+                      {{ form.tags}}
+                      <label for="{{ form.tags.auto_id }}">{{form.tags.label_tag}}e.g. Music, Culture, Politics e.t.c.</label>
+                    </div>
+                    {% if form.tags.help_text %}
+                    <p><small class="grey-text">{{ form.tags.help_text|markdownify }}</small></p>
+                    {% endif %}
+
+                    <div class="file-field input-field">
+                      <div class="blue btn">
+                        <span>Image</span>
+                        <input type="file" accept="image/*" id="id_image" name="image">
+                      </div>
+                      <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                      </div>
+                    </div>
+
+
+                  {% if post_id %}
+                  <div class="row">
+                    <button type="submit" class="yellow btn black-text">Update Discourse</button>
+                        OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
+                  </div>
                   {% else %}
-                  <div class="input-field">
-                    <label for={{ field.auto_id }}>{{field.label_tag}}</label>
-                    {{ field}}
+                  <p>
+                    <input type="checkbox" id="verified" required />
+                    <label for="verified">I would be responsible for what I post.</label>
+                  </p><br>
+
+                  <div class="row">
+                    <button type="submit" class="yellow btn black-text">Add Discourse</button>
+                    OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
                   </div>
                   {% endif %}
 
-
-                  <p>
-                    {% if field.help_text %}
-                        <small class="grey-text">{{ field.help_text|markdownify }}</small>
-                    {% endif %}
-                    {% for errror in field.errors %}
-                    <strong class="red-text">{{ error|escape }}</strong>
-                    {% endfor %}
-                  </p>
-              {% endfor %}
-
-              {% if post_id %}
-              <div class="row">
-                <button type="submit" class="btn">Edit Discourse</button>
-              </div>
-              {% else %}
-              <div class="row">
-                <button type="submit" class="btn">Create Discourse</button>
-                OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
-              </div>
-              {% endif %}
-
-                </form>
-
-
-          </div>
-
+            </form>
+            {{ form.media }}
         </div><!-- End of card -->
+
+
       </div>
 
-          <div class="col-md-3"></div>
         </div>
 
 {% endblock %}

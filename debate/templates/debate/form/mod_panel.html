@@ -4,18 +4,16 @@
 
 {% block title %}Mod Panel{% endblock %}
 
-
 {% block content %}
 
         <div class="row">
-          <div class="col m2"></div>
+
           {% if debaters_supporting or debaters_opposing %}
-          <div class="col m7">
-
+          <div class="col m7 offset-m2">
+            <h5>Debate Period for: <br>
+            <span class="blue-text">{{related_post.title}}</span> </h5>
             {% if debaters_supporting %}
-            <div class="card">
-
-              <div class="card-content">List of Debaters Showing Interest in Supporting
+              <div class="card-panel">List of Debaters Showing Interest in Supporting
                   <p class="red-text">Approve 5 or less debaters from this category based on your choice.</p>
                   <table class="responsive-table highlight">
                     <thead>
@@ -34,8 +32,8 @@
                         <td>{{debaters.name.get_full_name}}</td>
                         <td>{{debaters.name.username}}</td>
                         <td>{{debaters.name.profile.specialization}}</td>
-                        <td><button class="btn btn-primary approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="yes">Approve</button></td>
-                        <td><button class="btn approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="no">Dispprove</button></td>
+                        <td><a class="btn-floating blue waves-effect approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="yes"><i class="material-icons">add</i></a></td>
+                        <td><a class="btn-floating red waves-effect approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="no"><i class="material-icons">remove</i></a></td>
                         <td id="approval-{{debaters.name.username}}">
                           {% if debaters.approval_status == True %}
                             approved
@@ -47,14 +45,11 @@
                         {% endfor %}
                   </tbody>
                   </table>
-              </div>
             </div> <!-- End of card -->
             {% endif %}
 
             {% if debaters_opposing %}
-            <div class="card">
-
-              <div class="card-content">List of Debaters Showing Interest in Opposing
+              <div class="card-panel">List of Debaters Showing Interest in Opposing
 
                 <p class="red-text">Approve 5 or less debaters from this category based on your choice.</p>
                 <table class="">
@@ -73,8 +68,8 @@
                       <td>{{debaters.name.get_full_name}}</td>
                       <td>{{debaters.name.username}}</td>
                       <td>{{debaters.name.profile.specialization}}</td>
-                      <td><button class="btn btn-primary approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="yes">Approve</button></td>
-                      <td><button class="btn approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="no">Disapprove</button></td>
+                      <td><button class="btn-floating blue waves-effect approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="yes">Approve</button></td>
+                      <td><button class="btn-floating red waves-effect approve {{debaters.name.username}}" name="{{debaters.name.id}}" value="{{debaters.post.id}}" position="{{debaters.debate_position}}" approve="no">Disapprove</button></td>
                       <td id="approval-{{debaters.name.username}}">
                         {% if debaters.approval_status == True %}
                           approved
@@ -86,57 +81,76 @@
                       {% endfor %}
                 </tbody>
                 </table>
-              </div>
             </div><!--  End of card -->
             {% endif %}
 
           </div>
           {% else %}
-          <p>No person has indicated interest in debate yet. Share debate on social media to get the attention it deserves </p>
+            {% if related_post.debate_category == "closed" %}
+              <p>No person has indicated interest in debate yet. Share debate on social media to get the attention it deserves </p>
+            {% endif %}
           {% endif %}
 
-          <div class="col m3">
-            <div class="card">
-              <div class="card-content">
-                <h6>Debate Period for: <br>
-                {{related_post.title}} </h6>
-                <br>
+          {% if not debaters_supporting and not debaters_opposing %}
+              <div class="col m6 offset-m2">
+                <h5>Debate Period for: <br>
+                <span class="blue-text">{{related_post.title}}</span> </h5>
+          {% else %}<div class="col m3">
+          {% endif %}
+              <div class="card-panel">
                 <form class="" action="." method="post">
                   {% csrf_token %}
                   <div class="row">
+                    <!-- Switch to allow comments -->
+                      <div class="switch">
+                        <label class="blue-text">
+                          Off
+                          <input type="checkbox" {% if related_post.allow_follower_comment %}checked {% endif %} name="allow_follower_comment">
+                          <span class="lever"></span>
+                          On
+                        </label>
+                        <span>{{postdebate_form.allow_follower_comment.label_tag}}</span>
+                      </div>
                       <p>Debate Start Date/Time</p>
                       <div class='input-field'>
                         <i class="material-icons prefix">update</i>
                         {% render_field mod_form.begin class+="datetimepicker" %}
                       </div>
 
+
+                      <p>Vote Start Date/Time</p>
+                      <div class='input-field'>
+                        <i class="material-icons prefix">update</i>
+                        {% render_field mod_form.vote_starts class+="datetimepicker" %}
+                      </div>
+
+
                       <p>Debate End Date/Time</p>
                       <div class='input-field'>
                         <i class="material-icons prefix">update</i>
                         {% render_field mod_form.end class+="datetimepicker" %}
                       </div>
+                      <small class="red-text">N.B: Votes or scores would not be counted after this end time.</small>
 
 
-                  <p>Vote Start Date/Time</p>
-                  <div class='input-field'>
-                    <i class="material-icons prefix">update</i>
-                    {% render_field mod_form.vote_starts class+="datetimepicker" %}
-                  </div>
+
 
                   {% for error in mod_form.errors %}
                     <p class="red-text">{{error}}</p>
                   {% endfor %}
                 </div>
+                <p>
+                  <input type="checkbox" id="verified" required />
+                  <label for="verified">I have read the <a href="{% url 'debate:rules_guidelines' %}">terms of moderation</a> and understand what I am doing.</label>
+                </p><br>
 
-                  <input type="submit" value="Update Debate Date/Time" class="btn" />
+                  <input type="submit" value="Update" class="yellow btn black-text" /> Or <small>Return to <a href="{{related_post.get_absolute_url }}">debate</a></small>
                   <hr>
 
-                  <p>Only edit necessary fields. Do not tamper with debate settings if unsure</p>
-                  <p>We believe you have discussed with co-moderators(if any) before changing settings.</p>
-                  <p>Return to <a href="{{related_post.get_absolute_url }}">debate</a><p>
+                  <small>Only edit necessary fields. Do not tamper with debate settings if unsure
+                  We believe you have discussed with co-moderators(if any) before changing settings.
+                  <small>
                 </form>
-
-            </div>
           </div>
 
           </div>

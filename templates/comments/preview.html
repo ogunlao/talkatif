@@ -1,15 +1,15 @@
 {% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
 {% load comments_xtd %}
+{% load md2 %}
 
 {% block title %}{% trans "Preview your comment" %}{% endblock %}
 
 {% block content %}
 
 <div class="row">
-  <div class="col m3"></div>
 
-  <div class="col m6">
+  <div class="col m6 offset-m3">
     <div class="card">
       <div class="card-content">
         <h4 class="center-align">{% trans "Preview your comment" %}</h4>
@@ -44,8 +44,8 @@
       </span>
       </li>
 
-        <p>{{ comment }}</p>
-      
+        <p>{{ comment|markdown:"safe, code-friendly, code-color" }}</p>
+
     </ul>
       {% endif %}
     </div>
@@ -53,7 +53,8 @@
   <!--/div-->
 </div>
 <div class="row">
-  <div class="card">
+  <div class="card-panel">
+
       {% include "comments/form.html" %}
       <br>
   </div>

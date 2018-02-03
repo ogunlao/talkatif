@@ -24,10 +24,10 @@
         {% if not item.comment.is_removed %}
         <span class="right">
           {% if allow_flagging and item.flagged %}
-          <span class="red-text" title="{% trans 'comment flagged' %}"><i class="fa fa-flag"></i></span>
+          <span class="red-text flag-comment" title="{% trans 'comment flagged' %}"><i class="tiny material-icons">flag</i></span>
           {% elif allow_flagging %}
-          <a class="mutedlink" href="{% url 'comments-flag' item.comment.pk %}">
-            <span title="{% trans 'flag comment' %}"><i class="fa fa-flag"></i></span>
+          <a class="mutedlink like-comment" href="{% url 'comments-flag' item.comment.pk %}">
+            <span title="{% trans 'flag comment' %}"><i class="tiny material-icons">flag</i></span>
             </a>
           {% endif %}
           {% if item.flagged_count %}
@@ -41,7 +41,7 @@
         </span>
 
   </span>
-  <p>
+  <p class="blue_text">
               {% if post.debate_category == "closed" %}
                 {% for debater in post.supporting_debaters.all %}
                   {% if debater == item.comment.user %}
@@ -65,10 +65,8 @@
                   <p class="blue-text">Moderator</p>
                 {% endif%}
               {% endfor%}
-
-
-        {% endif %}
     </p>
+      {% endif %}
       {% if item.comment.is_removed %}
         <p class="grey-text"><em>{% trans "This comment has been removed." %}</em></p>
         {% else %}
@@ -84,16 +82,13 @@
         {% endif %}
         {% if request.user == item.comment.user %}
         |<a href="{% url 'delete_my_comment' item.comment.id %}"><span class="grey-text"> Remove</span></a>
+
         {% endif %}
       {% endif %}
     </p>
 </li>
 <li class="divider"></li>
 </ul>
-
-
-
-
 
     {% if not item.comment.is_removed and item.children %}
     <div class="row">

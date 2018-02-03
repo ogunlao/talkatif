@@ -1,3 +1,4 @@
 {% load md2 %}
-
-{{ content|markdown:"safe, code-friendly, code-color"|linebreaks}}
+{% load debate_filter %}
+<small>{{ content|wordcount }} word{{ content|wordcount|pluralize }}. | {{content|minute_read}}</small>
+{{ content|markdown:"safe, code-friendly, code-color"}}

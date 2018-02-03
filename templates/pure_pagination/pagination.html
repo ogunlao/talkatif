@@ -10,9 +10,9 @@
   {% for page in page_obj.pages %}
       {% if page %}
           {% ifequal page page_obj.number %}
-  <li class="waves-effect active"><a href="#!">{{ page }}</a></li>
+  <li class="amber lighten-4 waves-effect active"><a class="grey-text" href="#!">{{ page }}</a></li>
           {% else %}
-  <li class="waves-effect"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+  <li class="amber lighten-4 waves-effect"><a class="grey-text" href="?{{ page.querystring }}">{{ page }}</a></li>
           {% endifequal %}
           {% else %}
   <li>...</li>

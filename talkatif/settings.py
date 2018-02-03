@@ -16,7 +16,6 @@ from decouple import config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -43,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'haystack',
     'debate.apps.DebateConfig',
     'discourse.apps.DiscourseConfig',
     'mptt',
@@ -80,11 +80,10 @@ INSTALLED_APPS = [
     'el_pagination',
     'django_social_share',
 
-    'haystack',
+
     'meta', #adds metadata to sites
     'imagekit',
     'robots', #Generates site.xml file for crawlers
-
     'django_comments_xtd',
     'django_comments',
     'django_markdown2',
@@ -120,6 +119,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 #'zinnia.context_processors.version', optional
                 'django.template.context_processors.media',
+                'debate.context_processors.site_processor',
 
             ],
         },
@@ -184,6 +184,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
 COMPRESS_ROOT =  os.path.join(BASE_DIR, "static")
 #STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = '/media/'
@@ -232,16 +233,16 @@ STATICFILES_FINDERS = (
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'localhost:9200',
+        'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': 'haystack',
     },
 }
 
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
 TAGGIT_CASE_INSENSITIVE = True #taggit settings
 
-#COMMENTS_XTD Settings
-COMMENTS_APP = 'django_comments_xtd'
-COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
+
 
 # Either enable sending mail messages to the console:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -283,6 +284,11 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
         'show_feedback': True,
     }
 }
+
+
+#COMMENTS_XTD Settings
+COMMENTS_APP = 'django_comments_xtd'
+COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
 
 #Comment Threading settings
 COMMENTS_XTD_MAX_THREAD_LEVEL = 10  # default is 0
@@ -336,5 +342,18 @@ VERSATILEIMAGEFIELD_SETTINGS = {
     }
 VERSATILEIMAGEFIELD_USE_PLACEHOLDIT = True
 
-
+#MAthjax
 MATHJAX_ENABLED=True
+
+
+#Markdown Settings
+
+from datetime import datetime
+MARKDOWNX_URLS_PATH = '/attachment/markdownify/'
+MARKDOWNX_UPLOAD_URLS_PATH = '/attachment/upload/'
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime('attachment/%Y/%m/%d/')
+MARKDOWNX_UPLOAD_MAX_SIZE = 4 * 1024 * 1024 #4 MB in bytes
+MARKDOWNX_IMAGE_MAX_SIZE = {
+    'size': (300, 0),
+    'quality': 80
+}

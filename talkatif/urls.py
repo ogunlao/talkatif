@@ -25,17 +25,21 @@ from django.views.generic import RedirectView
 from debate import views as debate_views
 from discourse import views as discourse_views
 
+
+
 urlpatterns = [
     url(r'^$', debate_views.index, name = 'main_page'),
     #url(r'^$', RedirectView.as_view(url='/all/', permanent=True)),
     url(r'^all/', debate_views.all_list, name='all_list'),
+    url(r'^search/', include('haystack.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^debate/', include('debate.urls', namespace='debate', app_name='debate')),
     url(r'^discourse/', include('discourse.urls', namespace='discourse', app_name='discourse')),
     url(r'^index/', debate_views.index, name = 'index'),
+    url(r'^faq/$', debate_views.faq, name='faq'),
     url(r'^delete_comment/(?P<comment_id>\d+)/$', debate_views.delete_my_comment, name='delete_my_comment'),
-    url(r'^search/', include('haystack.urls')),
     url(r'^blog/', include('zinnia.urls')),
+    url(r'^attachment/', include('markdownx.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
