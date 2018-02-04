@@ -72,8 +72,8 @@ INSTALLED_APPS = [
     #social signin plugins
     'allauth.socialaccount.providers.facebook',
     #'allauth.socialaccount.providers.linkedin',
-    #'allauth.socialaccount.providers.twitter',
-    #'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.google',
 
     'taggit',
     'widget_tweaks',
@@ -103,7 +103,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'talkatif.urls'
-SITE_ID = 5
+SITE_ID = 4
 
 TEMPLATES = [
     {
@@ -210,11 +210,33 @@ ACCOUNT_PRESERVE_USERNAME_CASING =False
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
+SOCIALACCOUNT_PROVIDERS = \
+    {'facebook':
+       {'METHOD': 'oauth2',
+        'SCOPE': ['email','public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time'],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'kr_KR',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.4'}}
+
 # Required by django-allauth to extend the sign up form to include profile data
 ACCOUNT_FORMS = {'signup': 'debate.forms.SignupForm'}
 
 #Django-meta settings
-META_SITE_PROTOCOL = 'http'
+META_SITE_PROTOCOL = 'https'
 META_SITE_DOMAIN = "www.talkatif.com"
 META_DEFAULT_KEYWORDS = ["debate","faceoff","opinions", "criticism", "rebuttal", "arguement", "discourse", "discussion"]
 META_USE_SITES = True
@@ -223,7 +245,7 @@ META_USE_SITES = True
 #Robot settings
 ROBOTS_USE_SITEMAP = True
 ROBOTS_SITEMAP_URLS = [
-    'http://localhost:8000/sitemap.xml',
+    'http://talkatif.com/sitemap.xml',
 ]
  #'http://www.example.com/sitemap.xml',
 ROBOTS_SITEMAP_VIEW_NAME = 'cached-sitemap'
@@ -250,7 +272,7 @@ TAGGIT_CASE_INSENSITIVE = True #taggit settings
 
 
 # Either enable sending mail messages to the console:
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 #Django-chrontab settings
 
