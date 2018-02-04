@@ -61,7 +61,6 @@ oauthlib==2.0.6
 olefile==0.44
 pilkit==2.0
 Pillow==4.3.0
-pkg-resources==0.0.0
 psutil==5.4.2
 psycopg2==2.7.3.2
 pyparsing==2.2.0

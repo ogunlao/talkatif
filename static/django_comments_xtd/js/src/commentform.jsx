@@ -205,7 +205,7 @@ export class CommentForm extends React.Component {
       errors: {name: false, email: false, comment: false}
     });
   }
-
+  
   handle_submit(event) {
     event.preventDefault();
     if(!this.validate())
@@ -233,7 +233,7 @@ export class CommentForm extends React.Component {
       204: msg_204,
       403: msg_403
     };
-
+    
     $.ajax({
       method: 'POST',
       url: this.props.send_url,
@@ -258,7 +258,7 @@ export class CommentForm extends React.Component {
       }.bind(this)
     });
   }
-
+  
   handle_preview(event) {
     event.preventDefault();
     if(this.validate())
@@ -270,7 +270,7 @@ export class CommentForm extends React.Component {
     const rawMarkup = md.render(this.state.comment);
     return { __html: rawMarkup };
   }
-
+  
   render_preview() {
     if(!this.state.previewing)
       return "";
@@ -280,7 +280,7 @@ export class CommentForm extends React.Component {
     const hash = md5(this.state.email.toLowerCase());
     const avatar_url = "http://www.gravatar.com/avatar/"+hash+"?s=48&d=mm";
     const avatar_img = <img src={avatar_url} height="48" width="48"/>;
-
+    
     if(this.state.url) {
       media_left = <a href={this.state.url}>{avatar_img}</a>;
       heading_name = (<a href={this.state.url} target="_new">
@@ -338,7 +338,7 @@ export class CommentForm extends React.Component {
     }
     var btn_label_preview = django.gettext("preview");
     var btn_label_send = django.gettext("send");
-
+    
     return (
       <form method="POST" onSubmit={this.handle_submit}
             className="form-horizontal">
@@ -358,7 +358,7 @@ export class CommentForm extends React.Component {
           </div>
           {comment} {name} {mail} {url} {followup}
         </fieldset>
-
+        
         <div className="form-group" style={group_style}>
           <div className="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
             <input type="submit" name="post" value={btn_label_send}
@@ -371,7 +371,7 @@ export class CommentForm extends React.Component {
       </form>
     );
   }
-
+  
   render() {
     let preview = this.render_preview();
     let header = "";
@@ -400,7 +400,7 @@ export class CommentForm extends React.Component {
           {form}
         </div>
       </div>
-
+      
     );
   }
 }
