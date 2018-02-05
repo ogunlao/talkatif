@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 #from django.core.mail import send_mass_mail
 from stream.models import PostDebate, Notifyme

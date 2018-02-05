@@ -6,11 +6,13 @@
 
 {% block content %}
 <div class="row">
-  <div class="col m3"></div>
-    <div class="col m6">
+
+    <div class="col m6 offset-m3">
         <h1>{% trans "Account Inactive" %}</h1>
 
-        <p>{% trans "This account is inactive." %}</p>
+        <p>{% trans "This account is inactive." %}
+        <br>
+        Contact admin with your registered email to reactivate.</p>
     </div>
   </div>
 {% endblock %}

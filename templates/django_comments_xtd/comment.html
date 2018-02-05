@@ -5,7 +5,14 @@
 
 <div id="c{{ comment.id }}" class="media">
   <a name="c{{ comment.id }}"></a>
-  <div class="media-left"><img src="{{ comment.user.profile.image.thumbnail.25x25 }}"/></div>
+  <div class="media-left">
+    <a href="{{comment.user.profile.get_absolute_url}}">
+    {% if comment.user.profile.image %}
+    <img src="{{ comment.user.profile.image.thumbnail.25x25 }}" class="circle" />
+    {% else %}
+    <img src="{{ comment.user.profile.profile_image_url }}" width="25" height="25" class="circle"/>
+    {% endif %}
+  </a>
   <div class="media-body">
     <div class="comment">
       <h6 class="media-heading">

@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^debate/', include('debate.urls', namespace='debate', app_name='debate')),
     url(r'^discourse/', include('discourse.urls', namespace='discourse', app_name='discourse')),
     url(r'^index/', debate_views.index, name = 'index'),
+    url(r'^profile/deactivate/$', debate_views.deactivate_profile, name='deactivate_profile'),
     url(r'^faq/$', debate_views.faq, name='faq'),
     url(r'^delete_comment/(?P<comment_id>\d+)/$', debate_views.delete_my_comment, name='delete_my_comment'),
     url(r'^blog/', include('zinnia.urls')),

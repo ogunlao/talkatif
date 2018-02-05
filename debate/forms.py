@@ -27,6 +27,11 @@ class SignupForm(forms.Form):
     country = LazyTypedChoiceField(choices=countries)
     specialization = forms.CharField(label='Specialization', help_text="e.g. Practicing Lawyer, \
                         Programmer, Business Man, Political Activist")
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email=email).exists():
+            raise forms.ValidationError(u'This email address has been registered. Do not try to register again.')
+        return email
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
@@ -52,16 +57,6 @@ class SignupForm(forms.Form):
 
         import random
         user.username = user.first_name + str(random.randint(0,99))
-
-        def clean_password2(self):
-            password1 = self.cleaned_data.get('password1')
-            password2 = self.cleaned_data.get('password2')
-
-            if not password2:
-                raise forms.ValidationError("You must confirm your password")
-            if password1 != password2:
-                raise forms.ValidationError("Your passwords do not match")
-            return password2
 
         user.save()
 

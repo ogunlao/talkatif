@@ -5,7 +5,14 @@
 <ul id="comments" class="collection-item">
   {% for comment in comment_list %}
     <a name="c{{ comment.id }}"></a>
-    <li class="collection-item avatar">{{ comment.user_email|xtd_comment_gravatar }}</li>
+    <li class="collection-item avatar">
+      <a href="{{comment.user.profile.get_absolute_url}}">
+      {% if comment.user.profile.image %}
+      <img src="{{ comment.user.profile.image.thumbnail.25x25 }}" class="circle" />
+      {% else %}
+      <img src="{{ comment.user.profile.profile_image_url }}" width="25" height="25" class="circle"/>
+      {% endif %}
+    </a>
     <li class="collection-item">
       <div class="comment">
         <h6 class="media-heading">

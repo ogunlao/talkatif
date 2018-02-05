@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load comments_xtd %}
 {% load md2 %}
+{% load debate_filter %}
 
 {% block title %}{% trans "Preview your comment" %}{% endblock %}
 
@@ -45,7 +46,8 @@
       </li>
 
         <p>{{ comment|markdown:"safe, code-friendly, code-color" }}</p>
-
+        <small>{{ comment|wordcount }} word{{ content|wordcount|pluralize }}. | {{comment|minute_read}}</small>
+        
     </ul>
       {% endif %}
     </div>

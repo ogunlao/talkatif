@@ -18,6 +18,10 @@ from markdownx.models import MarkdownxField
 from django_comments_xtd.moderation import moderator, SpamModerator
 from debate.badwords import badwords
 
+#Used to get facebook user profile
+from allauth.socialaccount.models import SocialAccount
+import hashlib
+
 class PublishedManager(models.Manager):
     def get_queryset(self):
         return super(PublishedManager, self).get_queryset().filter(show='True')
@@ -182,6 +186,15 @@ class Profile(models.Model):
         'Profile Picture', blank=True, null=True,
         upload_to='images/profile/',
     )
+
+    def profile_image_url(self):
+        fb_uid = SocialAccount.objects.filter(user_id=self.user.id, provider='facebook')
+
+        if len(fb_uid):
+            return "http://graph.facebook.com/{}/picture?width=200&height=200".format(fb_uid[0].uid)
+
+        return "http://www.gravatar.com/avatar/{}?s=100".format(hashlib.md5(self.user.email.encode('utf-8')).hexdigest())
+
 
     def get_absolute_url(self):
         return reverse('profile', args=[self.user.username,])
