@@ -29,13 +29,11 @@
           <span>{% for person in badge.collected_by.all %}
             <a href="{{ person.profile.get_absolute_url }}">{{person.username}}</a>{% if not forloop.last %},{% endif %}{% endfor %}
           <span></p>
-
+        </div>
     {% endfor %}
     {% else %}
       <h5>There are no badges registered</h5>
     {% endif %}
-  </div>
-
 
 </div>
 

@@ -16,12 +16,22 @@ import random
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from markdownx.forms import ImageForm
+from django.conf import settings
 
 def index(request):
+    #Gets meta details for post
+    meta = Meta(
+        title="Welcome to Talkatif. Home to debates, opinions, arguments and talks.",
+        description="talkatif.com creates an environment for interesting talks, debates, arguments and opinions.",
+        url=reverse('index'),
+        extra_props = {
+            #'viewport': 'width=device-width, initial-scale=1.0, minimum-scale=1.0'
+        }
+    )
     if request.user.is_authenticated():
         return redirect('all_list', permanent=True )
     else:
-        return render(request, 'index.html', {})
+        return render(request, 'index.html', {'meta':meta})
 
 from django.contrib.auth.decorators import user_passes_test
 @user_passes_test(lambda u: u.is_superuser)
@@ -318,8 +328,8 @@ def profile(request, username):
     post, created = Profile.objects.get_or_create(user=profile_user)
 
     if created:
-        message_info = 'Welcome to your profile! Quickly update your profile picture and details'
-        message.info(request, message_info)
+        message_info = 'Welcome to your profile! A username '+username+' was auto generated for you. Edit your profile.'
+        messages.info(request, message_info)
 
     #Get various posts accourding to categories
     debate_involved = Stat.objects.filter(person = profile_user)
@@ -344,7 +354,7 @@ def profile(request, username):
         #Get ids of categories
         id_debater = Participation.objects.get(name = "debater")
         id_moderator = Participation.objects.get(name = "moderator")
-        id_suggester = Participation.objects.get(name = "post debate topics")
+        id_suggester = Participation.objects.get(name = "content creator")
         id_judge = Participation.objects.get(name = "judge")
 
         debater_badge = all_badge.filter(category = id_debater.pk)
@@ -442,6 +452,18 @@ def profile(request, username):
                 'won_count':won_count, 'moderated_count':moderated_count, 'judged_count':judged_count,
                 'profile_user_name':profile_user_name, 'created':created}
     return render(request, 'account/profile.html', context)
+
+@login_required
+def deactivate_profile(request):
+    admin_email = settings.SERVER_EMAIL
+    if request.method == 'POST':
+        user = request.user
+        user.is_active = False
+        user.save()
+        messages.success(request, 'Profile successfully disabled.')
+        return redirect('index')
+    else:
+        return render(request, 'account/deactivate_profile.html', {'admin_email':admin_email})
 
 @login_required
 def mod_debate(request, post_id):

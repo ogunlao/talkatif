@@ -17,7 +17,12 @@
 <li class="collection-item avatar">
   <a name="c{{ item.comment.id }}" ></a>
   <a href="{{item.comment.user.profile.get_absolute_url}}">
-  <img src="{{ item.comment.user.profile.image.thumbnail.25x25 }}" alt="" class="circle"/></a>
+    {% if item.comment.user.profile.image %}
+    <img src="{{ item.comment.user.profile.image.thumbnail.25x25 }}" class="circle" />
+    {% else %}
+    <img src="{{ item.comment.user.profile.profile_image_url }}" width="25" height="25" class="circle"/>
+    {% endif %}
+  </a>
   <span class="title">
         {{ item.comment.submit_date|localize }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="red-text">{% trans "SuperMod" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'copy comment link' %}" href="{% get_comment_permalink item.comment %}"><i class="fa fa-share" aria-hidden="true"></i></a>
 
