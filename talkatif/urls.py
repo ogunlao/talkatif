@@ -21,15 +21,21 @@ from django.contrib import auth
 from django.conf.urls import include
 
 #Add URL maps to redirect the base URL to our application
-from django.views.generic import RedirectView
 from debate import views as debate_views
 from discourse import views as discourse_views
 
+#sitemap url config
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import StaticViewSitemap, PostSitemap, PostDebateSitemap
 
+sitemaps = {
+    'static': StaticViewSitemap,
+    'post': PostSitemap,
+    'postdebate' : PostDebateSitemap,
+}
 
 urlpatterns = [
     url(r'^$', debate_views.index, name = 'main_page'),
-    #url(r'^$', RedirectView.as_view(url='/all/', permanent=True)),
     url(r'^all/', debate_views.all_list, name='all_list'),
     url(r'^search/', include('haystack.urls')),
     url(r'^admin/', admin.site.urls),
@@ -48,6 +54,9 @@ urlpatterns = [
     url(r'^accounts/profile/(?P<username>[-\w\d]+)/', debate_views.profile, name='profile'),
     url(r'^accounts/profile/', debate_views.update_profile, name='update_profile'),
     url(r'^dashboard/', debate_views.dashboard, name = 'dashboard'),
+
+    url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps},
+    name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 handler404 = 'discourse_views.handler404'

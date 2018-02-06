@@ -1,7 +1,6 @@
 {% extends "zinnia/skeleton.html" %}
 {% load i18n %}
 {% load zinnia %}
-
 {% block meta-keywords %}{% get_tags as entry_tags %}{{ entry_tags|join:", "}}{% endblock meta-keywords %}
 
 {% block meta %}
@@ -11,9 +10,6 @@
 {% block link %}
     <link rel="index" href="{% url 'zinnia:entry_archive_index' %}" />
     <link rel="author" type="text/plain" href="{% url 'zinnia:humans' %}" />
-    <link rel="EditURI" type="application/rsd+xml" href="{% url 'zinnia:rsd' %}" />
-    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="{% url 'zinnia:wlwmanifest' %}" />
-    <link rel="search" type="application/opensearchdescription+xml" title="talkatif blog" href="{% url 'zinnia:opensearch' %}" />
     {% get_archives_entries "zinnia/tags/entries_archives_link.html" %}
 {% endblock link %}
 
@@ -49,47 +45,38 @@
   {% get_calendar_entries %}
 </aside> -->
 <aside id="widget-tags" class="widget">
-  <div class="card">
-    <div class="card-content">
+    <div class="card-panel">
       <h5>
         <a href="{% url 'zinnia:tag_list' %}">{% trans "Tags" %}</a>
       </h5>
       {% get_tag_cloud %}
-    </div>
   </div>
 </aside>
 <aside id="widget-recents" class="widget">
-  <div class="card">
-    <div class="card-content">
+    <div class="card-panel">
     <h5>{% trans "Recent entries" %}</h5>
     {% get_recent_entries %}
     </div>
-  </div>
 </aside>
+<!--
 <aside id="widget-comments" class="widget">
-  <div class="card">
-    <div class="card-content">
+    <div class="card-panel">
       <h5>{% trans "Recent comments" %}</h5>
       {% get_recent_comments %}
     </div>
-  </div>
 </aside>
 
 <aside id="widget-randoms" class="widget">
-  <div class="card">
-    <div class="card-content">
+    <div class="card-panel">
       <h5>{% trans "Random entries" %}</h5>
       {% get_random_entries %}
     </div>
-  </div>
-</aside>
+</aside> -->
 <aside id="widget-populars" class="widget">
-  <div class="card">
-    <div class="card-content">
+    <div class="card-panel">
       <h5>{% trans "Popular entries" %}</h5>
       {% get_popular_entries %}
     </div>
-  </div>
 </aside>
 
 <!--
@@ -102,8 +89,7 @@
 <aside id="widget-tools" class="widget">
 
 {% if perms.zinnia %}
-<div class="card">
-  <div class="card-content">
+  <div class="card-panel">
     <h5>{% trans "Tools" %}</h5>
     <ul>
     <li>
@@ -120,7 +106,6 @@
     </li>
     {% endif %}
   </ul>
-  </div>
 </div>
 </aside>
 {% endif %}

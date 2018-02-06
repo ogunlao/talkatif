@@ -2,11 +2,11 @@
 
 You're receiving this e-mail because you have signed up on {{ site_name }}.
 
-This email address would be linked to you account upon verification.
+This email address would be linked to your account upon verification.
 
-A username "{{ user_display }}" has been automatically created for you, and can also be used to signin.
+A username "{{ user_display }}" has been automatically created for you, and can be used to signin. I can be changed upon verification.
 
 To activate your account, go to {{ activate_url }}
 {% endblocktrans %}{% endautoescape %}
-{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you from {{ site_name }}!
-{{ site_domain }}{% endblocktrans %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you from all of us at {{ site_name }}!
+Laolu.{% endblocktrans %}

@@ -23,7 +23,4 @@ urlpatterns = [
     url(r'^(?P<category>\w+)/(?P<post_id>\d+)/(?P<post_slug>[-\w]+)/$', views.debate_detail, name='debate_detail'),
     url(r'^(?P<category>\w+)/(?P<post_id>\d+)/(?P<post_slug>[-\w]+)/$', views.go_to, name='goto_page'),
 
-
-
-
 ]

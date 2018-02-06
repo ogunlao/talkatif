@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     'django.contrib.humanize',
     'haystack',
     'debate.apps.DebateConfig',
@@ -225,16 +226,6 @@ META_SITE_PROTOCOL = 'https'
 META_SITE_DOMAIN = "talkatif.com"
 META_DEFAULT_KEYWORDS = ["debate","faceoff","talk", "opinions", "criticism", "rebuttal", "argument", "discourse", "discussion", "polls", "poll"]
 META_USE_SITES = True
-
-
-#Robot settings
-ROBOTS_USE_SITEMAP = True
-ROBOTS_SITEMAP_URLS = [
-    'https://www.talkatif.com/sitemap.xml',
-
-]
- #'http://www.example.com/sitemap.xml',
-ROBOTS_SITEMAP_VIEW_NAME = 'cached-sitemap'
 
 
 STATICFILES_FINDERS = (

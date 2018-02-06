@@ -1,18 +1,15 @@
-{% load i18n %}
-{% load staticfiles %}
 <!doctype html>
 <html lang="{{ LANGUAGE_CODE }}">
+{% load i18n %}
+{% load staticfiles %}
   <head>
     <meta charset="utf-8">
-    <title>talkatif blog : {% block title-page %}{% endblock title-page %} </title>
+    <title>Talkatif blog {% block title-page %}{% endblock title-page %} </title>
     <meta name="robots" content="follow, all" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="{% block meta-description %}{% trans "Puto blog for updating users on latest news and development." %}{% endblock meta-description %}{% block meta-description-page %}{% endblock meta-description-page %}" />
+    <meta name="description" content="{% block meta-description %}{% trans "Talkatif blog for updating users on latest news and development." %}{% endblock meta-description %}{% block meta-description-page %}{% endblock meta-description-page %}" />
     <meta name="keywords" content="{% block meta-keywords %}talkatif blog, debate, discourse, discussion, forum{% endblock meta-keywords %}" />
     {% block meta %}{% endblock meta %}
-    <link rel="pingback" href="/xmlrpc/" />
-    <link rel="shortcut icon" href="{% static "favicon.ico" %}" />
-    <link rel="pingback" href="/xmlrpc/" />
     <link rel="shortcut icon" href="{% static "favicon.ico" %}" />
     <link rel="home" href="{% url 'zinnia:entry_archive_index' %}" />
     <link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "zinnia/theme/css/screen.css" %}" />
@@ -32,19 +29,23 @@
     <link type="text/css" href="{% static 'css/materialize.min.css' %}" rel="stylesheet" media="screen,projection"/>
     <link type="text/css" href="{% static 'css/materialize-social.css' %}" rel="stylesheet" media="screen,projection"/>
     <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <script src="{% static 'js/vendor/jquery.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" >
-
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <style>
-      body {
-        background-color:	#F5F5F5 }
+        a:hover{  text-decoration: none !important; }
+        h2{
+          font-size: 150%;
+        }
+        h5{
+          font-size: 100%;
+        }
     </style>
     {% endcompress %}
 
   </head>
 
-  <body class="zinnia  {% block sidebar-class %}right-sidebar{% endblock sidebar-class %}">
+  <body class=" {% block sidebar-class %}right-sidebar{% endblock sidebar-class %}">
 
     <!--[if lt IE 8]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -57,10 +58,10 @@
       <li><a class="blue-text" href="{% url 'debate:see_badge' %}">Badges</a></li>
       <li><a class="blue-text" href="{% url 'account_reset_password' %}">Change Password</a></li>
       <li><a class="blue-text" href="{% url 'debate:rules_guidelines' %}">Rules</a></li>
-      <li><a href="{% url 'faq' %}">FAQ</a></li>
+      <li><a class="blue-text" href="{% url 'faq' %}">FAQ</a></li>
     </ul>
 
-    <nav class="nav-extended blue">
+    <nav class="nav blue">
     <div class="nav-wrapper">
       <a href="{% url 'all_list' %}" class="center brand-logo"><img class="circle" alt="talkatif" src="{{ MEDIA_URL }}logo/talkatif_logo.png",  width = "65", height= "65"></a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
@@ -74,7 +75,6 @@
         </a></li>
         <li class="tab"><a target="_self" class="active" href="{% url 'discourse:post_list' %}">Discourse
           {% if daily_discourse > 0 %}<span class="new badge amber lighten-4 red-text">{{daily_discourse}}</span>{% endif %}</a></li>
-        <li class="tab"><a target="_self" href="/blog/">Blog</a></li>
       </ul>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><form method="get" action="/search/">
@@ -119,17 +119,14 @@
         {% else %}
         <li><a href="{% url 'account_login' %}">Sign In</a></li>
         <li><a href="{% url 'account_signup' %}">New User? Sign Up</a></li>
-        <li><a href="#">FAQ</a></li>
+        <li><a href="{% url 'faq' %}">FAQ</a></li>
         {% endif %}
       </ul>
     </div>
   </nav>
 
-
-    <div class="container">
-
-      {% block slider %}{% endblock slider %}
-      <div class="col m9 offset-m2" id="content" class="hfeed" role="main">
+    <div class="row">
+      <div class="col m7 offset-m1" >
         {% block content %}
         <div class="links">
           <h2>{% trans "Useful links" %}</h2>
@@ -149,12 +146,14 @@
 
         {% endblock content %}
       </div>
-      <div id="sidebar" role="complementary">
-        {% block sidebar %}
-        {% endblock sidebar %}
+      <div class="col m3" >
+          <div id="sidebar" role="complementary">
+            {% block sidebar %}
+            {% endblock sidebar %}
+          </div>
       </div>
 
-    </div><!-- End of container -->
+    </div><!-- End of row -->
 
     {% include "footer.html" %}
 

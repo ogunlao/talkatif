@@ -12,6 +12,16 @@ from taggit.models import Tag
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from markdownx.forms import ImageForm
 
+#Default meta details for post
+meta = Meta(
+    title="Welcome to Talkatif. Home to debates, opinions, arguments and talks. A talking family.",
+    description="talkatif.com creates an environment for interesting talks, debates, arguments and opinions.",
+    url="/",
+    extra_props = {
+        #'viewport': 'width=device-width, initial-scale=1.0, minimum-scale=1.0'
+    }
+)
+
 def handler404(request):
     message_info = "An error occured while opening your page. Please try Again."
     messages.info(request, message_info )
@@ -25,11 +35,7 @@ def handler500(request):
 def post_list(request, tag_slug = None):
     object_list = Post.published.all()
     tag = None
-    # if tag_slug:
-    #     tag = get_object_or_404(Tag, slug=tag_slug)
-    #     object_list = object_list.filter(tags__in=[tag])
 
-    #Necessary to make sure something is published if tag is not found
     if tag_slug:
         try:
             tag = Tag.objects.all().get(slug=tag_slug)
@@ -50,7 +56,7 @@ def post_list(request, tag_slug = None):
 
 
     template = 'discourse/post/post_list.html'
-    context = {'object_list': object_list, 'tag':tag }
+    context = {'object_list': object_list, 'tag':tag, 'meta':meta, }
 
     return render(request, template , context)
 
@@ -88,7 +94,7 @@ def post_detail(request, post_id, post_slug):
             break
 
     like_count = post.total_likes #counts total likes on post
-    context = {'post':post, 'like_count':like_count, 'liked':liked, 'post_form':post_form }
+    context = {'post':post, 'like_count':like_count, 'liked':liked, 'post_form':post_form, 'meta':meta }
 
     return render(request, 'discourse/post/post_detail.html', context)
 
@@ -136,7 +142,7 @@ def new_post(request, post_id = None):
     else:
         form = PostForm(instance=post)
         image_form = ImageForm()
-        context =  {'form': form, 'post_id':post_id, 'image_form':image_form}
+        context =  {'form': form, 'post_id':post_id, 'image_form':image_form, 'meta':meta}
         return render(request, 'discourse/form/new_post.html', context)
 
 from django.http import HttpResponse

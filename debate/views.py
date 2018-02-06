@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse, reverse
+from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from .models import PostDebate, Profile, Votes, Notifyme, Stat,\
                 Scores, Badge, Participation, TrackedPost, TrackedBadge, PostDebater
@@ -18,16 +19,17 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from markdownx.forms import ImageForm
 from django.conf import settings
 
+#Default meta details for post
+meta = Meta(
+    title="Welcome to Talkatif. Home to debates, opinions, arguments and talks. A talking family.",
+    description="talkatif.com creates an environment for interesting talks, debates, arguments and opinions.",
+    url="/",
+    extra_props = {
+        #'viewport': 'width=device-width, initial-scale=1.0, minimum-scale=1.0'
+    }
+)
+
 def index(request):
-    #Gets meta details for post
-    meta = Meta(
-        title="Welcome to Talkatif. Home to debates, opinions, arguments and talks.",
-        description="talkatif.com creates an environment for interesting talks, debates, arguments and opinions.",
-        url=reverse('index'),
-        extra_props = {
-            #'viewport': 'width=device-width, initial-scale=1.0, minimum-scale=1.0'
-        }
-    )
     if request.user.is_authenticated():
         return redirect('all_list', permanent=True )
     else:
@@ -38,7 +40,7 @@ from django.contrib.auth.decorators import user_passes_test
 @login_required
 def dashboard(request):
     total_users= User.objects.all().count()
-    return render(request, 'dashboard.html', {'total_users':total_users})
+    return render(request, 'dashboard.html', {'total_users':total_users, 'meta':meta,})
 
 def all_list(request):
     post_list = PostDebate.published.all()
@@ -68,7 +70,7 @@ def all_list(request):
     merged_list = paginator.page(page)
 
 
-    context = {'merged_list': merged_list, 'form':form, 'last_5_badges':last_5_badges,}
+    context = {'merged_list': merged_list, 'form':form, 'last_5_badges':last_5_badges, 'meta':meta,}
     template = 'all_list.html'
 
     return render(request, template , context)
@@ -97,7 +99,7 @@ def debate_list(request, tag_slug = None, category = None):
     last_5_badges = TrackedBadge.objects.all()[:5]
 
     template = 'debate/post/debate_list.html'
-    context = {'object_list': object_list, 'tag':tag,  'page': page, 'last_5_badges':last_5_badges }
+    context = {'object_list': object_list, 'tag':tag,  'page': page, 'last_5_badges':last_5_badges, 'meta':meta }
     return render(request, template , context)
 
 #A function to get the ip host of loggen in user
@@ -262,7 +264,7 @@ def join_participants(request, post_id, position):
     else:
         messages.info(request, 'You have been previously added to the queue. Do not show interest again!')
     return redirect('debate:debate_detail', category = post.debate_category, post_id=post.pk, \
-            post_slug = post.slug )
+            post_slug = post.slug, )
 
 
 from PIL import Image as Img
@@ -319,7 +321,7 @@ def new_post(request, post_id = None):
         form = PostDebateForm(instance=post)
         image_form = ImageForm()
         context = {'form': form, 'sent': sent, 'post_id':post_id,\
-            'image_form':image_form,}
+            'image_form':image_form, 'meta':meta}
         return render(request, 'debate/form/new_debate.html', context)
 
 @login_required
@@ -450,7 +452,7 @@ def profile(request, username):
     context = {'post': post, 'profile_user': profile_user, 'moderated':moderated,'judged':judged, 'supported':supported, 'opposed':opposed, \
                 'won':won, 'lost': lost, 'drew':drew, 'debate_involved': debate_involved, 'badges':badges,
                 'won_count':won_count, 'moderated_count':moderated_count, 'judged_count':judged_count,
-                'profile_user_name':profile_user_name, 'created':created}
+                'profile_user_name':profile_user_name, 'created':created, 'meta':meta}
     return render(request, 'account/profile.html', context)
 
 @login_required
@@ -463,7 +465,7 @@ def deactivate_profile(request):
         messages.success(request, 'Profile successfully disabled.')
         return redirect('index')
     else:
-        return render(request, 'account/deactivate_profile.html', {'admin_email':admin_email})
+        return render(request, 'account/deactivate_profile.html', {'admin_email':admin_email, 'meta':meta})
 
 @login_required
 def mod_debate(request, post_id):
@@ -492,7 +494,7 @@ def mod_debate(request, post_id):
         mod_form = ModeratorForm(instance=related_post)
         postdebate_form = PostDebateForm(instance=related_post)
     context = {'mod_form': mod_form, 'related_post':related_post, 'debaters_supporting':debaters_supporting,\
-    'debaters_opposing':debaters_opposing, 'postdebate_form':postdebate_form }
+    'debaters_opposing':debaters_opposing, 'postdebate_form':postdebate_form, 'meta':meta }
     return render(request, 'debate/form/mod_panel.html', context)
 
 
@@ -588,7 +590,7 @@ def score_debate(request, post_id):
          'judge_support_percent': judge_support_percent, 'judge_oppose_percent':judge_oppose_percent,
          'total_votes':total_votes, 'vote_support_percent': vote_support_percent,
          'vote_oppose_percent': vote_oppose_percent,
-         'supporting_team_percent_score': supporting_team_percent_score, 'opposing_team_percent_score':opposing_team_percent_score }
+         'supporting_team_percent_score': supporting_team_percent_score, 'opposing_team_percent_score':opposing_team_percent_score, 'meta':meta }
 
         return render(request, 'debate/form/score.html', context )
 
@@ -615,7 +617,8 @@ def update_profile(request):
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'account/update_profile.html', {
         'user_form': user_form,
-        'profile_form': profile_form
+        'profile_form': profile_form,
+        'meta':meta,
     })
 
 def see_badge(request):
@@ -623,15 +626,15 @@ def see_badge(request):
     post = Badge.objects.all()
 
     return render(request, 'debate/post/badge.html', {
-        'post':post
+        'post':post, 'meta':meta,
     })
 
 
 def rules_guidelines(request):
-    return render(request, 'debate/post/rules_guidelines.html', { })
+    return render(request, 'debate/post/rules_guidelines.html', {'meta':meta })
 
 def faq(request):
-    return render(request, 'faq.html', { })
+    return render(request, 'faq.html', {'meta':meta })
 
 from django.http import HttpResponse
 try:
@@ -803,6 +806,6 @@ def delete_my_comment(request, comment_id, next=None):
 
             return redirect(comment.content_object.get_absolute_url())
         else:
-            return render(request, 'comments/delete.html', {'comment': comment, "next": next}, )
+            return render(request, 'comments/delete.html', {'comment': comment, 'next': next, 'meta':meta}, )
     else:
         raise Http404
