@@ -26,13 +26,15 @@
 
     <div class="media">
       <div class="media-left">
-        {% if comment.user_url %}
-        <a href="{{ comment.user_url }}">
-          {{ comment.user_email|xtd_comment_gravatar }}
-        </a>
+        <a href="{{ comment.user.get_absolute_url }}">
+        {% if comment.user.profile.image %}
+        <img src="{{ comment.user.profile.image.thumbnail.25x25 }}" class="circle" />
+        {% elif comment.user.socialaccount_set.all.0.get_avatar_url %}
+        <img  src="{{ comment.user.socialaccount_set.all.0.get_avatar_url }}" width="25" height=25/>
         {% else %}
-        {{ comment.user_email|xtd_comment_gravatar }}
+        <img src="{{comment.user.profile.profile_image_url}}" width="25" height="25" />
         {% endif %}
+      </a>
       </div>
       <div class="media-body">
         <h6 class="media-heading">
@@ -70,11 +72,11 @@
         <div class="form-group">
           <div class="text-center">
             {% if already_liked_it %}
-            <input type="submit" name="submit" class="btn btn-warning" value="{% trans 'Withdraw' %}"/>
+            <input type="submit" name="submit" class="btn red" value="{% trans 'Withdraw' %}"/>
             {% else %}
-            <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'I like it' %}"/>
+            <input type="submit" name="submit" class="btn blue" value="{% trans 'I like it' %}"/>
             {% endif %}
-            <a class="btn btn-default" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
+            <a class="btn grey" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
           </div>
         </div>
       </form>

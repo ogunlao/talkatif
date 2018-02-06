@@ -24,7 +24,7 @@
                 <li class="collection-item">Username <span class="right">{{ profile_user.username }}</span></li>
                 <li class="collection-item">First Name <span class="right">{{ profile_user.first_name|capfirst }}</span></li>
                 <li class="collection-item">Last Name <span class="right">{{ profile_user.last_name|capfirst }}</span></li>
-                <li class="collection-item">Other Names <span class="right">{{ post.other_name|capfirst }}</span></li>
+                <li class="collection-item">Other Names <span class="right">{% if post.other_name %}{{ profile_user.other_name|capfirst }}{% endif %}</span></li>
               {% if profile_user == request.user %}
                 <li class="collection-item">Email:
                   <p class="">{{ profile_user.email }}<br>
@@ -39,22 +39,22 @@
                     {% endif %}
                   </span></li>
                 <li class="collection-item">Specialization <span class="right">{{ post.specialization }}</span></li>
-                <li class="collection-item">Location <span class="right">{{ post.city|capfirst }}, {{post.country.name}}</span></li>
+                <li class="collection-item">Location <span class="right">{% if post.city %}{{ post.city|capfirst }},{% endif %} {{post.country.name}}</span></li>
                 <li class="collection-item">Bio <span class="right">{{post.bio}}</span></li>
               </ul>
             </div><!-- End of card -->
           </div><!-- End of column -->
 
               <div class="col m5">
-
                       <div class="card-panel">
                         {% if profile_user.profile.image %}
                         <img src="{{ profile_user.profile.image.thumbnail.200x200 }}" />
+                        {% elif user.socialaccount_set.all.0.get_avatar_url %}
+                        <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" width="100%" height=100%/>
                         {% else %}
-                        <img src="{{ request.user.profile.profile_image_url }}"/>
-
-                        <!--<img src="{{MEDIA_URL}}/images/profile/placeholder.png" width="100%" height=100% /> -->
+                        <img src="{{profile_user.profile.profile_image_url}}" width="100%" height=100% />
                         {% endif %}
+
                     </div>
 
               </div>

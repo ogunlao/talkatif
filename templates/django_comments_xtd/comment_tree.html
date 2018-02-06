@@ -19,8 +19,10 @@
   <a href="{{item.comment.user.profile.get_absolute_url}}">
     {% if item.comment.user.profile.image %}
     <img src="{{ item.comment.user.profile.image.thumbnail.25x25 }}" class="circle" />
+    {% elif user.socialaccount_set.all.0.get_avatar_url %}
+    <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" width="25" height=25/>
     {% else %}
-    <img src="{{ item.comment.user.profile.profile_image_url }}" width="25" height="25" class="circle"/>
+    <img src="{{profile_user.profile.profile_image_url}}" width="25" height="25" />
     {% endif %}
   </a>
   <span class="title">

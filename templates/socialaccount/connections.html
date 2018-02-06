@@ -2,9 +2,15 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Account Connections" %}{% endblock %}
+{% block title %}{% trans "Account Connections" %}{% endblock %}
 
 {% block content %}
+
+<div class="row">
+  <div class="col offset-m3 m6">
+    <div class="card-panel">
+
+
 <h1>{% trans "Account Connections" %}</h1>
 
 {% if form.accounts %}
@@ -32,7 +38,7 @@
 {% endfor %}
 
 <div>
-<button type="submit">{% trans 'Remove' %}</button>
+<button type="submit" class="blue btn">{% trans 'Remove' %}</button>
 </div>
 
 </fieldset>
@@ -43,12 +49,16 @@
 <p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
 {% endif %}
 
-<h2>{% trans 'Add a 3rd Party Account' %}</h2>
+<h4>{% trans 'Add a 3rd Party Account' %}</h4>
 
 <ul class="socialaccount_providers">
 {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
 </ul>
 
 {% include "socialaccount/snippets/login_extra.html" %}
+
+</div>
+</div>
+</div>
 
 {% endblock %}

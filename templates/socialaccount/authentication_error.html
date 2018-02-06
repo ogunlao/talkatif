@@ -2,10 +2,20 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Social Network Login Failure" %}{% endblock %}
+{% block title %}{% trans "Social Network Login Failure" %}{% endblock %}
 
 {% block content %}
+
+<div class="row">
+  <div class="col offset-m3 m6">
+    <div class="card-panel">
+
 <h1>{% trans "Social Network Login Failure" %}</h1>
 
 <p>{% trans "An error occurred while attempting to login via your social network account." %}</p>
+
+</div>
+</div>
+</div>
+
 {% endblock %}

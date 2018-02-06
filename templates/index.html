@@ -42,7 +42,7 @@
     <nav id="nav_f" class="default_color" role="navigation">
         <div class="container">
             <div class="nav-wrapper">
-            <a href="#" id="logo-container" class="brand-logo">Talkatif</a>
+            <a href="#" id="logo-container" class="brand-logo"><img class="circle" src="{{ MEDIA_URL }}logo/talkatif.png" alt="Talkatif" srcset="{{ MEDIA_URL }}logo/talkatif12.svg" width = "100", height= "100" /></a>
                 <ul class="right hide-on-med-and-down">
                     <li><a href="#intro">About Us</a></li>
                     <li><a href="#snap">A snap</a></li>
@@ -125,7 +125,7 @@
 
 <!--Parallax-->
 <div class="parallax-container">
-    <div class="parallax"><img src="{{MEDIA_URL}}/img/base1.jpg"></div>
+    <div class="parallax"><img src="{{MEDIA_URL}}attachment/index/base1.jpg"></div>
 </div>
 
 <!--Footer-->
@@ -154,10 +154,15 @@
                         <div class="col  s1">OR</div>
 
                         <div class="col s4">
-                            <p><a href="{% url 'account_signup' %}" class="yellow-text">SignUp</a</p>
+                            <p><a href="{% url 'account_signup' %}" class="yellow-text">SignUp</a></p>
                         </div>
+
                     </div>
+
                 </form>
+                <div>
+                  <p class="white-text">Login with your <a class="yellow-text" href="{% url 'account_login' %}">social account. </a></p>
+              </div>
             </div>
             <div class="col l3 s12">
                 <h5 class="white-text">talkatif.com</h5>

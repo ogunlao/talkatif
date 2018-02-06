@@ -13,6 +13,7 @@ from versatileimagefield.fields import VersatileImageField
 from versatileimagefield.placeholder import OnDiscPlaceholderImage
 import os
 from markdownx.models import MarkdownxField
+from django.conf import settings
 
 #For comment moderation
 from django_comments_xtd.moderation import moderator, SpamModerator
@@ -188,12 +189,8 @@ class Profile(models.Model):
     )
 
     def profile_image_url(self):
-        fb_uid = SocialAccount.objects.filter(user_id=self.user.id, provider='facebook')
-
-        if len(fb_uid):
-            return "http://graph.facebook.com/{}/picture?width=200&height=200".format(fb_uid[0].uid)
-
-        return "http://www.gravatar.com/avatar/{}?s=100".format(hashlib.md5(self.user.email.encode('utf-8')).hexdigest())
+        return settings.MEDIA_URL+"/images/avatar.svg"
+        #return "http://www.gravatar.com/avatar/{}?s=100".format(hashlib.md5(self.user.email.encode('utf-8')).hexdigest())
 
 
     def get_absolute_url(self):

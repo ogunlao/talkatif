@@ -6,13 +6,21 @@
 
 {% block content %}
 
+<div class="row">
+  <div class="col offset-m3 m6">
+    <div class="card-panel">
+
 <h1>{% trans 'OpenID Sign In' %}</h1>
 
 
 <form id="openid_login_form" class="openid_login" method="post" action="{% url 'openid_login' %}">
 {% csrf_token %}
 {{form.as_p}}
-<button type="submit">Sign In</button>
+<button type="submit" class="blue btn">Sign In</button>
 </form>
+
+</div>
+</div>
+</div>
 
 {% endblock %}
