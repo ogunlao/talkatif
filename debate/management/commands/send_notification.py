@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 #from django.core.mail import send_mass_mail
-from stream.models import PostDebate, Notifyme
+from debate.models import PostDebate, Notifyme
 from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
@@ -31,14 +31,17 @@ def notify_all(schedule_post):
     for posts in schedule_post:
         notification_list = Notifyme.objects.filter(post = posts).filter(notified = False)
         if notification_list:
-            subject = "Notification from Puto"
+            subject = "Debate Notification from talkatif.com"
             message_list = []
             for lists in notification_list:
                 recipients_email = lists.user_notify.email
-                html_content = render_to_string('debate_subscribers_template.html', {'name':person.get_full_name(),\
-                         'debate_title':notification_post.title,'debate_time':notification_post.begin,'debate_summary':notification_post.summary,})
+                ctx = {'name':lists.user_notify.get_full_name(),\
+                         'debate_title':posts.title, \
+                         'debate_time':posts.begin,'debate_summary':posts.summary,\
+                         'debate_url':"https://talkatif.com"+str(posts.get_absolute_url()), 'admin_email':settings.SERVER_EMAIL}
+                html_content = render_to_string('debate_subscribers_template.html', ctx)
                 message = strip_tags(html_content) #strips the html of tags to get the raw text.
-                recipients_email = person.email
+                recipients_email = lists.user_notify.email
                 message_detail = EmailMultiAlternatives(subject, message, from_email, [recipients_email])
                 message_detail.attach_alternative(html_content,"text/html")
                 message_list.append(message_detail)

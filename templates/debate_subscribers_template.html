@@ -1,12 +1,11 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Puto Notification</title>
-<link rel="stylesheet" type="text/css" href="stylesheets/email.css" />
+<title>Talkatif Debate Notification</title>
+<link href="https://www.talkatif.com/static/css/email.css" rel="stylesheet">
 </head>
 <body bgcolor="#FFFFFF">
 
@@ -17,8 +16,8 @@
 <div class="content">
 <table bgcolor="#999999">
 <tr>
-<td><img src="https://placehold.it/200x50/" /></td>
-<td align="right"><h6 class="collapse">Puto Debate</h6></td>
+<td><img src="https://www.talkatif.com/media/logo/talkatif.png" width="50" height="50"/></td>
+<td align="right"><h6 class="collapse">Talkatif Debate</h6></td>
 </tr>
 </table>
 </div>
@@ -36,22 +35,17 @@
 <tr>
 <td>
 
-
-
-
   <h1>Debate Notification</h1>
-  <p>Dear {{name}}, You subscribed to be notifed about the following debate.<br>
+  <p>Dear {{name}},
+    You subscribed to be notifed about the following debate:<br>
     </p>
 
-
-<h3>Hi, {{name|title}}</h3>
-<p class="lead">The debate starts {{debate_time}} Nigerian Time at Puto.</p><br>
-<p class="lead">Title:<br>{{debate_title}}</p>
-<p>
-  Debate Summary:<br>{{debate_summary}}</p>
+<h3>Hi, {{name}}</h3>
+<p class="lead">The debate starts {{debate_time}}.</p><br>
+<p class="lead">Title:<br><a href="{{debate_url}}">{{debate_title}}</a></p>
 
 <p class="callout">
-To get further details about the debate, debaters list and comments, <a href="#">click here to visit! &raquo;</a>
+To get further details about the debate, debaters list and comments, <a href="{{debate_url}}">click here to visit! &raquo;</a>
 </p>
 <br>
 
@@ -63,7 +57,7 @@ To get further details about the debate, debaters list and comments, <a href="#"
 <tr>
 <td>
 <h5 class="">Connect with Us:</h5>
-<p class=""><a href="#" class="soc-btn fb">Facebook</a> <a href="#" class="soc-btn tw">Twitter</a> <a href="#" class="soc-btn gp">Google+</a></p>
+<p class=""><a href="https://www.facebook.com/talkatif/" class="soc-btn fb">Facebook</a> <a href="https://www.twitter.com/talkatif/" class="soc-btn tw">Twitter</a></p>
 </td>
 </tr>
 </table>
@@ -72,7 +66,7 @@ To get further details about the debate, debaters list and comments, <a href="#"
 <tr>
 <td>
 <h5 class="">Contact Info:</h5>
-Email: <strong><a href="emailto:{{setings.SERVER_EMAIL}}">{{setings.SERVER_EMAIL}}</a></strong></p>
+Email: <strong><a href="emailto:{{admin_email}}">{{admin_email}}</a></strong></p>
 </td>
 </tr>
 </table>
@@ -99,9 +93,11 @@ Email: <strong><a href="emailto:{{setings.SERVER_EMAIL}}">{{setings.SERVER_EMAIL
 <tr>
 <td align="center">
 <p>
-<a href="#">Terms</a> |
-<a href="#">Privacy</a> |
-<a href="#"><unsubscribe>Unsubscribe</unsubscribe></a>
+
+<a href="https://www.talkatif.com/debate/rules_guidelines/">Rules</a> |
+<a href="https://www.talkatif.com/faq/">FAQ</a> |
+<a href="https://www.talkatif.com/blog/">Blog</a>
+
 </p>
 </td>
 </tr>

@@ -136,6 +136,14 @@
 
 {% include "footer.html" %}
 
+{% if messages %}
+    {% for message in messages %}
+      <script>
+      // Materialize.toast(message, displayLength, className, completeCallback);
+        $( document ).ready(Materialize.toast('{{message}}', 2000)) // 4000 is the duration of the toast
+      </script>
+  {% endfor %}
+{% endif %}
 
 {% compress js %}
   <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
@@ -143,14 +151,7 @@
   <script src="{% static 'js/field-selection.js' %}" type="text/javascript"></script>
   <script src="{% static 'js/button_click.js' %}" type="text/javascript"></script>
 
-  {% if messages %}
-      {% for message in messages %}
-  <script>
-  // Materialize.toast(message, displayLength, className, completeCallback);
-    $( document ).ready(Materialize.toast('{{message}}', 2000)) // 4000 is the duration of the toast
-  </script>
-    {% endfor %}
-  {% endif %}
+
 
   <script type="text/x-mathjax-config">
   MathJax.Hub.Config({

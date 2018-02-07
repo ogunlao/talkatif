@@ -4,7 +4,7 @@
 
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Talkatif Debate Notification</title>
+<title>Welcome to Talkatif</title>
 <link href="https://www.talkatif.com/static/css/email.css" rel="stylesheet">
 </head>
 <body bgcolor="#FFFFFF">
@@ -17,7 +17,7 @@
 <table bgcolor="#999999">
 <tr>
 <td><img src="https://www.talkatif.com/media/logo/talkatif.png" width="50" height="50"/></td>
-<td align="right"><h6 class="collapse">Talkatif Debate</h6></td>
+<td align="right"><h6 class="collapse">Welcome, {{name}}</h6></td>
 </tr>
 </table>
 </div>
@@ -35,27 +35,27 @@
 <tr>
 <td>
 
-<h1>Debate Notification.</h1>
-<p>Dear {{name}}, you have been selected to be part of the <strong>{{debate_job}}</strong> team.<br>
-Pls, prepare ahead and get in touch with other participants if necessary.</p>
+<h3>Dear, {{name}}</h3>
+<p class="lead">We welcome you to the talkatif community. To get up-to-speed about our activities, we have
+curated a list of present debates. Click to access them.</p><br>
 
-
-<h3>Hi, {{name}}</h3>
-<p class="lead">You have chosen to participate in a debate starting {{debate_time}}</p><br>
-<p class="lead">Title:<br><a href="{{debate_url}}">{{debate_title}}</a></p>
-
+{% if postdebate %}
 <p class="callout">
-It is reasonable to get familiar with your team before commencement. <a href="{{debate_url}}">Click here to visit! &raquo;</a>
-</p>
-<br>
-<p class="callout">
-Other {{debate_job}} team members<br>
-<ul>
-{% for person in debate_team %}
-<li>{{person.get_full_name}} - <a href="https://www.talkatif.com/accounts/profile/{{username}}/">@{{person.username}}</a>
+Debates.<br>
+{% for debate in postdebate %}
+<a href="https://talkatif.com{{debate.get_absolute_url}}">{{debate.title}}</a>
 {% endfor %}
-</ul>
 </p>
+{% endif %}
+<br>
+{% if post %}
+<p class="callout">
+Discussions.<br>
+{% for discussion in post %}
+<a href="https://talkatif.com{{discussion.get_absolute_url}}">{{discussion.title}}</a>
+{% endfor %}
+</p>
+{% endif %}
 <br>
 
 <table class="social" width="100%">
@@ -102,7 +102,9 @@ Email: <strong><a href="emailto:{{admin_email}}">{{admin_email}}</a></strong></p
 <tr>
 <td align="center">
 <p>
-<a href="https://www.talkatif.com{% url 'faq' %}">FAQ</a> | <a href="https://www.talkatif.com{% url 'debate:rules_guidelines' %}">Debate Rules</a> | <a href="https://www.talkatif.com/blog/">Blog</a>
+
+<a href="https://www.talkatif.com/debate/rules_guidelines/">Rules</a> | <a href="https://www.talkatif.com/faq/">FAQ</a> | <a href="https://www.talkatif.com/blog/">Blog</a>
+
 </p>
 </td>
 </tr>

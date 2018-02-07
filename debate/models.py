@@ -202,6 +202,35 @@ class Profile(models.Model):
         """
         return self.user.get_full_name()
 
+from allauth.account.signals import email_confirmed
+from django.dispatch import receiver
+
+@receiver(email_confirmed)
+def email_confirmed_(request, email_address, **kwargs):
+    """
+    Signal to send welcome message to user on first login
+    """
+    from django.core.mail import EmailMultiAlternatives
+    from django.template.loader import render_to_string, get_template
+    from django.utils.html import strip_tags
+    from debate.models import PostDebate
+    from discourse.models import Post
+    postdebate = PostDebate.objects.filter()[:5]
+    post = Post.objects.filter()[:5]
+    user = User.objects.get(email=email_address.email)
+
+    # user.is_active = True
+    # user.save()
+
+    ctx = {'postdebate':postdebate, 'post':post, 'user':user}
+    from_email = settings.SERVER_EMAIL
+    recipients_email = user.email
+    subject = "Welcome to the Talkatif Community."
+    html_content = render_to_string('welcome_mail.html', ctx)
+    message = strip_tags(html_content) #strips the html of tags to get the raw text.
+    msg = EmailMultiAlternatives(subject, message, from_email, [recipients_email])
+    msg.attach_alternative(html_content,"text/html")
+    msg.send()
 
 class PostDebater(models.Model):
     """

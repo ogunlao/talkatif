@@ -465,22 +465,19 @@ def deactivate_profile(request):
         messages.success(request, 'Profile successfully disabled.')
 
         from django.core.mail import send_mail
-        message = "Dear"+ request.user.get_full_name +"\nThis is a notification that your account has \
-        been deactivated. You would be unable to login or make comments. \n\n If you would like to reactivate \
-        at anytime, feel free to send a reactivation mail to "+admin_email+" from your registered email. \n\n \
-        For reference, your account details are as follows; \n \
-        Username : "+user.username+"\n \
-        Full name: "+user.get_full_name()+". \
-        \n\nThan you for your contributions to the talkatif community,\
-        \nLaolu."
+        from django.template.loader import render_to_string
+        import datetime
+        now = datetime.datetime.now()
+        dvalues = {'full_name':user.get_full_name(), 'username':user.username, 'deactivation_date':now, 'admin_email':admin_email}
+        body = render_to_string('deactivation_mail.txt', dvalues)
 
         send_mail(
         'Deactivation of talkatif.com account',
-        'Dear',
-        settings.SERVER_EMAIL,
-        [request.user.email],
-        fail_silently=False,
-    )
+        body,
+        admin_email,
+        [user.email],
+        fail_silently=True,
+            )
         return redirect('index')
 
     else:

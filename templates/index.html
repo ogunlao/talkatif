@@ -195,7 +195,7 @@
     </div>
     <div class="footer-copyright default_color">
         <div class="container">
-            &copy; oGuNLaO {% now 'Y' %}
+            &copy; Talkatif {% now 'Y' %}
         </div>
     </div>
 </footer>
@@ -203,7 +203,14 @@
     <!--  Scripts-->
     <script src="{% static 'js/index/plugin-min.js' %}"></script>
     <script src="{% static 'js/index/custom-min.js' %}"></script>
-
+    {% if messages %}
+        {% for message in messages %}
+          <script>
+          // Materialize.toast(message, displayLength, className, completeCallback);
+            $( document ).ready(Materialize.toast('{{message}}', 2000)) // 4000 is the duration of the toast
+          </script>
+      {% endfor %}
+    {% endif %}
 
     </body>
 </html>

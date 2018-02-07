@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 #from django.core.mail import send_mass_mail
-from stream.models import PostDebate
+from debate.models import PostDebate
 from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
@@ -31,13 +31,16 @@ def notify_all(schedule_post):
     """
     for notification_post in schedule_post:
         if notification_post:
-            subject = "Notification from Puto.ng"
+            subject = "Debate Notification from talkatif.com"
             message_list = message_detail = []
             if notification_post.moderator.all(): #checks if there are modertors
                 for person in notification_post.moderator.all():
-                    html_content = render_to_string('notification_template.html', {'name':person.get_full_name(),\
+                    ctx = {'name':person.get_full_name(), 'username': person.username, \
+                            'debate_time':notification_post.begin, \
                             'debate_job' : 'moderating', 'debate_title':notification_post.title,\
-                            'debate_summary':notification_post.summary, 'debate_team':notification_post.moderator.all()})
+                            'debate_summary':notification_post.summary, 'debate_team':notification_post.moderator.all(),
+                            'debate_url':"https://talkatif.com"+str(notification_post.get_absolute_url()), 'admin_email':settings.SERVER_EMAIL}
+                    html_content = render_to_string('notification_template.html', ctx )
                     message = strip_tags(html_content) #strips the html of tags to get the raw text.
                     recipients_email = person.email
                     message_detail = EmailMultiAlternatives(subject, message, from_email, [recipients_email])
