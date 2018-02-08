@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django_countries.fields import LazyTypedChoiceField
 from django_countries import countries #country dropdown
 from django.contrib.auth.hashers import make_password #used to hash passwords
-from multiupload.fields import MultiImageField
 
 class PostDebateForm(forms.ModelForm):
     class Meta:
