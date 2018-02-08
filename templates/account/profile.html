@@ -17,19 +17,21 @@
                 <li class="collection-header"><h4>{{ profile_user_name|title }}</h4>
                   {% if profile_user == request.user %}
                     <a class="yellow btn black-text" href="{% url 'update_profile'%}">Edit Profile</a>
-
-                    <small class="right"><a href="{% url 'deactivate_profile' %}">Deactivate</a></small>
+                    {% if request.user == profile_user %}
+                    <small class="right"><a class="grey-text"  href="{% url 'deactivate_profile' %}">Deactivate</a></small>
+                    {% endif %}
                   {% endif %}
                 </li>
                 <li class="collection-item">Username <span class="right">{{ profile_user.username }}</span></li>
                 <li class="collection-item">First Name <span class="right">{{ profile_user.first_name|capfirst }}</span></li>
                 <li class="collection-item">Last Name <span class="right">{{ profile_user.last_name|capfirst }}</span></li>
-                <li class="collection-item">Other Names <span class="right">{% if post.other_name %}{{ profile_user.other_name|capfirst }}{% endif %}</span></li>
+                <li class="collection-item">Other Name <span class="right">{{ post.other_name|capfirst }}</span></li>
               {% if profile_user == request.user %}
                 <li class="collection-item">Email:
                   <p class="">{{ profile_user.email }}<br>
+                    {% if request.user == profile_user %}
                     <span class="blue-text"><a href={% url 'account_email'%}>Add<span></a></p></li>
-
+                    {% endif %}
               {% endif %}
                 <li class="collection-item">Participating in
                   <span class="right">
@@ -46,15 +48,22 @@
           </div><!-- End of column -->
 
               <div class="col m5">
+                      {% load avatar_tags %}
                       <div class="card-panel">
-                        {% if profile_user.profile.image %}
-                        <img src="{{ profile_user.profile.image.thumbnail.200x200 }}" />
+                        {% if profile_user|has_avatar %}
+                        {% avatar user 150 class="circle responsive-img" %}
+                          {% if request.user == profile_user %}
+                            <p><a href="{% url 'avatar_delete' %}">Remove avatar</a></p>
+                          {% endif %}
                         {% elif user.socialaccount_set.all.0.get_avatar_url %}
-                        <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" width="100%" height=100%/>
+                        <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="Default social avater" width="100%" height=100%/>
+                        <small class="grey-text">This is your social avatar.</small>
                         {% else %}
                         <img src="{{profile_user.profile.profile_image_url}}" width="100%" height=100% />
                         {% endif %}
-
+                        {% if request.user == profile_user %}
+                          <p><a href="{% url 'avatar_change' %}">Change avatar</a></p>
+                        {% endif %}
                     </div>
 
               </div>

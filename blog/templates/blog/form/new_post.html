@@ -1,0 +1,85 @@
+{% extends "discourse/base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% load markdownify %}
+{% block extra_head %} {% endblock extra_head %}
+{% block title %}New Discourse{% endblock %}
+
+{% block content %}
+
+        <div class="row">
+
+
+          <div class="col m6 offset-m3">
+            <div class="card-panel">
+              <h5>Post or Edit a discourse</h5>
+
+                <form class="" enctype="multipart/form-data" action="." method="post">
+                  {% csrf_token %}
+
+                    <div class="input-field">
+                      {{ form.title|safe}}
+                      <label for="{{ form.title.auto_id }}">{{form.title.label_tag}}</label>
+                    </div>
+                    {% if form.title.help_text %}
+                    <p><small class="grey-text">{{ form.title.help_text }}</small></p>
+                    {% endif %}
+                    <!-- Text Editor -->
+                    <div class="row">
+
+                    <div class="collection">
+                      {% include "button_click.html" %}
+                      {{ form.summary|attr:"class:materialize-textarea"}}
+                    </div>
+                  </div>
+                    <label for="{{ form.summary.auto_id }}">{{form.summary.label_tag}}</label>
+                    {% if form.summary.help_text %}
+                    <p><small class="grey-text">{{ form.summary.help_text|markdownify }}</small></p>
+                    {% endif %}
+
+                    <div class="input-field">
+                      {{ form.tags}}
+                      <label for="{{ form.tags.auto_id }}">{{form.tags.label_tag}}e.g. Music, Culture, Politics e.t.c.</label>
+                    </div>
+                    {% if form.tags.help_text %}
+                    <p><small class="grey-text">{{ form.tags.help_text|markdownify }}</small></p>
+                    {% endif %}
+
+                    <div class="file-field input-field">
+                      <div class="blue btn">
+                        <span>Image</span>
+                        <input type="file" accept="image/*" id="id_image" name="image">
+                      </div>
+                      <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                      </div>
+                    </div>
+
+
+                  {% if post_id %}
+                  <div class="row">
+                    <button type="submit" class="yellow btn black-text">Update Discourse</button>
+                        OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
+                  </div>
+                  {% else %}
+                  <p>
+                    <input type="checkbox" id="verified" required />
+                    <label for="verified">I would be responsible for what I post.</label>
+                  </p><br>
+
+                  <div class="row">
+                    <button type="submit" class="yellow btn black-text">Add Discourse</button>
+                    OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
+                  </div>
+                  {% endif %}
+
+            </form>
+            {{ form.media }}
+        </div><!-- End of card -->
+
+
+      </div>
+
+        </div>
+
+{% endblock %}

@@ -239,6 +239,7 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
             'user_in_supporting_team':user_in_supporting_team, \
             'user_in_opposing_team':user_in_opposing_team, 'user_is_moderator':user_is_moderator, \
             'user_is_judge':user_is_judge, 'open_comment':open_comment, }
+
     return render(request, 'debate/post/debate_detail.html', context)
 
 

@@ -90,7 +90,6 @@ def post_detail(request, post_id, post_slug):
     for person in post.likes.all():
         if person == request_user:
             liked = True
-            print("Yeah liked")
             break
 
     like_count = post.total_likes #counts total likes on post

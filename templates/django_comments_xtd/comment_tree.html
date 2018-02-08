@@ -17,12 +17,13 @@
 <li class="collection-item avatar">
   <a name="c{{ item.comment.id }}" ></a>
   <a href="{{item.comment.user.profile.get_absolute_url}}">
-    {% if item.comment.user.profile.image %}
-    <img src="{{ item.comment.user.profile.image.thumbnail.25x25 }}" class="circle" />
+    {% load avatar_tags %}
+    {% if item.comment.user|has_avatar %}
+      {% avatar item.comment.user 25 class="circle" %}
     {% elif user.socialaccount_set.all.0.get_avatar_url %}
-    <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" width="25" height=25/>
+      <img  src="{{ item.comment.user.socialaccount_set.all.0.get_avatar_url }}" width="25" height=25/>
     {% else %}
-    <img src="{{profile_user.profile.profile_image_url}}" width="25" height="25" />
+      <img src="{{item.comment.user.profile.profile_image_url}}" width="25" height="25" />
     {% endif %}
   </a>
   <span class="title">
@@ -44,7 +45,6 @@
           {% if perms.comments.can_moderate %}
           <a class="mutedlink" href="{% url 'comments-delete' item.comment.pk %}"><span title="{% trans 'remove comment' %}"><i class="fa fa-trash"></i></span></a>
           {% endif %}
-
         </span>
 
   </span>

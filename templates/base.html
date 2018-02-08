@@ -6,7 +6,6 @@
 {% load staticfiles %}
 {% load meta %}
 
-
 <html>
 <head {% meta_namespaces %}>
     {% include "meta/meta.html" %}
@@ -17,8 +16,7 @@
   <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 
   <!-- Site Properties -->
-  <title>talkatif - {% block title %}Home{% endblock %}</title>
-
+  <title>Talkatif - {% block title %}Home{% endblock %}</title>
 
   {% load compress %}
   {% compress <js/css> %}
@@ -61,14 +59,18 @@
     <a href="{% url 'all_list' %}" class="center brand-logo"><img class="circle" alt="talkatif" src="{{ MEDIA_URL }}logo/talkatif.png",  width = "65", height= "65"></a>
     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
     <ul id="nav-mobile" class="hide-on-med-and-down">
-      <li class="tab"><a target="_self" href="{% url 'all_list'  %}">Feed</a></li>
-      <li class="tab"><a target="_self" href="{% url 'debate:debate_list_by_category' 'closed' %}">Debate
+      {% url 'all_list' as url %}
+      <li class="tab {% if request.path == url %}active{% endif %}"><a target="_self" href="{% url 'all_list'  %}">Feed</a></li>
+      {% url 'debate:debate_list_by_category' 'closed' as url1 %}
+      <li class="tab {% if request.path == url1 %}active{% endif %}"><a target="_self" href="{% url 'debate:debate_list_by_category' 'closed' %}">Debate
         {% if daily_debate > 0 %}<span class="new badge amber lighten-4 red-text">{{daily_debate}}</span>{% endif %}
       </a></li>
-      <li class="tab"><a target="_self" href= "{% url 'debate:debate_list_by_category' 'open' %}">Argument
+      {% url 'debate:debate_list_by_category' 'open' as url2 %}
+      <li class="tab {% if request.path == url2 %}active{% endif %}"><a target="_self" href= "{% url 'debate:debate_list_by_category' 'open' %}">Argument
         {% if daily_argument > 0 %}<span class="new badge amber lighten-4 red-text">{{daily_argument}}</span>{% endif %}
       </a></li>
-      <li class="tab"><a target="_self" class="active" href="{% url 'discourse:post_list' %}">Discourse
+      {% url 'discourse:post_list' as url3 %}
+      <li class="tab {% if request.path == url3 %}active{% endif %}"><a target="_self" class="active" href="{% url 'discourse:post_list' %}">Discourse
         {% if daily_discourse > 0 %}<span class="new badge amber lighten-4 red-text">{{daily_discourse}}</span>{% endif %}</a></li>
     </ul>
     <ul id="nav-mobile" class="right hide-on-med-and-down">

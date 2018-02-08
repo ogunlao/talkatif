@@ -9,7 +9,7 @@
 <hr/>
 
 <div class="row">
-  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">  
+  <div class="col offset-m2 col m8">
     <ul class="media-list" id="comment-list">
       {% for comment in object_list %}
       {% include "django_comments_xtd/comment.html" %}
@@ -34,7 +34,7 @@
         </li>
       </ul>
     </div><!-- pagination -->
-    
+
   </div>
 </div>
 {% endblock %}

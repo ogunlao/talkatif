@@ -1,12 +1,10 @@
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
 from django.utils.text import slugify
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField #For Profile
-from django.core.validators import MaxValueValidator, MinValueValidator
 from markdownx.models import MarkdownxField
 
 class PublishedManager(models.Manager):

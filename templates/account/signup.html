@@ -10,7 +10,6 @@
 {% block title %}{% trans "Signup" %}{% endblock %}
 
 {% block content %}
-
 <div class="row">
 
   <div class="col m6 offset-m3">
@@ -29,7 +28,7 @@
               </a>
             </div>
             <div class="col s4">
-              <a id="twitter_login" href="/accounts/twitter/login" class="btn blue omb_btn-twitter">
+              <a id="twitter_login" href="/accounts/twitter/login" class="btn blue lighten-3 omb_btn-twitter">
                 <i class="fa fa-twitter show-on-small"></i>
                 <span class="hide-on-small-only">Twitter</span>
               </a>
@@ -49,25 +48,66 @@
               </div>
           </div>
 
-          <h3>{% trans "Sign Up" %}</h3>
+          <h5>{% trans "Sign Up" %}</h5>
 
           <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
           <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
             {% csrf_token %}
-            {% for field in form %}
-            <div class="input-field">
-            <p>
-              {{ field.label_tag }}<br>
-              {{ field|add_class:"form-control"}}
+            <div class="row">
+              <div class="col m6">
+                  <div class="input-field">
+                  <p>
+                    {{ form.first_name.label_tag }}<br>
+                    {{ form.first_name}}
+                    {% if field.help_text %}
+                      <small style="color: grey">{{ form.first_name.help_text }}</small>
+                    {% endif %}
+                  </p>
+                  <p><strong class="red-text">{{ form.first_name.errors }}</strong></p>
+                </div>
+              </div>
+              <div class="col m6">
+                  <div class="input-field">
+                  <p>
+                    {{ form.last_name.label_tag }}<br>
+                    {{ form.last_name}}
+                    {% if field.help_text %}
+                      <small style="color: grey">{{ form.last_name.help_text }}</small>
+                    {% endif %}
+                  </p>
+                  <p><strong class="red-text">{{ form.last_name.errors }}</strong></p>
+                </div>
+              </div>
+            </div>
 
-              {% if field.help_text %}
-                <small style="color: grey">{{ field.help_text }}</small>
-              {% endif %}
-            </p>
-            <p><strong class="red-text">{{ field.errors }}</strong></p>
-          </div>
-          {% endfor %}
+            <div class="row">
+              <div class="col m6">
+                  <div class="input-field">
+                  <p>
+                    {{ form.email.label_tag }}<br>
+                    {{ form.email}}
+                    {% if form.email.help_text %}
+                      <small style="color: grey">{{ form.email.help_text }}</small>
+                    {% endif %}
+                  </p>
+                  <p><strong class="red-text">{{ form.email.errors }}</strong></p>
+                </div>
+              </div>
+              <div class="col m6">
+                  <div class="input-field">
+                  <p>
+                    {{ form.password.label_tag }}<br>
+                    {{ form.password}}
+                    {% if form.password.help_text %}
+                      <small style="color: grey">{{ form.password.help_text }}</small>
+                    {% endif %}
+                  </p>
+                  <p><strong class="red-text">{{ form.password.errors }}</strong></p>
+                </div>
+              </div>
+            </div>
+
 
             {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />

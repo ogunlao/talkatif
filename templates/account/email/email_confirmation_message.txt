@@ -4,9 +4,11 @@ You're receiving this e-mail because you have signed up on {{ site_name }}.
 
 This email address would be linked to your account upon verification.
 
-A username "{{ user_display }}" has been automatically created for you, and can be used to signin. It can be changed upon verification.
+A username "{{ user_display }}" has been automatically created for you, and can be used to signin. It can be changed upon verification via your profile.
 
-To activate your account, go to {{ activate_url }}
+To activate your account, click <a href={{ activate_url }}><button>Activate account</button></a>
+or copy this link into your browser;
+{{ activate_url }}
 {% endblocktrans %}{% endautoescape %}
 {% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you from all of us at {{ site_name }}!
 Laolu.{% endblocktrans %}

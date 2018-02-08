@@ -33,7 +33,14 @@
       <ul>
       <li class="collection-item avatar">
         <a href="{{ user.profile.get_absolute_url }}">
-          <img src="{{ user.profile.image.thumbnail.25x25 }}" alt="" class="circle"/></a>
+          {% load avatar_tags %}
+          {% if user|has_avatar %}
+            {% avatar user 25 class="circle" %}
+          {% elif user.socialaccount_set.all.0.get_avatar_url %}
+            <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" width="25" height=25/>
+          {% else %}
+            <img src="{{user.profile.profile_image_url}}" width="25" height="25" />
+          {% endif %}
         </a>
 
       <span class="title">
@@ -47,7 +54,7 @@
 
         <p>{{ comment|markdown:"safe, code-friendly, code-color" }}</p>
         <small>{{ comment|wordcount }} word{{ content|wordcount|pluralize }}. | {{comment|minute_read}}</small>
-        
+
     </ul>
       {% endif %}
     </div>

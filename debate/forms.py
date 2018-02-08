@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django_countries.fields import LazyTypedChoiceField
 from django_countries import countries #country dropdown
 from django.contrib.auth.hashers import make_password #used to hash passwords
-from multiupload.fields import MultiImageField
 
 class PostDebateForm(forms.ModelForm):
     class Meta:
@@ -21,27 +20,12 @@ class SignupForm(forms.Form):
     first_name = forms.CharField(max_length=100, label='First Name')
     last_name = forms.CharField(max_length=100, label='Last Name')
     email = forms.EmailField(label='Email Address')
-    password1 = forms.CharField(widget=forms.PasswordInput(), label='Password')
-    password2 = forms.CharField(widget=forms.PasswordInput(), label='Re-enter Password')
-    city = forms.CharField(max_length=100, label='Your Current City')
-    country = LazyTypedChoiceField(choices=countries)
-    specialization = forms.CharField(label='Specialization', help_text="e.g. Practicing Lawyer, \
-                        Programmer, Business Man, Political Activist")
+    password = forms.CharField(widget=forms.PasswordInput(), label='Password')
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email).exists():
-            raise forms.ValidationError(u'This email address has been registered. Do not try to register again.')
+            raise forms.ValidationError(u'This email address has been already been registered.')
         return email
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-
-        if not password2:
-            raise forms.ValidationError("You must confirm your password")
-        if password1 != password2:
-            raise forms.ValidationError("Your passwords do not match")
-        return password2
 
     def save(self, request):
         # Save your user
@@ -50,22 +34,15 @@ class SignupForm(forms.Form):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.email = self.cleaned_data['email']
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        user.password = make_password(self.clean_password2())
+        password = self.cleaned_data.get('password')
+        user.password = make_password(password)
         #set_password(self.cleaned_data["password1"])
 
         import random
         user.username = user.first_name + str(random.randint(0,99))
 
         user.save()
-
-        profile.user = user
-        profile.city = self.cleaned_data['city']
-        profile.country = self.cleaned_data['country']
-        profile.specialization = self.cleaned_data['specialization']
-        profile.save()
-
+        
         return user
 
 class ProfileForm(forms.ModelForm):

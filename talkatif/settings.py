@@ -46,12 +46,10 @@ INSTALLED_APPS = [
     'haystack',
     'debate.apps.DebateConfig',
     'discourse.apps.DiscourseConfig',
+    'blog.apps.BlogConfig',
     'anymail',
-    'mptt',
     'markdownx',
-    'zinnia', #blog
-    'tagging',
-    'versatileimagefield',
+    'avatar',
     'django_user_agents',
 
     #used by chron to send emails
@@ -80,11 +78,8 @@ INSTALLED_APPS = [
     'taggit',
     'widget_tweaks',
     'el_pagination',
-    'django_social_share',
-
 
     'meta', #adds metadata to sites
-    'imagekit',
     'robots', #Generates site.xml file for crawlers
     'django_comments_xtd',
     'django_comments',
@@ -120,7 +115,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
-                #'zinnia.context_processors.version', optional
                 'django.template.context_processors.media',
                 'debate.context_processors.site_processor',
 
@@ -335,12 +329,6 @@ NEWSLETTER_BATCH_DELAY = 60
 # Number of emails in one batch
 NEWSLETTER_BATCH_SIZE = 100
 
-#versatile image field settings
-VERSATILEIMAGEFIELD_SETTINGS = {
-    'create_images_on_demand': True,
-    }
-VERSATILEIMAGEFIELD_USE_PLACEHOLDIT = True
-
 #MAthjax
 MATHJAX_ENABLED=True
 
@@ -353,6 +341,11 @@ MARKDOWNX_UPLOAD_URLS_PATH = '/attachment/upload/'
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('attachment/%Y/%m/%d/')
 MARKDOWNX_UPLOAD_MAX_SIZE = 4 * 1024 * 1024 #4 MB in bytes
 MARKDOWNX_IMAGE_MAX_SIZE = {
-    'size': (300, 0),
+    'size': (500, 0),
     'quality': 80
 }
+
+#Avatar settings
+AVATAR_CLEANUP_DELETED = True
+AVATAR_MAX_AVATARS_PER_USER = 3
+AVATAR_CLEANUP_DELETED = True

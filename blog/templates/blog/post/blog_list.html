@@ -1,0 +1,74 @@
+{% extends "blog/base.html" %}
+{% load widget_tweaks %}
+{% load humanize %}
+{% load markdownify %}
+{% load comments %}
+{% load comments_xtd %}
+{% load i18n %}
+
+{% block title %}Blog{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col m6 offset-m2">
+    {% if tag %}
+    <div class="row">
+      Results for:
+      <a href="{% url 'blog:blog_list_by_tag' tag.slug   %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
+    </div>
+    {% endif %}
+
+    {% if object_list %}
+      {% for post in object_list.object_list %}
+
+    <div class="card">
+      <div class="card-content">
+        {% for tag in post.tags.all %}
+          <a href="{% url 'blog:blog_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
+        {% endfor %}
+        <h5 class=""><a href="{{post.get_absolute_url}}">{{post.title}}</a></h5>
+        <p>{{post.body|truncatechars:300|markdownify|linebreaks}}</p>
+        <small>Written {{post.created|naturaltime}}
+          by <a href="{{post.author.profile.get_absolute_url}}">{{post.author.get_full_name}}</a>
+
+          {% get_comment_count for post as comment_count %}
+          <span class="right">
+            {{ comment_count }}
+            <i class="tiny material-icons">comment</i>
+          </span>
+
+        </small>
+
+        </div>
+
+
+      </div><!-- End of card -->
+
+    {% endfor %}
+
+        <div>
+            {{ object_list.render }}
+        </div>
+
+    {% else %}
+      <p>There are no posts yet. Check back.</p>
+    {% endif %}
+
+</div>
+
+  <div class="col m3">
+
+    {% get_last_xtdcomments 5 as last_comments for blog.blogpost %}
+    {% if last_comments %}
+    <h6>Latest Comments</h6>
+        {% for comment in last_comments %}
+          {% include "django_comments_xtd/latest_comments.html" %}
+        {% endfor %}
+
+    {% endif %}
+
+ </div>
+</div>
+
+{% endblock %}

@@ -5,6 +5,7 @@
 {% load comments %}
 {% load comments_xtd %}
 {% load widget_tweaks %}
+{% load avatar_tags %}
 
 {% load staticfiles %}
 
@@ -35,7 +36,7 @@
           {% for tag in post.tags.all %}
             <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
           {% endfor %}
-          {% if post.updated != post.created %}<p class="small">Edited</p>{% endif %}
+          {% if post.updated != post.created %}<small class="grey-text">Last Edited {{post.updated|naturaltime}}</small>{% endif %}
           <h5 class="">{{post.title}}</h5>
           <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"|linebreaks}}</p>
           {% if post.author == user %}

@@ -1,0 +1,95 @@
+{% extends "blog/base.html" %}
+{% load humanize %}
+{% load md2 %}
+{% load markdownify %}
+{% load comments %}
+{% load comments_xtd %}
+{% load widget_tweaks %}
+
+{% load staticfiles %}
+
+{% block title %}{{post.title}}{% endblock %}
+
+<!-- Main Post details -->
+{% block content %}
+
+<div class="row">
+
+
+  <div class="col m6 offset-m2">
+    {% if post %}
+
+    <div class="card">
+        <div class="card-content">
+          {% for tag in post.tags.all %}
+            <a href="{% url 'blog:blog_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
+          {% endfor %}
+          {% if post.updated != post.created %}<small class="small">Last Edited {{post.updated|naturaltime}}</small>{% endif %}
+          <h5 class="">{{post.title}}</h5>
+          <p class="justify">{{post.body|markdown:"safe, code-friendly, code-color"|linebreaks}}</p>
+
+          {% get_comment_count for post as comment_count %}
+          <span class="right">
+            <i class="material-icons">comment</i> {{ comment_count }}
+          </span>
+
+          {% include "share_button.html" %}
+
+            <p class="grey-text">
+            Written {{post.created|naturaltime}},
+            By {{post.author.get_full_name}}</p>
+        </div>
+
+      </div><!-- End of card -->
+
+
+      {% get_comment_form for post as form %}
+      {% if user.is_authenticated %}
+    <div class="card">
+      <div class="row">
+        <form class="col s12" method="POST" action="{% comment_form_target %}">
+          {% csrf_token %}
+              <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
+              <div class="red hidden" data-comment-element="errors"></div>
+              {% for field in form %}
+                {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
+              {% endfor %}
+              <div style="display:none">{{ form.honeypot }}</div>
+
+          <div class="row">
+            <div class="input-field col s12 {% if 'comment' in form.errors %}has-error{% endif %}">
+              {% include "button_click.html" %}
+              {% render_field form.comment class="materialize-textarea" data-length="3000" %}
+              <label for="id_comment">Leave your comments and questions here.</label>
+            </div>
+          </div>
+
+          <div>
+              <input type="submit" name="post" value='send' class="blue btn" />
+              <input type="submit" name="preview" value="preview" class="btn grey" />
+          </div>
+
+          <div class="row">
+          <small>
+            <a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported.
+          </small>
+        </div>
+
+        </form>
+      </div>
+    </div>
+      {% endif %}
+
+    {% if comment_count %}
+            {% render_xtdcomment_tree for post allow_feedback show_feedback  %}
+    {% endif %}
+
+    {% else %}
+    There are no blog posts yet.
+    {% endif %}
+
+  </div><!-- End of colm8 -->
+
+</div><!-- End of main row -->
+
+{% endblock %}

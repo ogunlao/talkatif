@@ -8,10 +8,8 @@ from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField #For Profile
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-#versatile image imports
-from versatileimagefield.fields import VersatileImageField
-from versatileimagefield.placeholder import OnDiscPlaceholderImage
-import os
+from sorl_cropping import ImageRatioField #
+
 from markdownx.models import MarkdownxField
 from django.conf import settings
 
@@ -164,14 +162,11 @@ class Scores(models.Model):
     class Meta:
         verbose_name_plural = 'Scores'
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
 class Profile(models.Model):
     """
     Extended Model used to add more details to User model.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True)
     #Needed for allauth signup
     other_name = models.CharField(max_length=100, blank=True, null=True)
     specialization = models.CharField(max_length=200, blank=True, null=True, help_text="e.g. Practicing Lawyer, \
@@ -180,16 +175,12 @@ class Profile(models.Model):
     bio = models.TextField(blank=True, null=True, help_text="Tell us a little about yourself.")
     city = models.CharField(max_length=100, blank=True, null=True,
                                         help_text="e.g Lagos, New York")
-    country = CountryField(blank_label='(select country)', default = "NG")
+    country = CountryField(blank_label='(select country)', null=True, blank=True)
     participation_type = models.ManyToManyField('Participation', blank=True, related_name='participation_type')
     notify = models.BooleanField(default = True, help_text="Notify me of upcoming debates.")
-    image = VersatileImageField(
-        'Profile Picture', blank=True, null=True,
-        upload_to='images/profile/',
-    )
 
     def profile_image_url(self):
-        return settings.MEDIA_URL+"/images/avatar.svg"
+        return settings.MEDIA_URL+"/avatars/avatar.svg"
         #return "http://www.gravatar.com/avatar/{}?s=100".format(hashlib.md5(self.user.email.encode('utf-8')).hexdigest())
 
 
