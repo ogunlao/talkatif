@@ -8,8 +8,6 @@ from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField #For Profile
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from sorl_cropping import ImageRatioField #
-
 from markdownx.models import MarkdownxField
 from django.conf import settings
 
