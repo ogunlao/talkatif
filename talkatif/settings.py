@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'debate.apps.DebateConfig',
     'discourse.apps.DiscourseConfig',
     'blog.apps.BlogConfig',
+    'tkcomments.apps.TkcommentsConfig',
     'anymail',
     'markdownx',
     'avatar',
@@ -282,6 +283,9 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 
 #COMMENTS_XTD Settings
 COMMENTS_APP = 'django_comments_xtd'
+COMMENTS_XTD_MODEL = 'tkcomments.models.TkComment' #2
+COMMENTS_XTD_FORM_CLASS = 'tkcomments.forms.TkCommentForm' #3
+
 COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
 
 #Comment Threading settings
@@ -296,10 +300,10 @@ COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
                      b"Aequam memento rebus in arduis servare mentem.")
 
 # Source mail address used for notifications.
-COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
+COMMENTS_XTD_FROM_EMAIL = "notification@talkatif.com"
 
 # Contact mail address to show in messages.
-COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
+COMMENTS_XTD_CONTACT_EMAIL = "enquiries@talkatif.com"
 
 SERIALIZATION_MODULES = {
     'xml':    'tagulous.serializers.xml_serializer',
