@@ -11,22 +11,11 @@
 <div class="row">
 
   <div class="col m6 offset-m3">
-    <div class="card">
-      <div class="card-content">
-        <h4 class="center-align">{% trans "Preview your comment" %}</h4>
-        <p class="center-align">
-          {% trans "Preview your comment for:" %}<br/>
-          <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
-        </p>
-      </div>
-
-  <!--div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8"-->
-
-    <div class="hide-on-small-only">
-      <hr/>
-    </div>
-
-    <div class="card-content">
+    <div class="card-panel">
+      <p class="center-align">
+        {% trans "Preview your comment for:" %}<br/>
+        <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+      </p>
       {% if not comment %}
       <em>{% trans "Empty comment." %}</em>
       {% else %}
@@ -35,11 +24,11 @@
         <a href="{{ user.profile.get_absolute_url }}">
           {% load avatar_tags %}
           {% if user|has_avatar %}
-            {% avatar user 25 class="circle" %}
+            {% avatar user 35 class="circle" %}
           {% elif user.socialaccount_set.all.0.get_avatar_url %}
-            <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" width="25" height=25/>
+            <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="circle" width="35" height=35/>
           {% else %}
-            <img src="{{user.profile.profile_image_url}}" width="25" height="25" />
+            <img src="{{user.profile.profile_image_url}}" class="circle" width="35" height="35" />
           {% endif %}
         </a>
 
@@ -53,20 +42,16 @@
       </li>
 
         <p>{{ comment|markdown:"safe, code-friendly, code-color" }}</p>
-        <small>{{ comment|wordcount }} word{{ content|wordcount|pluralize }}. | {{comment|minute_read}}</small>
-
+        <small>{{ comment|wordcount }} word{{ comment|wordcount|pluralize }}. | {{comment|minute_read}}<br>
+          {% if form.cleaned_data.comment_anonymous == "BE ANONYMOUS" %}Commenting as <em class="blue-text">Anonymous</em>.
+          {% else %}Commenting as <em class="blue-text">{{ form.cleaned_data.name }}</em>{% endif %}
+        </small>
     </ul>
       {% endif %}
     </div>
 
-  <!--/div-->
-</div>
 <div class="row">
-  <div class="card-panel">
-
       {% include "comments/form.html" %}
-      <br>
-  </div>
 </div>
 
 </div>

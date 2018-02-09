@@ -36,11 +36,17 @@
           {% endfor %}
         {% endfor %}
 
+        <div class="input-field">
+          <small class="grey-text">Gender</small>
+          {{ profile_form.gender}}
+        </div>
+
         </div>
 
       <div id="other" class="col s12">
-        {{ profile_form.participation_type.label_tag }}
+
         <div class="input-field">
+          <small class="grey-text">What activities would you like to participate in?</small>
           {{ profile_form.participation_type}}
         </div>
         <!-- Switch -->

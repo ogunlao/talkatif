@@ -39,7 +39,6 @@
 <p>Dear {{name}}, you have been selected to be part of the <strong>{{debate_job}}</strong> team.<br>
 Pls, prepare ahead and get in touch with other participants if necessary.</p>
 
-
 <h3>Hi, {{name}}</h3>
 <p class="lead">You have chosen to participate in a debate starting {{debate_time}}</p><br>
 <p class="lead">Title:<br><a href="{{debate_url}}">{{debate_title}}</a></p>
@@ -52,7 +51,7 @@ It is reasonable to get familiar with your team before commencement. <a href="{{
 Other {{debate_job}} team members<br>
 <ul>
 {% for person in debate_team %}
-<li>{{person.get_full_name}} - <a href="https://www.talkatif.com/accounts/profile/{{username}}/">@{{person.username}}</a>
+<li>{{person.get_full_name}} - <a href="https://www.talkatif.com/accounts/profile/{{username}}/">@{{person.username}}</a>- {{person.email}}</li>
 {% endfor %}
 </ul>
 </p>
@@ -61,15 +60,6 @@ Other {{debate_job}} team members<br>
 <table class="social" width="100%">
 <tr>
 <td>
-
-<table align="left" class="column">
-<tr>
-<td>
-<h5 class="">Connect with Us:</h5>
-<p class=""><a href="https://www.facebook.com/talkatif/" class="soc-btn fb">Facebook</a> <a href="https://www.twitter.com/talkatif/" class="soc-btn tw">Twitter</a></p>
-</td>
-</tr>
-</table>
 
 <table align="left" class="column">
 <tr>

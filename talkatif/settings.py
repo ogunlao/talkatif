@@ -190,14 +190,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-SERVER_EMAIL = config('EMAIL') #configured email for sending notifications
+ADMIN_EMAIL = config('EMAIL')
+SERVER_EMAIL = config('EMAIL2')
+NOTIFICATION_EMAIL = config('EMAIL2') #configured email for sending notifications
 
 ANYMAIL = {
     # (exact settings here depend on your ESP...)
     "POSTMARK_SERVER_TOKEN": config('POSTMARK_TOKEN'),
 }
 EMAIL_BACKEND = "anymail.backends.postmark.EmailBackend"  # or sendgrid.EmailBackend, or...
-DEFAULT_FROM_EMAIL = config('EMAIL')  # if you don't already have this in settings
+DEFAULT_FROM_EMAIL = config('EMAIL2')  # if you don't already have this in settings
 
 #Authentication Setting
 LOGIN_URL = "/accounts/login/"
@@ -220,7 +222,6 @@ META_SITE_PROTOCOL = 'https'
 META_SITE_DOMAIN = "talkatif.com"
 META_DEFAULT_KEYWORDS = ["debate","faceoff","talk", "opinions", "criticism", "rebuttal", "argument", "discourse", "discussion", "polls", "poll"]
 META_USE_SITES = True
-
 
 STATICFILES_FINDERS = (
 'django.contrib.staticfiles.finders.FileSystemFinder',

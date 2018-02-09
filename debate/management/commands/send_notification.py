@@ -15,7 +15,7 @@ connection.open()
 message_list = list()
 
 
-from_email = settings.SERVER_EMAIL
+from_email = settings.NOTIFICATION_EMAIL
 
 def notify_post(schedule_time):
     """
@@ -38,7 +38,7 @@ def notify_all(schedule_post):
                 ctx = {'name':lists.user_notify.get_full_name(),\
                          'debate_title':posts.title, \
                          'debate_time':posts.begin,'debate_summary':posts.summary,\
-                         'debate_url':"https://talkatif.com"+str(posts.get_absolute_url()), 'admin_email':settings.SERVER_EMAIL}
+                         'debate_url':"https://talkatif.com"+str(posts.get_absolute_url()), 'admin_email':settings.ADMIN_EMAIL}
                 html_content = render_to_string('debate_subscribers_template.html', ctx)
                 message = strip_tags(html_content) #strips the html of tags to get the raw text.
                 recipients_email = lists.user_notify.email

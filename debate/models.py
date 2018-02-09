@@ -18,6 +18,7 @@ from debate.badwords import badwords
 #Used to get facebook user profile
 from allauth.socialaccount.models import SocialAccount
 import hashlib
+import random
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -164,6 +165,10 @@ class Profile(models.Model):
     """
     Extended Model used to add more details to User model.
     """
+    GENDER_CHOICES = (
+        ('male', 'male'),
+        ('female', 'female'),
+        )
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True)
     #Needed for allauth signup
     other_name = models.CharField(max_length=100, blank=True, null=True)
@@ -176,11 +181,11 @@ class Profile(models.Model):
     country = CountryField(blank_label='(select country)', null=True, blank=True)
     participation_type = models.ManyToManyField('Participation', blank=True, related_name='participation_type')
     notify = models.BooleanField(default = True, help_text="Notify me of upcoming debates.")
+    gender = models.CharField(choices=GENDER_CHOICES, max_length=6, blank=True, null=True)
 
     def profile_image_url(self):
-        return settings.MEDIA_URL+"/avatars/avatar.svg"
-        #return "http://www.gravatar.com/avatar/{}?s=100".format(hashlib.md5(self.user.email.encode('utf-8')).hexdigest())
-
+        avatar_name = "avatar"+str(random.randint(0, 3))+".png"
+        return settings.MEDIA_URL+"avatars/default_avatar/"+avatar_name
 
     def get_absolute_url(self):
         return reverse('profile', args=[self.user.username,])
@@ -190,9 +195,27 @@ class Profile(models.Model):
         String for representing the Custom User Model object (in Admin site etc.)
         """
         return self.user.get_full_name()
-
 from allauth.account.signals import email_confirmed
+
+from allauth.account.signals import user_signed_up
 from django.dispatch import receiver
+
+@receiver(user_signed_up)
+def set_initial_user_names(request, user, sociallogin=None, **kwargs):
+    """
+    sociallogin.account.provider  # e.g. 'twitter'
+    sociallogin.account.get_avatar_url()
+    sociallogin.account.get_profile_url()
+    sociallogin.account.extra_data['screen_name']
+    """
+    from debate.models import Profile
+
+    if sociallogin:
+        if sociallogin.account.provider == 'facebook':
+            gender_type = sociallogin.account.extra_data['gender']
+            #verified = sociallogin.account.extra_data['verified']
+    profile = Profile(user=user, gender = gender_type)
+    profile.save()
 
 @receiver(email_confirmed)
 def email_confirmed_(request, email_address, **kwargs):

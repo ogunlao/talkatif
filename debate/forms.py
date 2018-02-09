@@ -27,6 +27,16 @@ class SignupForm(forms.Form):
             raise forms.ValidationError(u'This email address has been already been registered.')
         return email
 
+    def clean_password(self):
+        from django.contrib.auth import password_validation
+        validators = password_validation.get_default_password_validators()
+        password = self.cleaned_data.get('password')
+        password_validation.validate_password(
+            password,
+            user=None,
+            password_validators=validators,
+            )
+
     def save(self, request):
         # Save your user
         user = User()
@@ -36,13 +46,10 @@ class SignupForm(forms.Form):
         user.email = self.cleaned_data['email']
         password = self.cleaned_data.get('password')
         user.password = make_password(password)
-        #set_password(self.cleaned_data["password1"])
 
         import random
         user.username = user.first_name + str(random.randint(0,99))
-
         user.save()
-        
         return user
 
 class ProfileForm(forms.ModelForm):

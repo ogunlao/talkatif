@@ -79,36 +79,7 @@
       {% if user.is_authenticated %}
     <div class="card">
       <div class="row">
-        <form class="col s12" method="POST" action="{% comment_form_target %}">
-          {% csrf_token %}
-              <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
-              <div class="red hidden" data-comment-element="errors"></div>
-              {% for field in form %}
-                {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
-              {% endfor %}
-              <div style="display:none">{{ form.honeypot }}</div>
-
-          <div class="row">
-            <div class="input-field col s12 {% if 'comment' in form.errors %}has-error{% endif %}">
-              {% include "button_click.html" %}
-              {% render_field form.comment class="materialize-textarea" data-length="3000" %}
-              <label for="id_comment">Comment on post. Be concise and cogent.</label>
-            </div>
-          </div>
-
-          <div>
-              <input type="submit" name="post" value='send' class="blue btn" />
-              <input type="submit" name="preview" value="preview" class="btn grey" />
-          </div>
-
-          <div class="row">
-          <small>
-            <a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported.
-            <br>For open debate, indicate if supporting or opposing at top of comment.
-          </small>
-        </div>
-
-        </form>
+          {% include "comments/form.html" %}
       </div>
     </div>
       {% endif %}
@@ -125,7 +96,7 @@
     <div class="row">
       <br>
         <a href="{% url 'discourse:new_post' %}">
-      <button class="yellow btn black-text">Create New Discourse</button></a>
+      <button class="yellow btn black-text">New Discourse</button></a>
     </div>
 
 

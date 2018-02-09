@@ -23,15 +23,15 @@
                   {% endif %}
                 </li>
                 <li class="collection-item">Username <span class="right">{{ profile_user.username }}</span></li>
-                <li class="collection-item">First Name <span class="right">{{ profile_user.first_name|capfirst }}</span></li>
-                <li class="collection-item">Last Name <span class="right">{{ profile_user.last_name|capfirst }}</span></li>
-                <li class="collection-item">Other Name <span class="right">{{ post.other_name|capfirst }}</span></li>
+                <li class="collection-item">Name <span class="right">{{ profile_user.first_name|capfirst }} {% if post.other_name %}{{ post.other_name|capfirst }}{% endif %} {{ profile_user.last_name|capfirst }}</span></li>
+                <li class="collection-item">Gender<span class="right">{{ post.gender|capfirst }}</span></li>
+
               {% if profile_user == request.user %}
-                <li class="collection-item">Email:
+                <li class="collection-item"><span class="red-text">*</span>Email:
                   <p class="">{{ profile_user.email }}<br>
-                    {% if request.user == profile_user %}
-                    <span class="blue-text"><a href={% url 'account_email'%}>Add<span></a></p></li>
-                    {% endif %}
+                    <span class="blue-text"><a href={% url 'account_email'%}>Add</span></a></p></li>
+                <li class="collection-item"><span class="red-text">*</span>DoB:
+                  <span class="right">{{ post.date_of_birth }}</span></li>
               {% endif %}
                 <li class="collection-item">Participating in
                   <span class="right">
@@ -44,6 +44,7 @@
                 <li class="collection-item">Location <span class="right">{% if post.city %}{{ post.city|capfirst }},{% endif %} {{post.country.name}}</span></li>
                 <li class="collection-item">Bio <span class="right">{{post.bio}}</span></li>
               </ul>
+                <small><span class="red-text">*<span> Only visible to the account owner</small>
             </div><!-- End of card -->
           </div><!-- End of column -->
 
@@ -55,7 +56,7 @@
                           {% if request.user == profile_user %}
                             <p><a href="{% url 'avatar_delete' %}">Remove avatar</a></p>
                           {% endif %}
-                        {% elif user.socialaccount_set.all.0.get_avatar_url %}
+                        {% elif profile_user.socialaccount_set.all.0.get_avatar_url %}
                         <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="Default social avater" width="100%" height=100%/>
                         <small class="grey-text">This is your social avatar.</small>
                         {% else %}

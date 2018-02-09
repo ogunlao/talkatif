@@ -46,7 +46,7 @@
                 <ul class="right hide-on-med-and-down">
                     <li><a href="#intro">About Us</a></li>
                     <li><a href="#snap">A snap</a></li>
-                    <li><a href="#login">Login</a></li>
+                    <li><a href="{% url 'account_login' %}">Login</a></li>
                     <li><a href="{% url 'account_signup' %}">Signup</a></li>
                 </ul>
                 <ul id="nav-mobile" class="side-nav">
@@ -58,7 +58,31 @@
             <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="large material-icons">menu</i></a>
             </div>
         </div>
-    </nav>
+    </nav><br><br><br>
+    <form class="col s12 m6 right" action="{% url 'account_login' %}" autocomplete="off" method="POST">{% csrf_token %}
+        <div class="row">
+            <div class="input-field col s5">
+                <i class="material-icons prefix white-text">account_circle</i>
+                <input id="id_login" name="login" type="text" placeholder="e.g dan@mail.co" class="validate white-text" required>
+                <label for="icon_prefix" class="white-text">Username/Email</label>
+            </div>
+            <div class="input-field col s5">
+                <i class="material-icons prefix white-text">lock</i>
+                <input id="id_password" name="password" placeholder="Password" class="validate white-text" type="password" required>
+                <label for="icon_password" class="white-text">Password</label>
+            </div>
+
+            <div class="input-field col s2">
+                <button class="btn-floating waves-effect waves-light amber black-text" type="submit">
+                    <i class="material-icons right white-text">send</i>
+                </button>
+            </div>
+        </div>
+
+    </form>
+    <div>
+  </div>
+
 </div>
 
 <!--Hero-->
@@ -128,64 +152,15 @@
     <div class="container">
         <div class="row">
             <div class="col l6 s12">
-                <form class="col s12" action="{% url 'account_login' %}" autocomplete="off" method="POST">{% csrf_token %}
-                    <div class="row">
-                        <div class="input-field col s6">
-                            <i class="material-icons prefix white-text">account_circle</i>
-                            <input id="id_login" name="login" type="text" placeholder="e.g dan@mail.co" class="validate white-text" required>
-                            <label for="icon_prefix" class="white-text">Username/Email</label>
-                        </div>
-                        <div class="input-field col s6">
-                            <i class="material-icons prefix white-text">lock</i>
-                            <input id="id_password" name="password" placeholder="Password" class="validate white-text" type="password" required>
-                            <label for="icon_password" class="white-text">Password</label>
-                        </div>
 
-                        <div class="col offset-s1 s5">
-                            <button class="btn waves-effect waves-light amber black-text" type="submit">Login
-                                <i class="material-icons right white-text">send</i>
-                            </button>
-                        </div>
-                        <div class="col  s1">OR</div>
-
-                        <div class="col s4">
-                            <p><a href="{% url 'account_signup' %}" class="yellow-text">SignUp</a></p>
-                        </div>
-
-                    </div>
-
-                </form>
-                <div>
-                  <p class="white-text">Login with your <a class="yellow-text" href="{% url 'account_login' %}">social account. </a></p>
-              </div>
             </div>
             <div class="col l3 s12">
-                <h5 class="white-text">talkatif.com</h5>
+                <h5 class="white-text">Talkatif.com</h5>
                 <ul>
                     <li><a class="white-text" href="/">Home</a></li>
-                    <li><a class="white-text" href="/blog/">Blog</a></li>
                 </ul>
             </div>
-            <div class="col l3 s12">
-                <h5 class="white-text">Social</h5>
-                <ul>
-                    <li>
-                        <a class="white-text" href="https://www.facebook.com/talkatif">
-                            <i class="small fa fa-facebook-square white-text"></i> Facebook
-                        </a>
-                    </li>
-                    <li>
-                        <a class="white-text" href="https://twitter.com/talkatif">
-                            <i class="small fa fa-twitter-square white-text"></i> Twitter
-                        </a>
-                    </li>
-                    <li>
-                        <a class="white-text" href="https://www.linkedin.com/in/talkatif">
-                            <i class="small fa fa-linkedin-square white-text"></i> Linkedin
-                        </a>
-                    </li>
-                </ul>
-            </div>
+
         </div>
     </div>
     <div class="footer-copyright default_color">

@@ -19,15 +19,15 @@
   <a href="{{item.comment.user.profile.get_absolute_url}}">
     {% load avatar_tags %}
     {% if item.comment.user|has_avatar %}
-      {% avatar item.comment.user 25 class="circle" %}
-    {% elif user.socialaccount_set.all.0.get_avatar_url %}
-      <img  src="{{ item.comment.user.socialaccount_set.all.0.get_avatar_url }}" width="25" height=25/>
+      {% avatar item.comment.user 35 class="circle" %}
+    {% elif item.comment.user.socialaccount_set.all.0.get_avatar_url %}
+      <img  src="{{ item.comment.user.socialaccount_set.all.0.get_avatar_url }}" class="circle" width="35" height=35/>
     {% else %}
-      <img src="{{item.comment.user.profile.profile_image_url}}" width="25" height="25" />
+      <img src="{{item.comment.user.profile.profile_image_url}}" class="circle" width="35" height="35" />
     {% endif %}
   </a>
   <span class="title">
-        {{ item.comment.submit_date|localize }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="red-text">{% trans "SuperMod" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'copy comment link' %}" href="{% get_comment_permalink item.comment %}"><i class="fa fa-share" aria-hidden="true"></i></a>
+        {{ item.comment.submit_date|localize }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}<a href="{{item.comment.user.profile.get_absolute_url}}">{{ item.comment.name }}</a>{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="red-text">{% trans "SuperMod" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'copy comment link' %}" href="{% get_comment_permalink item.comment %}"><i class="fa fa-share" aria-hidden="true"></i></a>
 
         {% if not item.comment.is_removed %}
         <span class="right">
@@ -80,6 +80,7 @@
         <p>
           {% include "includes/django_comments_xtd/comment_content.html" with content=item.comment.comment %}
         <br>
+    {% if user.is_authenticated %}
         <li class="divider"></li>
         {% if allow_feedback %}
         {% include "includes/django_comments_xtd/user_feedback.html" %}
@@ -87,6 +88,7 @@
         {% if item.comment.allow_thread and not item.comment.is_removed %}
         {% if allow_feedback %}&nbsp;&nbsp;<span class="grey-text">&bull;</span>&nbsp;&nbsp;{% endif %}<a class="grey-text" href="{{ item.comment.get_reply_url }}">{% trans "Reply" %}</a>
         {% endif %}
+    {% endif %}
         {% if request.user == item.comment.user %}
         |<a href="{% url 'delete_my_comment' item.comment.id %}"><span class="grey-text"> Remove</span></a>
 

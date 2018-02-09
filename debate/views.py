@@ -224,7 +224,7 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
     user_is_judge = post.judges.all().filter(id=request.user.id)
 
     #Check to see if comment form can be enabled
-    if post.debate_category == "open" or user_is_moderator:
+    if (post.debate_category == "open" and request.user.is_authenticated()) or user_is_moderator:
         open_comment = True
     elif (user_in_supporting_team or user_in_opposing_team or user_is_judge) and debate_in_progress:
         open_comment = True
