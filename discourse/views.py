@@ -22,15 +22,23 @@ meta = Meta(
     }
 )
 
+
 def handler404(request):
-    message_info = "An error occured while opening your page. Please try Again."
-    messages.info(request, message_info )
-    return redirect('all_list', permanent=True )
+    return render(request, '404.html' )
 
 def handler500(request):
-    message_info = "An error occured while opening your page. Please try Again."
-    messages.info(request, message_info )
-    return redirect('all_list', permanent=True )
+    return render(request, '500.html' )
+
+
+# def handler404(request):
+#     message_info = "An error occured while opening your page. Please try Again."
+#     messages.info(request, message_info )
+#     return redirect('all_list', permanent=True )
+#
+# def handler500(request):
+#     message_info = "An error occured while opening your page. Please try Again."
+#     messages.info(request, message_info )
+#     return redirect('all_list', permanent=True )
 
 def post_list(request, tag_slug = None):
     object_list = Post.published.all()

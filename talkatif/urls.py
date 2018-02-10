@@ -60,14 +60,14 @@ urlpatterns = [
     name='django.contrib.sitemaps.views.sitemap'),
 ]
 
-handler404 = 'discourse_views.handler404'
-handler500 = 'discourse_views.handler500'
+handler404 = 'discourse.views.handler404'
+handler500 = 'discourse.views.handler500'
 # Use static() to add url mapping to serve static files during development (only)
 
 from django.conf.urls.static import static
 from django.conf import settings
 
-if settings.DEBUG == True:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+#if settings.DEBUG == True:
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
