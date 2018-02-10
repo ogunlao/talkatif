@@ -1,3 +1,4 @@
+{% load markdownify %}
 <div class="fixed-action-btn horizontal">
   <a class="btn-floating btn-large red pulse">
     <i class="large material-icons">share</i>
@@ -9,12 +10,14 @@
     <li><a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}"
       class="waves-effect waves-light btn-floating social twitter">
             <i class="fa fa-twitter"></i></a></li>
-    <li><a href="http://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri|urlencode }}&title={{post.title}}&summary={{post.summary}}&source={{ request.get_host }}"
+    <li><a href="http://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri|urlencode }}&title={{post.title}}&summary={{post.summary|markdownify}}&source={{ request.get_host }}"
       class="waves-effect waves-light btn-floating social linkedin">
             <i class="fa fa-linkedin"></i></a></li>
     {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
-    <li><a href="whatsapp://send?text='{{request.get_host}}{{ post.get_absolute_url }}  \n {{post.title}}'" data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
+    {% with "\n\n" as newline %}
+    <li><a href="whatsapp://send?text='{{ request.build_absolute_uri|urlencode }}{{newline|urlencode}}{{post.title}}{{newline|urlencode}}{{post.summary|truncatechars:300|markdownify}}'" data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
             <i class="fa fa-whatsapp"></i></a></li>
+    {% endwith %}
     {% endif %}
   </ul>
 </div>

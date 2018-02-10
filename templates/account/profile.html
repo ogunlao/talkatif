@@ -44,7 +44,9 @@
                 <li class="collection-item">Location <span class="right">{% if post.city %}{{ post.city|capfirst }},{% endif %} {{post.country.name}}</span></li>
                 <li class="collection-item">Bio <span class="right">{{post.bio}}</span></li>
               </ul>
+              {% if request.user == profile_user %}
                 <small><span class="red-text">*<span> Only visible to the account owner</small>
+              {% endif %}
             </div><!-- End of card -->
           </div><!-- End of column -->
 
@@ -52,12 +54,12 @@
                       {% load avatar_tags %}
                       <div class="card-panel">
                         {% if profile_user|has_avatar %}
-                        {% avatar user 150 class="circle responsive-img" %}
+                        {% avatar profile_user 150 class="circle responsive-img" %}
                           {% if request.user == profile_user %}
                             <p><a href="{% url 'avatar_delete' %}">Remove avatar</a></p>
                           {% endif %}
                         {% elif profile_user.socialaccount_set.all.0.get_avatar_url %}
-                        <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="Default social avater" width="100%" height=100%/>
+                        <img  src="{{ profile_user.socialaccount_set.all.0.get_avatar_url }}" alt="Default social avater" width="100%" height=100%/>
                         <small class="grey-text">This is your social avatar.</small>
                         {% else %}
                         <img src="{{profile_user.profile.profile_image_url}}" width="100%" height=100% />
