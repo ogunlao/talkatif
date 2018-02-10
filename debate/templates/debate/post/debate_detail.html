@@ -288,7 +288,7 @@
       <a class="yellow btn black-text" href="{% url 'debate:suggest_post' %}">Create a new debate</a>
     </p>
 
-    {% if post.winner_updated %}
+    {% if post.winner_updated or debate_has_ended %}
     <div class="card-panel">
       <p class="text-danger small_text">Results:<br>
       Supporting: {{total_support_vote}} vote{{total_support_vote|pluralize }}<br>
