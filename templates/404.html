@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>{% block title %}Contact Me&nbsp;&raquo;&nbsp;code 404{% endblock %}</title>
-</head>
-<body>
-  <h3>Page not found 404</h3>
-</body>
-</html>
+{% extends "base.html" %}
+
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+
+<h1>We are sorry!!. The page you are requesting cannot be found.</h1>
+<p>Please, check your link.</p>
+
+{% endblock %}

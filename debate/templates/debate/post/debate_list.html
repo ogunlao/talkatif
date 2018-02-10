@@ -65,11 +65,13 @@
 
         <!-- The following renders the pagination html -->
         <div>
+          {% if object_list.object_list %}
             {{ object_list.render }}
+          {% endif %}
         </div>
-
-  {% else %}
-    <p>There are no debates started yet. Create a new debate below.</p>
+  {% endif %}
+  {% if not object_list.object_list %}
+    <p>There are no debates started yet. Create a new debate or checkback.</p>
   {% endif %}
 
     </div><!-- End of main div   -->
@@ -124,16 +126,6 @@
 
  </div>
 </div>
-
-<script>
-//Init for chips for tags
-$(document).ready(function() {
-$('.chips-placeholder').material_chip({
-    placeholder: 'Enter a tag',
-    secondaryPlaceholder: 'Enter another tag',
-  });
-});
-</script>
 
 
 {% endblock %}

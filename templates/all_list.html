@@ -91,12 +91,14 @@
 
           {# The following renders the pagination html #}
           <div id="pagination">
+            {% if merged_list.object_list %}
               {{ merged_list.render }}
+            {% endif %}
           </div>
+        {% endif %}
 
-
-            {% else %}
-              <p>There are no posts yet. Check back.</p>
+            {% if not merged_list.object_list %}
+              <p>There are no feeds yet. Check back.</p>
             {% endif %}
   </div>
   <div class="col m3 l3">

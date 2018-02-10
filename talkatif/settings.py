@@ -25,7 +25,6 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-
 from decouple import config, Csv
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
@@ -219,8 +218,8 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_FORMS = {'signup': 'debate.forms.SignupForm'}
 
 #Django-meta settings
-META_SITE_PROTOCOL = 'https'
-META_SITE_DOMAIN = "talkatif.com"
+META_SITE_PROTOCOL = config('META_SITE_PROTOCOL')
+META_SITE_DOMAIN = config('META_SITE_DOMAIN')
 META_DEFAULT_KEYWORDS = ["debate","faceoff","talk", "opinions", "criticism", "rebuttal", "argument", "discourse", "discussion", "polls", "poll"]
 META_USE_SITES = True
 
@@ -234,19 +233,13 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'haystack',
+        'INDEX_NAME': config('HAYSTACK_NAME'),
     },
 }
 
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 TAGGIT_CASE_INSENSITIVE = True #taggit settings
-
-#Django-chrontab settings
-
-# CRONJOBS = [
-#     ('*/1 * * * *', 'myapp.cron.my_scheduled_job')
-# ]
 
 CACHES = {
     'default': {
@@ -262,7 +255,7 @@ CACHES = {
 
 #comment manager
 MANAGERS = (
-    ('Ogun Sewade', config('EMAIL') ),
+    (config('ADMIN_NAME'), config('EMAIL') ),
 )
 
 #To allow comment flagging, likes and dislikes
@@ -300,10 +293,10 @@ COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
                      b"Aequam memento rebus in arduis servare mentem.")
 
 # Source mail address used for notifications.
-COMMENTS_XTD_FROM_EMAIL = "notification@talkatif.com"
+COMMENTS_XTD_FROM_EMAIL = NOTIFICATION_EMAIL
 
 # Contact mail address to show in messages.
-COMMENTS_XTD_CONTACT_EMAIL = "enquiries@talkatif.com"
+COMMENTS_XTD_CONTACT_EMAIL = ADMIN_EMAIL
 
 SERIALIZATION_MODULES = {
     'xml':    'tagulous.serializers.xml_serializer',
