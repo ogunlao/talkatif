@@ -37,7 +37,7 @@
             <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
           {% endfor %}
           {% if post.updated != post.created %}<small class="grey-text">Last Edited {{post.updated|naturaltime}}</small>{% endif %}
-          <h5 class="">{{post.title}}</h5>
+          <h5 class="blue-text main_title">{{post.title}}</h5>
           <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"|linebreaks}}</p>
           {% if post.author == user %}
           <p>
@@ -111,9 +111,8 @@
  </div>
 </div><!-- End of main row -->
 
-{% endblock %}
 
-{% block extra-js %}
+
 <script>
 $('.like-button').click(function(){
       $.ajax({
@@ -141,29 +140,76 @@ $('.like-button').click(function(){
 
 });
 
+$('.like-comment').click(function(ev){
+      comment_id = $(this).attr('id')
+      liked_id = "liked_"+comment_id
+      liked_value = $("#"+liked_id).text()
+      //console.log(liked_value)
 
-{% for image in attachments %}
+      $.ajax({
 
-$(document).ready(function(){
-  var id = {{forloop.counter}}
-  var img_css_id = "image"+id.toString()
-  //console.log(img_css_id)
-  $.ajax({
-           type: "POST",
-           url: "{% url 'discourse:load_post_image' %}",
-           data: {'csrfmiddlewaretoken': '{{ csrf_token }}', 'post_id':$("#"+img_css_id).attr('post_id'),'image_id':$("#"+img_css_id).attr('image_id'), },
-           success: function(response) {
-                  $('#'+img_css_id).html('<img class="responsive-img", src="data:image/png;base64,' + response + '" />');
+               type: "POST",
+               url: "/comments/like/"+comment_id+"/",
+               data: {'comment_id': $(this).attr('id'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               dataType: "json",
+               success: function(response) {
+                 //I could only update it using the error function
+                      //liked_value = liked_value + 1
+                      //$("#"+liked_id).text(response.total_comment_like);
+                },
+                error: function(rs, e) {
+                    //console.log(rs.responseText);
+                      if($('.like-comment').hasClass("liked")){
+                          liked_value = Number(liked_value) - 1
+                          if (liked_value == -1){ liked_value = 0};
+                           $('.like-comment').removeClass("liked");
+                           $('.mtl').removeClass("blue-text").addClass("grey-text");
 
-            },
-            error: function(rs, e) {
-                   //alert(rs.responseText);
-            }
-      });
+                      }else{
+                          liked_value = Number(liked_value) + 1
+
+                          $('.like-comment').addClass("liked");
+                          $('.mtl').removeClass("grey-text").addClass("blue-text");
+                        };
+                    $("#"+liked_id).text(liked_value);
+                    }
+          });
 });
 
-{% endfor %}
+$('.dislike-comment').click(function(ev){
+      comment_id = $(this).attr('id')
+      disliked_id = "disliked_"+comment_id
+      liked_value = $("#"+disliked_id).text()
+      //console.log(liked_value)
 
+      $.ajax({
+
+               type: "POST",
+               url: "/comments/dislike/"+comment_id+"/",
+               data: {'comment_id': $(this).attr('id'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               dataType: "json",
+               success: function(response) {
+                 //I could only update it using the error function
+                      //liked_value = liked_value + 1
+                      //$("#"+liked_id).text(response.total_comment_like);
+                },
+                error: function(rs, e) {
+                    //console.log(rs.responseText);
+                      if($('.dislike-comment').hasClass("disliked")){
+                          liked_value = Number(liked_value) - 1
+                          if (liked_value == -1){ liked_value = 0};
+                           $('.dislike-comment').removeClass("disliked");
+                           $('.mtdl').removeClass("red-text").addClass("grey-text");
+
+                      }else{
+                          liked_value = Number(liked_value) + 1
+                          $('.dislike-comment').addClass("disliked");
+                          $('.mtdl').removeClass("grey-text").addClass("red-text");
+                        };
+                    $("#"+disliked_id).text(liked_value);
+                    }
+          });
+});
 
 </script>
 

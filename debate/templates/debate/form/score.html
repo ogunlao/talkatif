@@ -1,5 +1,6 @@
 {% extends "debate/base.html" %}
 {% load widget_tweaks %}
+{% load md2 %}
 
 {% block title %}Score Debate{% endblock %}
 {% load staticfiles %}
@@ -9,57 +10,55 @@
         <div class="row">
 
           <div class="col m6 offset-m3">
-            <div class="card">
-              <div class="card-content">
-              {% if scored %}
+              <div class="card-panel">
+              {% if related_post.winner_updated %}
               <h5>Debate Scores and Vote Count</h5>
               {% else %}
               <h5>Score Debate for both teams</h5>
               {% endif %}
+              <h5>Debate Topic</h5>
+              <p class="blue-text">{{ post.post }}</p>
+              {% if related_post.winner_updated %}
+              <div class="row">
+                  <div class="col s12">
+                    <ul class="tabs">
+                      <li class="tab col s3"><a class="active blue-text" href="#result">Result</a></li>
+                      <li class="tab col s3"><a class="blue-text" href="#raw_scores">Raw Scores</a></li>
+                      <li class="tab col s3"><a class="blue-text" href="#judge">Judges</a></li>
+                    </ul>
+                  </div>
+                  <div id="result" class="col s12">
+                    <p>Suppoting Team Score: <span class="right">{{post.st_verdict}} %</span></p>
+                    <p>Opposing Team Score: <span class="right">{{post.ot_verdict}} %</span></p>
+                    <hr>
+                    <p>Winner:</p>
+                    {{related_post.winner|capfirst}}
+                  </div>
+                  <div id="raw_scores" class="col s12">
+                    <p>Opposing Team Votes: <span class="right">{{post.opposing_vote }}</span></p>
+                    <p>Supporting Team Votes: <span class="right">{{post.supporting_vote }}</span></p>
+                    <br>
+                    <p>Supporting Team Score: <span class="right">{{ post.supporting_score }}</span></p>
+                    <p>Opposing Team Score: <span class="right">{{post.opposing_score }}</span></p>
+                    <p>Highest Possible Score: <span class="right">{{ post.highest_score }}</span></p>
+                  </div>
+                  <div id="judge" class="judge">
+                    <h5>Judge Scores/{{post.judge_percent_share}}</h5>
+                    <small class="grey-text">Score of zero or empty scores indicates no judge verdict was included in scoring</small>
+                    <p>Supporting Side: <span class="right">{{judge_support_percent}}%</span></p>
+                    <p>Opposing Side: <span class="right">{{judge_support_percent}}%</span></p>
+                    <p>Observations</p>
+                    {% if post.observation %}
+                    <p>{{post.observation|markdown:"safe, code-friendly, code-color"}}</p>
+                    {% else %}
+                    <p>No recorded observation or anomaly</p>
+                    {% endif %}
+                  </div>
+              </div>
 
-              {% if scored %}
-                  <br/>
-                  <h5>Debate Topic</h5>
-                  <p>{{ post.post }}</p><hr>
-                  <p>Highest Possible Raw Judge Score: {{ post.highest_score }}</p>
-                  <p>Supporting Side Raw Score: {{ post.supporting_score }}</p>
-                  <p>Opposing Side Raw Score: {{post.opposing_score }}</p>
-                  <p>Observations</p>
-                  {% if post.observation %}
-                  <p>{{post.observation | linebreaks}}</p>
-                  {% else %}
-                  <p>No recorded observation or anomaly</p>
-                  {% endif %}
-
-              {% if calculated %}
-                  <hr>
-                  <p>Total Votes for Supporting Team: {{post.supporting_vote }}</p>
-                  <p>Total Votes for Opposing Team: {{post.opposing_vote }}</p>
-                  <hr>
-                  <p>Judge Score for Supporting Side over {{post.judge_percent_share}}: {{judge_support_percent}}</p>
-                  <p>Judge Score for Opposing Side over {{post.judge_percent_share}}: {{judge_support_percent}}</p>
-                  <p>Votes Score for Supporting Side over {{post.vote_percent_share}}: {{vote_support_percent}}</p>
-                  <p>Votes Score for Opposing Side over {{post.vote_percent_share}}: {{vote_oppose_percent}}</p>
-                  <hr>
-
-                  <p>Suppoting Team Score: {{supporting_team_percent_score}} %</p>
-                  <p>Opposing Team Score: {{opposing_team_percent_score}} %</p>
-                  <hr>
-                  <p>Winner of Debate</p>
-                  {% if supporting_team_percent_score > opposing_team_percent_score  %}
-                  <p>Supporting Team Wins</p>
-                  {% elif supporting_team_percent_score == opposing_team_percent_score %}
-                  <p>Debate ends in a stale</p>
-                  {% elif supporting_team_percent_score < opposing_team_percent_score %}
-                  <p>Opposing Team Wins</p>
-                  {% endif %}
-
-              {% endif %}
                   <p>Return to <a href="{{ related_post.get_absolute_url }}">debate</a><p>
 
               {% else %}
-                <h6 class="blue-text">Debate Topic:<br>
-                {{related_post.title}} </h6>
                 <br>
                 <form class="" action="." method="post">
                   {% csrf_token %}
@@ -91,7 +90,7 @@
                   {% endfor%}
                 </div>
 
-                <div class="card-content">
+                <div class="card-panel">
                     <div class="input-field">
                     <p>Voters Percent Share(Default: 70%)</p>
                     <p class="range-field">
@@ -117,14 +116,11 @@
                 {{score_form.media}}
                 <p>Verify scores before submission since values cannot be changed after submission</p>
                 <p>Return to <a href="{% url 'debate:debate_detail' related_post.debate_category related_post.id related_post.slug %}">debate</a> without submitting.<p>
-
-        {% endif %}
             </div>
-          </div>
+        {% endif %}
 
           </div>
 
-          <div class="col-md-3"></div>
         </div>
 
 {% endblock %}

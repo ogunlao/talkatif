@@ -30,7 +30,7 @@
             {% for tag in post.tags.all %}
               <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
             {% endfor %}
-            <h5 class=""><a href="{{post.get_absolute_url}}">{{post.title}}</a></h5>
+            <h5 class="main_title"><a href="{{post.get_absolute_url}}">{{post.title}}</a></h5>
             <p>{{post.summary|truncatechars:300|markdownify}}</p>
             <small>
             {% if post.end %} Ends {{post.end|naturaltime}}

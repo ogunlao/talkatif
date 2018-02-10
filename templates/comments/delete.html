@@ -19,7 +19,7 @@
     <div class="card-content">
 
     <h5 class="center-align">{% trans "Remove this comment?" %}</h5>
-    <p>{% trans "As the comment owner or a moderator you can delete comments. Deleting a comment does not remove it from the site, only prevents talkatif from showing the text. Click on the remove button to delete the following comment:" %}</p>
+    <small class="red-text">{% trans "As the comment owner or a moderator you can remove comments from the site. This prevents talkatif.com from showing the text. It cannot be undone." %}</small>
 
       <div class="media">
         <div class="media-left">
@@ -51,8 +51,8 @@
       <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
       <div class="form-group">
         <div class="row center-align">
-          <input type="submit" name="submit" class="btn btn-danger" value="{% trans "Remove" %}"/>
-          <a class="btn btn-default" href="{{ comment.get_absolute_url }}">cancel</a>
+          <input type="submit" name="submit" class="red btn" value="{% trans "Remove" %}"/>
+          <a class="grey btn" href="{{ comment.get_absolute_url }}">cancel</a>
         </div>
       </div>
     </form>

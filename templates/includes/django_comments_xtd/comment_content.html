@@ -1,4 +1,5 @@
 {% load md2 %}
 {% load debate_filter %}
+
 <small>{% if user_is_judge or user_is_moderator %}{{ content|wordcount }} word{{ content|wordcount|pluralize }}. |{% endif %} {{content|minute_read}}</small>
 {{ content|markdown:"safe, code-friendly, code-color"}}

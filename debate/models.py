@@ -151,13 +151,17 @@ class Scores(models.Model):
             MaxValueValidator(10),
             MinValueValidator(0)
         ], blank = True, help_text="Score for Opposing Side on a scale of 10")
-    highest_score = models.PositiveSmallIntegerField(default=10,blank = True, help_text="Highest Possible Score Possible")
+    highest_score = models.PositiveSmallIntegerField(default=10,blank = True, help_text="Highest Score Possible")
     observation = MarkdownxField(max_length=1000, null=True, blank = True, help_text="Give brief summary of scores. Markdown supported.")
 
     supporting_vote = models.PositiveIntegerField(default = 0, blank = True,)
     opposing_vote = models.PositiveIntegerField(default = 0, blank = True,)
     vote_percent_share = models.PositiveSmallIntegerField(default=70,blank = True,)
     judge_percent_share = models.PositiveSmallIntegerField(default=30,blank = True,)
+    st_verdict = models.PositiveSmallIntegerField(default=0,blank = True,)
+    ot_verdict = models.PositiveSmallIntegerField(default=0,blank = True,)
+    uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
+
     class Meta:
         verbose_name_plural = 'Scores'
 
@@ -184,7 +188,7 @@ class Profile(models.Model):
     gender = models.CharField(choices=GENDER_CHOICES, max_length=6, blank=True, null=True)
 
     def profile_image_url(self):
-        avatar_name = "avatar"+str(random.randint(0, 3))+".png"
+        avatar_name = "avatar"+str(random.randint(1, 3))+".png" #random avatars if not found; avatar1, avatar2, avatar3
         return settings.MEDIA_URL+"avatars/default_avatar/"+avatar_name
 
     def get_absolute_url(self):

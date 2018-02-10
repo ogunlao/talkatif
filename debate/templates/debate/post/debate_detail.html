@@ -73,7 +73,7 @@
           <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
         {% endfor %}
         {% if post.updated != post.created %}<small class="grey-text">Last Edited {{post.updated|naturaltime}}</small>{% endif %}
-        <h5 class="">{{post.title}}</h5>
+        <h5 class="blue-text main_title">{{post.title}}</h5>
         <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"}}</p>
         {% if user_is_moderator %}
           <a href="{% url 'debate:edit_debate_post' post.id %}">
@@ -115,18 +115,19 @@
           By <a href="{{post.author.profile.get_absolute_url}}">{{post.author.get_full_name}}</a></p>
           {% if post.winner_updated %}
           <p>Winning Team:
-            <span class="pull-right"><i class="fa fa-glass fa-lg" aria-hidden="true">{{post.winner}}</i></span>
+            <span><i class="fa fa-glass fa-lg" aria-hidden="true">{{post.winner|capfirst}}</i></span>
           </p>
           {% endif %}
-          {% if post.begin %}<p>Began/Begins {{post.begin|naturaltime}}</p>{% else %}<p>Debate starts soon.</p>{% endif %}
-          {% if post.end %} <p>Ends/Ended {{post.end|naturaltime}}</p>{% endif %}
+          {% if post.begin %}<p>Starting time:  {{post.begin|naturaltime}}</p>{% else %}<p>Debate starts soon.</p>{% endif %}
+          {% if post.end %} <p>Ending time: {{post.end|naturaltime}}</p>{% endif %}
+
           {% if debate_in_progress %}
           Status: Debate in progress
           {% endif %}
           {% if debate_has_ended %}
           Status: Debate had ended
           {% endif %}<br>
-          Comment Settings: {% if post.allow_follower_comments %} Comments opened after close of debate {% else %}
+          Comment Settings: {% if post.allow_follower_comment %} Comments opened after close of debate {% else %}
           Debate is closed to all form of comments {% endif %}
 
         </div>
@@ -261,7 +262,7 @@
 
     </div> <!-- End of card -->
 {% endif %}
-      <p>Confused? Read our <a href="">FAQs</a> and <a href="{% url 'debate:rules_guidelines' %}">Rules</a> to understand how things work here.</p>
+      <p>Confused? Read our <a href="{% url 'faq' %}">FAQs</a> and <a href="{% url 'debate:rules_guidelines' %}">Rules</a> to understand how things work here.</p>
 
   {% get_comment_form for post as form %}
   {% if open_comment %}
@@ -287,9 +288,23 @@
       <a class="yellow btn black-text" href="{% url 'debate:suggest_post' %}">Create a new debate</a>
     </p>
 
+    {% if post.winner_updated %}
+    <div class="card-panel">
+      <p class="text-danger small_text">Results:<br>
+      Supporting: {{total_support_vote}} vote{{total_support_vote|pluralize }}<br>
+      Opposing: {{total_oppose_vote}} vote{{total_oppose_vote|pluralize }}
+      <br>
+      Winner: {{post.winner|capfirst}}
+      <br>
+      See full <a href="{% url 'debate:score_debate' post.pk %}">result details.</a>
+
+      </p>
+    </div>
+    {% endif %}
+
     <div class="card-panel">
         <div class="row">
-        {% if voted_before or not post.begin or debate_in_progress or not user.is_authenticated %}
+        {% if voted_before or not voting_has_started %}
         <div class="col s12 m6">
           <a name="{{ post.slug }}" value="support" class="waves-effect waves-light vote btn-floating disabled">
             <i class="material-icons">thumbs_up_down</i></a>
@@ -316,7 +331,7 @@
       </div>
 
 
-        <p class="debate_stand small"><br>
+        <p class="debate_stand small_text"><br>
         {% if vote_message %}{{vote_message}}
         {% else %}You have not voted in this debate{% endif %}
         <br>
@@ -324,29 +339,17 @@
           <a href="{% url 'account_login' %}">Login</a> or <a href="{% url 'account_signup' %}">SignUp</a> to vote.
           {% endif %}
         </p><hr/>
-        <p class="small">Voting Starts :
-            {% if post.vote_starts %}{{post.vote_starts}}{% else %}Not yet set by Mod{%endif%}<br>
+        <p class="small_text">Voting Starts :
+            <span class="right">{% if post.vote_starts %}{{post.vote_starts}}{% else %}Not yet set by Mod{%endif%}</span><br>
           Voting Ends :
-            {% if post.end %}{{post.end}}{% else %}Not yet set by Mod{%endif%}<br>
+            <span class="right">{% if post.end %}{{post.end}}{% else %}Not yet set by Mod{%endif%}</span><br>
           Result displayed afterwards. Please be patient.</p>
       </div>
-
-
-      {% if debate_has_ended %}
-
-        <p aria-label="Debate Results" class="text-danger">Results:<br>
-        Supporting Team: {{total_support_vote}} votes<br>
-        Opposing Team: {{total_oppose_vote}} votes
-        </p>
-
-      {% endif %}
-
 
     {% if post.count %}
           <div class="card-panel">
         Total Followers : <br>{{post.count}} person{{ post.count|pluralize }}.
           </div>
-
     {% endif %}
 
       <div class="card-panel">
@@ -360,7 +363,7 @@
           {% if notify_status %}
             <p class="has_set_notification small">You have previously set notification for this debate. You would be notified via email 15 mins before debate starts.</p><br>
           {% else %}
-            <p class="has_set_notification small">Enable alert for debate to get notified before debate starts. {%if not user.is_authenticated %}You must be <a href="{% url 'account_login' %}">logged in</a>.{%endif%}</p><br>
+            <p class="has_set_notification small">Enable alert for debate and get notified before debate starts. {%if not user.is_authenticated %}You must be <a href="{% url 'account_login' %}">logged in</a>.{%endif%}</p><br>
           {% endif %}
       </div>
 
@@ -438,6 +441,77 @@ $('.notify').click(function(){
                 error: function(rs, e) {
                        //alert(rs.responseText);
                 }
+          });
+});
+
+$('.like-comment').click(function(ev){
+      comment_id = $(this).attr('id')
+      liked_id = "liked_"+comment_id
+      liked_value = $("#"+liked_id).text()
+      //console.log(liked_value)
+
+      $.ajax({
+
+               type: "POST",
+               url: "/comments/like/"+comment_id+"/",
+               data: {'comment_id': $(this).attr('id'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               dataType: "json",
+               success: function(response) {
+                 //I could only update it using the error function
+                      //liked_value = liked_value + 1
+                      //$("#"+liked_id).text(response.total_comment_like);
+                },
+                error: function(rs, e) {
+                    //console.log(rs.responseText);
+                      if($('.like-comment').hasClass("liked")){
+                          liked_value = Number(liked_value) - 1
+                          if (liked_value == -1){ liked_value = 0};
+                           $('.like-comment').removeClass("liked");
+                           $('.mtl').removeClass("blue-text").addClass("grey-text");
+
+                      }else{
+                          liked_value = Number(liked_value) + 1
+
+                          $('.like-comment').addClass("liked");
+                          $('.mtl').removeClass("grey-text").addClass("blue-text");
+                        };
+                    $("#"+liked_id).text(liked_value);
+                    }
+          });
+});
+
+$('.dislike-comment').click(function(ev){
+      comment_id = $(this).attr('id')
+      disliked_id = "disliked_"+comment_id
+      liked_value = $("#"+disliked_id).text()
+      //console.log(liked_value)
+
+      $.ajax({
+
+               type: "POST",
+               url: "/comments/dislike/"+comment_id+"/",
+               data: {'comment_id': $(this).attr('id'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               dataType: "json",
+               success: function(response) {
+                 //I could only update it using the error function
+                      //liked_value = liked_value + 1
+                      //$("#"+liked_id).text(response.total_comment_like);
+                },
+                error: function(rs, e) {
+                    //console.log(rs.responseText);
+                      if($('.dislike-comment').hasClass("disliked")){
+                          liked_value = Number(liked_value) - 1
+                          if (liked_value == -1){ liked_value = 0};
+                           $('.dislike-comment').removeClass("disliked");
+                           $('.mtdl').removeClass("red-text").addClass("grey-text");
+
+                      }else{
+                          liked_value = Number(liked_value) + 1
+                          $('.dislike-comment').addClass("disliked");
+                          $('.mtdl').removeClass("grey-text").addClass("red-text");
+                        };
+                    $("#"+disliked_id).text(liked_value);
+                    }
           });
 });
 

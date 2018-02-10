@@ -86,9 +86,11 @@
 
           </div>
           {% else %}
+          <div class="col m6 offset-m2">
             {% if related_post.debate_category == "closed" %}
               <p>No person has indicated interest in debate yet. Share debate on social media to get the attention it deserves </p>
             {% endif %}
+          </div>
           {% endif %}
 
           {% if not debaters_supporting and not debaters_opposing %}
@@ -109,7 +111,7 @@
                           <span class="lever"></span>
                           On
                         </label>
-                        <span>{{postdebate_form.allow_follower_comment.label_tag}}</span>
+                        <span> Allow comments from observers after debate ends.</span>
                       </div>
                       <p>Debate Start Date/Time</p>
                       <div class='input-field'>

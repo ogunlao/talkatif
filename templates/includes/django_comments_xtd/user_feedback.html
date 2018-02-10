@@ -1,16 +1,16 @@
 {% if allow_feedback %}
 <span class="small">
-  {% if show_feedback %}
-  <a data-toggle="tooltip" title="{{ item.likedit_users|join:'<br/>' }}"><span class="small" id="liked_{{item.comment.pk}}">{{ item.likedit_users|length }}</span></a>
+  {% if show_feedback and user.is_authenticated %}
+  <a href="" data-toggle="tooltip" title="{{ item.likedit_users|join:'<br/>' }}"><span class="small" id="liked_{{item.comment.pk}}">{{ item.likedit_users|length }}</span></a>
   {% endif %}
 
-  <a id={{item.comment.pk}} class="like-comment {% if not item.likedit %}mutedlink{% endif %}"><i class="tiny material-icons">thumb_up</i></a>
+  <a id={{item.comment.pk}} class="like-comment {% if item.likedit %}liked{% endif %}"><i class="tiny material-icons mtl {% if item.likedit %}blue-text{% else %}grey-text{% endif %}">thumb_up</i></a>
   <span class="text-muted">|</span>
 
   {% if show_feedback %}
-  <a data-toggle="tooltip" title="{{ item.dislikedit_users|join:'<br/>' }}"><span class="small" id="disliked_{{item.comment.pk}}">{{ item.dislikedit_users|length }}</span></a>
+  <a href="" data-toggle="tooltip" title="{{ item.dislikedit_users|join:'<br/>' }}"><span class="small" id="disliked_{{item.comment.pk}}">{{ item.dislikedit_users|length }}</span></a>
   {% endif %}
 
-  <a id={{item.comment.pk}} class="dislike-comment {% if not item.dislikedit %}mutedlink{% endif %}"><i class="tiny material-icons blue-text">thumb_down</i></a>
+  <a id={{item.comment.pk}} class="dislike-comment {% if item.dislikedit %}disliked{% endif %}"><i class="tiny material-icons mtdl {% if item.dislikedit %}red-text{% else %}grey-text{% endif %}">thumb_down</i></a>
 </span>
 {% endif %}

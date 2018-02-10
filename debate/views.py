@@ -191,8 +191,8 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
     like_count = post.total_likes #counts total likes on post
 
     #Time comparism
-    debate_in_progress = debate_has_ended = False
-    if post.end:
+    debate_in_progress = debate_has_ended = voting_has_started = False
+    if post.end and post.begin:
         if timezone.now() > post.begin and timezone.now() < post.end:
             debate_in_progress = True
         if timezone.now() > post.end:
@@ -201,6 +201,10 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
     elif post.begin:
         if timezone.now() > post.begin:
             debate_in_progress = True
+
+    if post.vote_starts:
+        if timezone.now() > post.vote_starts and debate_in_progress and request.user.is_authenticated(): #enable voting for users
+            voting_has_started = True
 
     #Gets meta details for post
     meta = Meta(
@@ -228,7 +232,7 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
         open_comment = True
     elif (user_in_supporting_team or user_in_opposing_team or user_is_judge) and debate_in_progress:
         open_comment = True
-    elif debate_has_ended and request.user.is_authenticated() and allow_follower_comment:
+    elif debate_has_ended and request.user.is_authenticated() and post.allow_follower_comment:
         open_comment = True
     else:
         open_comment = False
@@ -238,7 +242,7 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
             'debate_in_progress': debate_in_progress, 'debate_has_ended':debate_has_ended, 'deb_stat':deb_stat, \
             'user_in_supporting_team':user_in_supporting_team, \
             'user_in_opposing_team':user_in_opposing_team, 'user_is_moderator':user_is_moderator, \
-            'user_is_judge':user_is_judge, 'open_comment':open_comment, }
+            'user_is_judge':user_is_judge, 'open_comment':open_comment, 'voting_has_started':voting_has_started }
 
     return render(request, 'debate/post/debate_detail.html', context)
 
@@ -518,18 +522,23 @@ def mod_debate(request, post_id):
 
 @login_required
 def score_debate(request, post_id):
-    scored = False
-    calculated = False
+    scored = False #Has judges given their verdict?
+    calculated = False #Has total scores been calculated
     related_post = get_object_or_404(PostDebate, id = post_id)
-    status = Scores.objects.filter(post = related_post).exists()
-    if not status:
+    status = Scores.objects.filter(post = related_post).exists() #Has debate previously been scored?
+    judge_available = related_post.judges.all().count() #Are judges included in debate? 0 indiates non
+    vote_ended = False
+    if timezone.now() > related_post.end:
+        vote_ended = True
+    if not status and not vote_ended: #Allow judge scores only if debate has not ended
         if request.method == 'POST':
             score_form = ScoresForm(request.POST)
             if score_form.is_valid():
                 post = score_form.save(commit=False)
                 post.post = related_post
+                post.uploaded_by = request.user
                 post.save()
-                scored = "Yes"
+                scored = True
                 messages.success(request, 'Debate score updated successfully')
                 return render(request, 'debate/form/score.html', {'post': post, 'scored':scored})
             else:
@@ -539,75 +548,76 @@ def score_debate(request, post_id):
             score_form = ScoresForm()
             context = {'score_form': score_form, 'scored': scored, 'related_post' : related_post }
             return render(request, 'debate/form/score.html', context )
-    elif related_post.debate_category == "open" or status:
-        post = get_object_or_404(Scores, post = related_post)
-        #Get total votes for both sides
-        total_support_vote = Votes.objects.filter(post = related_post).filter(support = True).count()
-        total_oppose_vote = Votes.objects.filter(post = related_post).filter(oppose = True).count()
 
-        post.supporting_vote = total_support_vote
-        post.opposing_vote = total_oppose_vote
-        post.save()
+    else:
+        post, created = Scores.objects.get_or_create(post=related_post)
+        if not related_post.winner_updated:
+            #Get total votes for both side  and keep updating as users view it
+            total_support_vote = Votes.objects.filter(post = related_post).filter(support = True).count()
+            total_oppose_vote = Votes.objects.filter(post = related_post).filter(oppose = True).count()
 
-        scored = "Yes"
+            post.supporting_vote = total_support_vote
+            post.opposing_vote = total_oppose_vote
 
-        judge_support_percent = judge_oppose_percent = total_votes = vote_support_percent = vote_oppose_percent = 0
-        supporting_team_percent_score = opposing_team_percent_score = 0
-        #calculating Winner
+            scored = True #Scores has now been updated
 
-        if related_post.end <= timezone.now(): #check if debate has ended before calculating scores
-            if related_post.debate_category == "closed":
+            #check if debate has ended before calculating scores
+            judge_support_percent = judge_oppose_percent = total_votes = vote_support_percent = vote_oppose_percent = 0
+            supporting_team_percent_score = opposing_team_percent_score = 0 #initialization
+            #calculating Winner
+
+            total_votes = post.supporting_vote + post.opposing_vote
+            if related_post.debate_category == "closed" and judge_available:
                 #Assuming debate is closed and judges are to give verdict
                 judge_support_percent = (post.supporting_score / post.highest_score) * post.judge_percent_share
                 judge_oppose_percent = (post.opposing_score / post.highest_score) * post.judge_percent_share
-                total_votes = post.supporting_vote + post.opposing_vote
+
                 vote_support_percent = (post.supporting_vote / total_votes) * post.vote_percent_share
                 vote_oppose_percent = (post.opposing_vote / total_votes) * post.vote_percent_share
             else:
-                #Assuming debate is open, no judges, winner based on votes only
-                total_votes = post.supporting_vote + post.opposing_vote
+                #Use votes only, 100 percent used
                 vote_support_percent = (post.supporting_vote / total_votes) * 100
                 vote_oppose_percent = (post.opposing_vote / total_votes) * 100
+
             supporting_team_percent_score = vote_support_percent + judge_support_percent
             opposing_team_percent_score = vote_oppose_percent + judge_oppose_percent
-            calculated = True
 
-            if not related_post.winner_updated:
-                #Update Statistics for winners and loosers
-                stats_update_supporting = Stat.objects.filter(post = related_post).filter(supported = True)
-                stats_update_opposing = Stat.objects.filter(post = related_post).filter(opposed = True)
-                if supporting_team_percent_score > opposing_team_percent_score:
-                    for update in stats_update_supporting:
-                        update.won = True
-                        update.save()
-                    for update in stats_update_opposing:
-                        update.lost = True
-                        update.save()
-                    related_post.winner = "supporting" #Update post as supporting team won
-                elif supporting_team_percent_score < opposing_team_percent_score:
-                    for update in stats_update_opposing:
-                        update.won = True
-                        update.save()
-                    for update in stats_update_supporting:
-                        update.lost = True
-                        update.save()
-                    related_post.winner = "opposing" #Update post as opposing team won
-                elif supporting_team_percent_score == opposing_team_percent_score:
-                    for update in stats_update_opposing:
-                        update.drew = True
-                        update.save()
-                    for update in stats_update_supporting:
-                        update.drew = True
-                        update.save()
-                    related_post.winner = "draw" #Update post as it ended in a tie
-                related_post.winner_updated = True
-                related_post.save()
-            #stats_update = Stat.objects.filter()
-        context = {'scored': scored, 'calculated': calculated, 'post': post, 'related_post':related_post,
-         'judge_support_percent': judge_support_percent, 'judge_oppose_percent':judge_oppose_percent,
-         'total_votes':total_votes, 'vote_support_percent': vote_support_percent,
-         'vote_oppose_percent': vote_oppose_percent,
-         'supporting_team_percent_score': supporting_team_percent_score, 'opposing_team_percent_score':opposing_team_percent_score, 'meta':meta }
+            post.st_verdict = supporting_team_percent_score
+            post.ot_verdict = opposing_team_percent_score
+
+            #Update Statistics for winners and loosers
+            stats_update_supporting = Stat.objects.filter(post = related_post).filter(supported = True)
+            stats_update_opposing = Stat.objects.filter(post = related_post).filter(opposed = True)
+            if supporting_team_percent_score > opposing_team_percent_score:
+                for update in stats_update_supporting:
+                    update.won = True
+                    update.save()
+                for update in stats_update_opposing:
+                    update.lost = True
+                    update.save()
+                related_post.winner = "supporting" #Update post as supporting team won
+            elif supporting_team_percent_score < opposing_team_percent_score:
+                for update in stats_update_opposing:
+                    update.won = True
+                    update.save()
+                for update in stats_update_supporting:
+                    update.lost = True
+                    update.save()
+                related_post.winner = "opposing" #Update post as opposing team won
+            elif supporting_team_percent_score == opposing_team_percent_score:
+                for update in stats_update_opposing:
+                    update.drew = True
+                    update.save()
+                for update in stats_update_supporting:
+                    update.drew = True
+                    update.save()
+                related_post.winner = "draw" #Update post as it ended in a tie
+            related_post.winner_updated = True
+            related_post.save()
+            post.save()
+
+        context = {'scored': scored, 'post': post, 'related_post':related_post,
+        'meta':meta }
 
         return render(request, 'debate/form/score.html', context )
 

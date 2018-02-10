@@ -26,7 +26,7 @@
       <img src="{{item.comment.user.profile.profile_image_url}}" class="circle" width="35" height="35" />
     {% endif %}
   </a>
-  <span class="title">
+  <span class="comment_title">
         {{ item.comment.submit_date|localize }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}<a href="{{item.comment.user.profile.get_absolute_url}}">{{ item.comment.name }}</a>{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="red-text">{% trans "SuperMod" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'copy comment link' %}" href="{% get_comment_permalink item.comment %}"><i class="fa fa-share" aria-hidden="true"></i></a>
 
         {% if not item.comment.is_removed %}
@@ -48,32 +48,32 @@
         </span>
 
   </span>
-  <p class="blue_text">
-              {% if post.debate_category == "closed" %}
+            {% if post.debate_category == "closed" %}
                 {% for debater in post.supporting_debaters.all %}
                   {% if debater == item.comment.user %}
-                    <p class="blue-text">Supporting Debater </p>
+                    <p class="brown-text darken-3 comment_title">Supporting Debater </p>
                   {% endif%}
                 {% endfor%}
                 {% for debater in post.opposing_debaters.all %}
                   {% if debater == item.comment.user %}
-                    <p class="blue-text">Opposing Debater </p>
+                    <p class="brown-text darken-3 comment_title">Opposing Debater </p>
                   {% endif%}
                 {% endfor%}
                 {% for judge in post.judges.all %}
                   {% if judge == item.comment.user %}
-                    <p class="blue-text">Judge</p>
+                    <p class="brown-text darken-3 comment_title">Judge</p>
                   {% endif%}
                 {% endfor%}
               {% endif %}
 
               {% for mod in post.moderator.all %}
                 {% if mod == item.comment.user %}
-                  <p class="blue-text">Moderator</p>
+                  <p class="brown-text darken-3 comment_title">Moderator</p>
                 {% endif%}
               {% endfor%}
-    </p>
-      {% endif %}
+
+
+          {% endif %}
       {% if item.comment.is_removed %}
         <p class="grey-text"><em>{% trans "This comment has been removed." %}</em></p>
         {% else %}
@@ -99,19 +99,14 @@
 <li class="divider"></li>
 </ul>
 
-    {% if not item.comment.is_removed and item.children %}
-    <div class="row">
-      <div class="col s1"></div>
-        <div class="col s11">
-            {% render_xtdcomment_tree with comments=item.children %}
-        </div>
-      </div>
-
+    {% if item.children %}
+    <small class="grey-text">Replying to {% if item.comment.is_removed %}a deleted comment{% else %}<a class="blue-text" href="{% get_comment_permalink item.comment %}">{{item.comment.comment|truncatewords:10}}</a>{% endif %}</small>
+      {% render_xtdcomment_tree with comments=item.children %}
     {% endif %}
+
 {% if item.comment.level == 0 %}
 </div><!-- End of card content -->
 </div><!-- End of card -->
-
 
 {% show_pages %}
 {% endif %}
