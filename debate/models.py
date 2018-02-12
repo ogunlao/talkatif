@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField #For Profile
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib import messages
 
 from markdownx.models import MarkdownxField
 from django.conf import settings
@@ -257,7 +258,6 @@ def email_confirmed_(request, email_address, **kwargs):
 
     # user.is_active = True
     # user.save()
-
     ctx = {'postdebate':postdebate, 'post':post, 'user':user}
     from_email = settings.SERVER_EMAIL
     recipients_email = user.email
@@ -267,6 +267,7 @@ def email_confirmed_(request, email_address, **kwargs):
     msg = EmailMultiAlternatives(subject, message, from_email, [recipients_email])
     msg.attach_alternative(html_content,"text/html")
     msg.send()
+    messages.info(request,"Your email address has been confirmed. You can now login")
 
 class PostDebater(models.Model):
     """
