@@ -9,13 +9,13 @@
 
 {% load staticfiles %}
 
-{% block title %}{{post.title}}{% endblock %}
+{% block title %}Talks - {{post.title}}{% endblock %}
 
 {% block extra_nav %}
   {% if post.author == user %}
   <p>
     <a href="{% url 'discourse:edit_post' post.id %}">
-        Edit this post</a>
+        Edit this talk</a>
   </p>
   {% endif %}
 {% endblock extra_nav %}
@@ -36,13 +36,13 @@
           {% for tag in post.tags.all %}
             <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
           {% endfor %}
-          {% if post.updated != post.created %}<small class="grey-text">Last Edited {{post.updated|naturaltime}}</small>{% endif %}
+          {% if post.updated != post.created %}<small class="grey-text">Last Updated {{post.updated|naturaltime}}</small>{% endif %}
           <h5 class="blue-text main_title">{{post.title}}</h5>
           <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"|linebreaks}}</p>
           {% if post.author == user %}
           <p>
-            <a href="{% url 'discourse:edit_post' post.id %}">
-                Edit this post</a>
+            <a class="small_text" href="{% url 'discourse:edit_post' post.id %}">
+                Edit this talk.</a>
           </p>
           {% endif %}
 
@@ -67,7 +67,7 @@
 
           {% include "share_button.html" %}
 
-            <p class="grey-text">
+            <p class="grey-text small_text">
             Posted {{post.created|naturaltime}},
             By {{post.author.get_full_name}}</p>
         </div>
@@ -96,15 +96,24 @@
     <div class="row">
       <br>
         <a href="{% url 'discourse:new_post' %}">
-      <button class="yellow btn black-text">New Discourse</button></a>
+      <button class="yellow btn black-text">New Talk &raquo;</button></a>
     </div>
+
+    {% if similar_posts %}
+    <p class="small_text">Related talks{{similar_postso.count|pluralize}}.</p>
+    <ul>
+      {% for lists in similar_posts %}
+      <li><a class="small_text" href="{{lists.get_absolute_url}}">{{lists|capfirst}}</a></li>
+      {% endfor %}
+      <li class="divider"></li>
+    </ul>
+    {% endif %}
 
 
     {% if post.count %}
-          <div class="card-panel">
+          <div class="card-panel small_text">
         Total Followers : <br>{{post.count}} person{{ post.count|pluralize }}.
           </div>
-
     {% endif %}
 
 

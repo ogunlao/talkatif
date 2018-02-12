@@ -68,22 +68,24 @@ def post_list(request, tag_slug = None):
 
     return render(request, template , context)
 
-#A function to get the ip host of loggen in user
+#A function to get the ip host of logged in user
 #Used to track activities and get total user views
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
+from ipware import get_client_ip
+
+def client_ip(request):
+    client_ip, is_routable = get_client_ip(request)
+    if client_ip is None:
+        return "127.0.0.1" #A default IP as a dummy
     else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+        return client_ip
 
 def post_detail(request, post_id, post_slug):
     post = get_object_or_404(Post, id=post_id)
+    similar_posts = post.tags.similar_objects()[:5] #Get five other similar posts
     user_id = request.user.pk
     post_form = PostForm()
 
-    ip_add = get_client_ip(request) #gets user ip address
+    ip_add = client_ip(request) #gets user ip address
     if request.user.is_authenticated(): #To save user data for page views
         request_user = request.user
     else: request_user = None
@@ -101,7 +103,7 @@ def post_detail(request, post_id, post_slug):
             break
 
     like_count = post.total_likes #counts total likes on post
-    context = {'post':post, 'like_count':like_count, 'liked':liked, 'post_form':post_form, 'meta':meta }
+    context = {'post':post, 'like_count':like_count, 'liked':liked, 'post_form':post_form, 'meta':meta, 'similar_posts':similar_posts }
 
     return render(request, 'discourse/post/post_detail.html', context)
 

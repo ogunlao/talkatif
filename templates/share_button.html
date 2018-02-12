@@ -14,7 +14,7 @@
       class="waves-effect waves-light btn-floating social linkedin">
             <i class="fa fa-linkedin"></i></a></li>
     {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
-    <li><a href="whatsapp://send?text={{ request.build_absolute_uri|urlencode }} - *{{post.title}}* - {{post.summary|truncatechars:300|markdownify|striptags}}..." data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
+    <li><a href="whatsapp://send?text=*{{post.title}}* - What do you think?... {{ request.build_absolute_uri|urlencode }}" data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
             <i class="fa fa-whatsapp"></i></a></li>
     {% endif %}
   </ul>

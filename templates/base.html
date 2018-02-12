@@ -67,7 +67,7 @@
         {% if daily_argument > 0 %}<span class="new badge amber lighten-4 red-text">{{daily_argument}}</span>{% endif %}
       </a></li>
       {% url 'discourse:post_list' as url3 %}
-      <li class="tab {% if request.path == url3 %}active{% endif %}"><a target="_self" class="active" href="{% url 'discourse:post_list' %}">Discourse
+      <li class="tab {% if request.path == url3 %}active{% endif %}"><a target="_self" class="active" href="{% url 'discourse:post_list' %}">Talks
         {% if daily_discourse > 0 %}<span class="new badge amber lighten-4 red-text">{{daily_discourse}}</span>{% endif %}</a></li>
     </ul>
     <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -100,7 +100,7 @@
       <li class="tab"><a target="_self" href= "{% url 'debate:debate_list_by_category' 'open' %}">Argument
         {% if daily_argument > 0 %}<span class="new badge amber lighten-4 red-text">{{daily_argument}}</span>{% endif %}
       </a></li>
-      <li class="tab"><a target="_self" class="active" href="{% url 'discourse:post_list' %}">Discourse
+      <li class="tab"><a target="_self" class="active" href="{% url 'discourse:post_list' %}">Talks
         {% if daily_discourse > 0 %}<span class="new badge amber lighten-4 red-text">{{daily_discourse}}</span>{% endif %}</a></li>
       <li class="divider"></li>
       <li><a href="{% url 'account_logout' %}">Sign Out</a></li>

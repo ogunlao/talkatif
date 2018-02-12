@@ -6,7 +6,7 @@
 {% load comments_xtd %}
 {% load i18n %}
 
-{% block title %}Discourse{% endblock %}
+{% block title %}Talks{% endblock %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
     {% if tag %}
     <div class="row">
       Results for:
-      <a href="{% url 'discourse:post_list_by_tag' tag.slug   %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
+      <a href="{% url 'discourse:post_list_by_tag' tag.slug   %}"><span class="s badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
     </div>
     {% endif %}
 
@@ -67,7 +67,7 @@
     <div class="row">
       <br>
         <a href="{% url 'discourse:new_post' %}">
-      <button class="yellow btn black-text">New Discourse</button></a>
+      <button class="yellow btn black-text">New Talk</button></a>
     </div>
 
     {% get_last_xtdcomments 5 as last_comments for discourse.post %}

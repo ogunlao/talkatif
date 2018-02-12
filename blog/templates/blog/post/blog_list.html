@@ -47,13 +47,16 @@
 
     {% endfor %}
 
-        <div>
-            {{ object_list.render }}
-        </div>
-
-    {% else %}
-      <p>There are no posts yet. Check back.</p>
-    {% endif %}
+      <!-- The following renders the pagination html -->
+      <div>
+        {% if object_list.object_list %}
+          {{ object_list.render }}
+        {% endif %}
+      </div>
+  {% endif %}
+  {% if not object_list.object_list %}
+  <p>There are no blog posts yet.</p>
+  {% endif %}
 
 </div>
 

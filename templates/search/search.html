@@ -1,4 +1,5 @@
 {% extends "debate/base.html" %}
+{% load staticfiles %}
 {% load comments %}
 {% load el_pagination_tags %}
 {% load markdownify %}
@@ -7,7 +8,7 @@
 
 
 {% block title %}Search Result for {{query}}{% endblock %}
-{% load staticfiles %}
+
 
 {% block content %}
 
@@ -26,7 +27,7 @@
         {% for tag in result.tags %}
           <a href="{% url 'debate:debate_list_by_tag' tag|slugify  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag }}</span></a>
         {% endfor %}
-        <h5 class=""><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></h5>
+        <h5 class="main_title"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></h5>
         <p>{{result.summary|truncatechars:300|markdownify}}</p>
         <small>
         {% if result.end %} Ends {{result.end|naturaltime}}
@@ -35,7 +36,7 @@
           {% else %} Debate starts soon.
         {% endif %}
 
-        by <a href="{{result.object.author.profile.get_absolute_url}}">{{result.object.author.get_full_name}}</a>
+        ,By <a href="{{result.object.author.profile.get_absolute_url}}">{{result.object.author.get_full_name}}</a>
         <p><strong>Debaters:</strong>
         {% if result.debate_category == "closed" and result.supporting_debaters or result.opposing_debaters %}
           {% for author in result.supporting_debaters %} <a href="{{result.object.author.profile.get_absolute_url}}">{{ author}}</a>{% endfor %}
@@ -61,10 +62,10 @@
         {% for tag in result.tags %}
           <a href="{% url 'discourse:post_list_by_tag' tag|slugify  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag }}</span></a>
         {% endfor %}
-        <h5 class=""><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></h5>
+        <h5 class="main_title"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></h5>
         <p>{{result.summary|truncatechars:300|markdownify|linebreaks}}</p>
         <small>Created {{result.created|naturaltime}}
-          by <a href="{{result.object.author.profile.get_absolute_url}}">{{result.object.author.get_full_name}}</a>
+          ,By <a href="{{result.object.author.profile.get_absolute_url}}">{{result.object.author.get_full_name}}</a>
 
           {% get_comment_count for result.object as comment_count %}
           <span class="right">

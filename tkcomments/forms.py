@@ -6,8 +6,8 @@ from django_comments_xtd.models import TmpXtdComment
 
 class TkCommentForm(XtdCommentForm):
     COMMENT_CHOICES = (
-        ('BE YOURSELF', 'BE YOURSELF'),
-        ('BE ANONYMOUS', 'BE ANONYMOUS'),
+        ('B.Y', 'BE YOURSELF'),
+        ('B.A', 'BE ANONYMOUS'),
         )
     comment_anonymous = forms.ChoiceField(choices=COMMENT_CHOICES)
 

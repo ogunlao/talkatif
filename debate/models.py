@@ -213,12 +213,32 @@ def set_initial_user_names(request, user, sociallogin=None, **kwargs):
     sociallogin.account.extra_data['screen_name']
     """
     from debate.models import Profile
-
+    profile = Profile()
     if sociallogin:
         if sociallogin.account.provider == 'facebook':
-            gender_type = sociallogin.account.extra_data['gender']
+            profile.gender_type = sociallogin.account.extra_data['gender']
             #verified = sociallogin.account.extra_data['verified']
-    profile = Profile(user=user, gender = gender_type)
+
+    #I want to get country and city of user from ip address.
+    from ipware import get_client_ip
+    client_ip, is_routable = get_client_ip(request)
+    if client_ip is None:
+        pass # Unable to get the client's IP address
+    else:
+    # We got the client's IP address
+        if is_routable: # The client's IP address is publicly routable on the Internet
+            import requests
+            r = requests.get('http://usercountry.com/v1.0/json/'+str(client_ip))
+            result = r.json()
+            if result['status'] == "success":
+                profile.country = result['country']['alpha-2']
+                profile.city = result['region']['city']
+            else: #result returns failure
+                pass
+        else:
+            pass # The client's IP address is private
+
+    profile.user = user
     profile.save()
 
 @receiver(email_confirmed)

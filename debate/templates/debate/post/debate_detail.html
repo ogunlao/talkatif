@@ -9,7 +9,7 @@
 {% load debate_filter %}
 {% load avatar_tags %}
 
-{% block title %}{{post.title}}{% endblock title %}
+{% block title %}debate - {{post.title}}{% endblock title %}
 {% block extra_nav %}
 
       {% if user_is_moderator %}
@@ -77,7 +77,7 @@
         <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"}}</p>
         {% if user_is_moderator %}
           <a href="{% url 'debate:edit_debate_post' post.id %}">
-              <span class="small">Edit Debate</span></a>
+              <span class="small_text">Edit Debate</span></a>
         {% endif %}
 
         {% get_comment_count for post as comment_count %}
@@ -285,8 +285,17 @@
 
   <div class="col m3 l3">
     <p>
-      <a class="yellow btn black-text" href="{% url 'debate:suggest_post' %}">Create a new debate</a>
+      <a class="yellow btn black-text" href="{% url 'debate:suggest_post' %}">New debate</a>
     </p>
+    {% if similar_posts %}
+    <p class="small_text">Related Debate{{similar_postso.count|pluralize}}.</p>
+    <ul>
+      {% for lists in similar_posts %}
+      <li><a class="small_text" href="{{lists.get_absolute_url}}">{{lists|capfirst}}</a></li>
+      {% endfor %}
+      <li class="divider"></li>
+    </ul>
+    {% endif %}
 
     {% if post.winner_updated or debate_has_ended %}
     <div class="card-panel">
@@ -347,7 +356,7 @@
       </div>
 
     {% if post.count %}
-          <div class="card-panel">
+          <div class="card-panel small_text">
         Total Followers : <br>{{post.count}} person{{ post.count|pluralize }}.
           </div>
     {% endif %}
@@ -361,9 +370,9 @@
           {% endif %}
           <hr>
           {% if notify_status %}
-            <p class="has_set_notification small">You have previously set notification for this debate. You would be notified via email 15 mins before debate starts.</p><br>
+            <p class="has_set_notification small_text">You have previously set notification for this debate. You would be notified via email 15 mins before debate starts.</p><br>
           {% else %}
-            <p class="has_set_notification small">Enable alert for debate and get notified before debate starts. {%if not user.is_authenticated %}You must be <a href="{% url 'account_login' %}">logged in</a>.{%endif%}</p><br>
+            <p class="has_set_notification small_text">Enable alert for debate and get notified before debate starts. {%if not user.is_authenticated %}You must be <a href="{% url 'account_login' %}">logged in</a>.{%endif%}</p><br>
           {% endif %}
       </div>
 

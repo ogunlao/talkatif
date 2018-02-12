@@ -12,47 +12,54 @@
           <div class="col m6 offset-m3">
               <div class="card-panel">
               {% if related_post.winner_updated %}
-              <h5>Debate Scores and Vote Count</h5>
+              <h5 class="main_title">Debate Scores and Vote Count
               {% else %}
-              <h5>Score Debate for both teams</h5>
+              Score Debate for both teams</h5>
               {% endif %}
-              <h5>Debate Topic</h5>
+              <h5 class="main_title">Debate Topic</h5>
               <p class="blue-text">{{ post.post }}</p>
               {% if related_post.winner_updated %}
               <div class="row">
                   <div class="col s12">
-                    <ul class="tabs">
+                    <ul class="tabs tabs-fixed-width">
                       <li class="tab col s3"><a class="active blue-text" href="#result">Result</a></li>
                       <li class="tab col s3"><a class="blue-text" href="#raw_scores">Raw Scores</a></li>
                       <li class="tab col s3"><a class="blue-text" href="#judge">Judges</a></li>
                     </ul>
                   </div>
                   <div id="result" class="col s12">
-                    <p>Suppoting Team Score: <span class="right">{{post.st_verdict}} %</span></p>
-                    <p>Opposing Team Score: <span class="right">{{post.ot_verdict}} %</span></p>
-                    <hr>
-                    <p>Winner:</p>
-                    {{related_post.winner|capfirst}}
+                    <ul>
+                    <li>Suppoting Team Score: <span class="right">{{post.st_verdict}} %</span></li>
+                    <li>Opposing Team Score: <span class="right">{{post.ot_verdict}} %</span></li>
+                    <li class="divider"></li>
+                    <li>Winner: {{related_post.winner|capfirst}}</li>
+                  </ul>
+
                   </div>
                   <div id="raw_scores" class="col s12">
-                    <p>Opposing Team Votes: <span class="right">{{post.opposing_vote }}</span></p>
-                    <p>Supporting Team Votes: <span class="right">{{post.supporting_vote }}</span></p>
-                    <br>
-                    <p>Supporting Team Score: <span class="right">{{ post.supporting_score }}</span></p>
-                    <p>Opposing Team Score: <span class="right">{{post.opposing_score }}</span></p>
-                    <p>Highest Possible Score: <span class="right">{{ post.highest_score }}</span></p>
+                    <ul>
+                    <li>Opposing Team Votes: <span class="right">{{post.opposing_vote }}</span></li>
+                    <li>Supporting Team Votes: <span class="right">{{post.supporting_vote }}</span></li>
+                    <li class="divider"></li>
+                    <li>Supporting Team Score: <span class="right">{% if post.supporting_score %}{{ post.supporting_score }}{% else %}Not used{% endif %}</span></li>
+                    <li>Opposing Team Score: <span class="right">{% if post.opposing_score %}{{ post.opposing_score }}{% else %}Not used{% endif %}</span></li>
+                    <li>Highest Possible Score: <span class="right">{{ post.highest_score }}</span></li>
+                  </ul>
                   </div>
                   <div id="judge" class="judge">
-                    <h5>Judge Scores/{{post.judge_percent_share}}</h5>
+                    <p>Judge Scores/{{post.judge_percent_share}}</p>
                     <small class="grey-text">Score of zero or empty scores indicates no judge verdict was included in scoring</small>
-                    <p>Supporting Side: <span class="right">{{judge_support_percent}}%</span></p>
-                    <p>Opposing Side: <span class="right">{{judge_support_percent}}%</span></p>
-                    <p>Observations</p>
+                    <ul>
+                    <li>Supporting Side: <span class="right">{% if judge_support_percent %}{{judge_support_percent}}%{% else %}Not used{% endif %}</span></li>
+                    <li>Opposing Side: <span class="right">{% if judge_support_percent %}{{judge_support_percent}}%{% else %}Not used{% endif %}</span></li>
+                    <li>Observations</li>
+                    <li class="divider"></li>
                     {% if post.observation %}
-                    <p>{{post.observation|markdown:"safe, code-friendly, code-color"}}</p>
+                    <li>{{post.observation|markdown:"safe, code-friendly, code-color"}}
                     {% else %}
-                    <p>No recorded observation or anomaly</p>
+                    No recorded observation or anomaly.</li>
                     {% endif %}
+                   </ul>
                   </div>
               </div>
 

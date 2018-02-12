@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 {% load markdownify %}
 {% block extra_head %} {% endblock extra_head %}
-{% block title %}New Discourse{% endblock %}
+{% block title %}{% if post_id %}Edit talk{% else %}New talk{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -12,7 +12,11 @@
 
           <div class="col m6 offset-m3">
             <div class="card-panel">
-              <h5>Post or Edit a discourse</h5>
+              {% if post_id %}
+              <h5>Edit this talk.</h5>
+              {% else %}
+              <h5> Add a new talk. </h5>
+              {% endif %}
 
                 <form class="" enctype="multipart/form-data" action="." method="post">
                   {% csrf_token %}
@@ -68,8 +72,8 @@
                   </p><br>
 
                   <div class="row">
-                    <button type="submit" class="yellow btn black-text">Add Discourse</button>
-                    OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
+                    <button type="submit" class="yellow btn black-text">Add Talk</button>
+                    OR <span><a href={% url "discourse:post_list" %}>Return to talks</a>
                   </div>
                   {% endif %}
 

@@ -13,10 +13,10 @@
   <!-- <div class="media-left"><img src="{{ comment.user.profile.image.thumbnail.25x25 }}"/></div> -->
   <div class="media-body">
     <div class="comment">
-      <small class="media-heading">
+      <p class="media-heading small_text">
         {% trans "Posted to "%}&nbsp;<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>&nbsp;-&nbsp;
         {{ comment.submit_date|naturaltime }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}"><i class="fa fa-share" aria-hidden="true"></i></a>
-      </small>
+      </p>
         {{ comment.comment|truncatechars:150|markdownify|linebreaks}}
 
     </div>

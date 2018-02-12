@@ -40,7 +40,7 @@ urlpatterns = [
     url(r'^search/', include('haystack.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^debate/', include('debate.urls', namespace='debate', app_name='debate')),
-    url(r'^discourse/', include('discourse.urls', namespace='discourse', app_name='discourse')),
+    url(r'^talk/', include('discourse.urls', namespace='discourse', app_name='discourse')),
     url(r'^index/', debate_views.index, name = 'index'),
     url(r'^avatar/', include('avatar.urls')),
     url(r'^profile/deactivate/$', debate_views.deactivate_profile, name='deactivate_profile'),

@@ -102,23 +102,34 @@ def debate_list(request, tag_slug = None, category = None):
     context = {'object_list': object_list, 'tag':tag,  'page': page, 'last_5_badges':last_5_badges, 'meta':meta }
     return render(request, template , context)
 
-#A function to get the ip host of loggen in user
+#A function to get the ip host of logged in user
 #Used to track activities and get total user views
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
+from ipware import get_client_ip
+
+def client_ip(request):
+    client_ip, is_routable = get_client_ip(request)
+    if client_ip is None:
+        return "127.0.0.1"
     else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+        return client_ip
+
+# def get_client_ip(request):
+#     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+#     if x_forwarded_for:
+#         ip = x_forwarded_for.split(',')[0]
+#     else:
+#         ip = request.META.get('REMOTE_ADDR')
+#     return ip
 
 def debate_detail(request, post_id, category=None,  post_slug=None):
     post = get_object_or_404(PostDebate, pk=post_id)
+    similar_posts = post.tags.similar_objects()[:5] #Get five other similar posts
+
     user_id = request.user.pk
 
     #Checks and increment count of visits
     #you could check for logged in users as well
-    ip_add = get_client_ip(request) #gets user ip address
+    ip_add = client_ip(request) #gets user ip address
     if request.user.is_authenticated(): #To save user data for page views
         request_user = request.user
     else: request_user = None
@@ -237,7 +248,7 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
     else:
         open_comment = False
 
-    context = {'post': post, 'meta' : meta, 'like_count' : like_count, 'liked' : liked, 'vote_message' : vote_message,
+    context = {'post': post, 'meta' : meta, 'similar_posts':similar_posts, 'like_count' : like_count, 'liked' : liked, 'vote_message' : vote_message,
             'total_support_vote' : total_support_vote, 'total_oppose_vote' : total_oppose_vote, 'notify_status' : notify_status,
             'debate_in_progress': debate_in_progress, 'debate_has_ended':debate_has_ended, 'deb_stat':deb_stat, \
             'user_in_supporting_team':user_in_supporting_team, \
