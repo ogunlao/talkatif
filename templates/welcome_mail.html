@@ -14,10 +14,10 @@
 <td></td>
 <td class="header container">
 <div class="content">
-<table bgcolor="#999999">
+<table bgcolor="#F4F7BA">
 <tr>
 <td><img src="https://www.talkatif.com/media/logo/talkatif.png" width="50" height="50"/></td>
-<td align="right"><h6 class="collapse">Welcome, {{name}}</h6></td>
+<td align="right"><h3 class="collapse">Welcome, Kaabo, Sanu, Nno {{user.first_name}}!</h3></td>
 </tr>
 </table>
 </div>
@@ -35,9 +35,9 @@
 <tr>
 <td>
 
-<h3>Dear, {{name}}</h3>
-<p class="lead">We welcome you to the talkatif community. To get up-to-speed about our activities, we have
-curated a list of present debates. Click to access them.</p><br>
+<h3>Dear, {{user.get_full_name}}</h3>
+<p class="lead">We welcome you to the talkatif community. To get up-to-speed about the site, we have
+curated a list of present debates and talks. Click to access them.</p><br>
 
 {% if postdebate %}
 <p class="callout">
@@ -50,7 +50,7 @@ Debates.<br>
 <br>
 {% if post %}
 <p class="callout">
-Discussions.<br>
+Talks.<br>
 {% for discussion in post %}
 <a href="https://talkatif.com{{discussion.get_absolute_url}}">{{discussion.title}}</a>
 {% endfor %}

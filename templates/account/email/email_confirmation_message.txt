@@ -12,5 +12,5 @@ or copy this link into your browser;
 {{ activate_url }}
 
 {% endblocktrans %}{% endautoescape %}
-{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you from all of us at {{ site_name }}!
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you from all of us at Talkatif Community!
 Laolu.{% endblocktrans %}
