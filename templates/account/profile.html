@@ -77,35 +77,44 @@
             <div class="row">
               <div class="card-panel">
                 {% if supported %}
-                <h5>Debate on Supporting Side <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{supported.count}}</span></h5>
+                <h5 class="main_title">Debate on Supporting Side <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{supported.count}}</span></h5>
+                <ul>
+                  <li class="divider"></li>
                 {% for debate_list in supported %}
-                  <p><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
+                  <li><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></li>
                 {% endfor %}
+                </ul>
                 {% endif %}
 
                 {% if opposed %}
-                <hr>
-                <h5>Debate on Opposing Side <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{opposed.count}}</span></h5>
+                <h5 class="main_title">Debate on Opposing Side <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{opposed.count}}</span></h5>
+                <ul>
+                  <li class="divider"></li>
                 {% for debate_list in opposed %}
-                  <p><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
+                  <li><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></li>
+                </ul>
                 {% endfor %}
                 {% endif %}
 
 
                 {% if moderated %}
-                <hr>
-                <h5>Moderated <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{moderated.count}}</span></h5>
+                <h5 class="main_title">Moderated <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{moderated.count}}</span></h5>
+                <ul>
+                  <li class="divider"></li>
                 {% for debate_list in moderated %}
-                  <p><a href="">{{debate_list.post}}</a></p>
+                  <li><a href="">{{debate_list.post}}</a></li>
                 {% endfor %}
+              </ul>
                 {% endif %}
 
                 {% if judged %}
-                <hr>
-                <h5>Judged <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{judged.count}}</span></h5>
+                <h5 class="main_title">Judged <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{judged.count}}</span></h5>
+                <ul>
+                  <li class="divider"></li>
                 {% for debate_list in judged %}
-                  <p><a href="">{{debate_list.post}}</a></p>
+                  <li><a href="">{{debate_list.post}}</a></li>
                 {% endfor %}
+              </ul>
                 {% endif %}
 
             </div><!-- End of card -->
@@ -118,15 +127,19 @@
         <div class="card">
           <div class="card-content">
             <h6>Stats</h6>
+            <ul>
+            <li>Won<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{won.count}}</span></li><br>
+            <li>Lost<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{lost.count}}</span></li><br>
+            <li>Draw(s)<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{drew.count}}</span></li><br>
+            <li>Moderated<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{moderated.count}}</span></li><br>
+            <li>Judged<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{judged.count}}</li>
+            </ul>
 
-            <p>Won<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{won.count}}</span>
-            <br><br>Lost<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{lost.count}}</span>
-            <br><br>Draw(s)<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{drew.count}}</span>
-            <br><br>Moderated<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{moderated.count}}</span>
-            <br><br>Judged<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{judged.count}}</span> </p>
-            <hr>
-            <p>Debates in Supporting Team<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{supported.count}}</span>
-            <br><br>Debates in Opposing Team<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{opposed.count}}</span> </p>
+            <ul>
+              <li class="divider"></li>
+            <li>Debates in Supporting Team<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{supported.count}}</span></li>
+            <br><li>Debates in Opposing Team<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{opposed.count}}</span> </li>
+            </ul>
           </div>
           <div class="card-content">Active <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{debate_involved.count}}</span></div>
         </div><!-- End of card -->
