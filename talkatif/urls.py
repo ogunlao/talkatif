@@ -52,10 +52,9 @@ urlpatterns = [
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^(?P<username>[-\w\d]+)/', debate_views.profile, name='profile'),
     url(r'^accounts/profile/', debate_views.update_profile, name='update_profile'),
     url(r'^dashboard/', debate_views.dashboard, name = 'dashboard'),
-
+    url(r'^(?P<username>[-\w\d]+)/', debate_views.profile, name='profile'),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps},
     name='django.contrib.sitemaps.views.sitemap'),
 ]
