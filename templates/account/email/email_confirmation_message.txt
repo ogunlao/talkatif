@@ -6,9 +6,9 @@ This email address would be linked to your account upon verification.
 
 A username "{{ user_display }}" has been automatically created for you, and can be used to signin. It can be changed upon verification via your profile.
 
-To activate your account, click <a class="btn" href={{ activate_url }}>Activate account</a>
+To activate your account, click on <a href={{ activate_url }}>Activate Account</a>
+or copy the url link  into your browser;
 
-or copy this link into your browser;
 {{ activate_url }}
 
 {% endblocktrans %}{% endautoescape %}

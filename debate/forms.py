@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django_countries.fields import LazyTypedChoiceField
 from django_countries import countries #country dropdown
 from django.contrib.auth.hashers import make_password #used to hash passwords
+from django.contrib.auth import password_validation
+import random
 
 class PostDebateForm(forms.ModelForm):
     class Meta:
@@ -28,14 +30,15 @@ class SignupForm(forms.Form):
         return email
 
     def clean_password(self):
-        from django.contrib.auth import password_validation
         validators = password_validation.get_default_password_validators()
         password = self.cleaned_data.get('password')
+        print("pwd:", password)
         password_validation.validate_password(
             password,
             user=None,
             password_validators=validators,
             )
+        return password
 
     def save(self, request):
         # Save your user
@@ -44,10 +47,8 @@ class SignupForm(forms.Form):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.email = self.cleaned_data['email']
-        password = self.cleaned_data.get('password')
+        password = self.cleaned_data['password']
         user.password = make_password(password)
-
-        import random
         user.username = user.first_name + str(random.randint(0,99))
         user.save()
         return user

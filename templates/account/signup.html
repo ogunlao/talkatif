@@ -55,7 +55,7 @@
           <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
             {% csrf_token %}
             <div class="row">
-              <div class="col m6">
+              <div class="col s12 m6">
                   <div class="input-field">
                   <p>
                     {{ form.first_name.label_tag }}<br>
@@ -67,7 +67,7 @@
                   <p><small class="red-text">{{ form.first_name.errors }}</small></p>
                 </div>
               </div>
-              <div class="col m6">
+              <div class="col s12 m6">
                   <div class="input-field">
                   <p>
                     {{ form.last_name.label_tag }}<br>
@@ -82,7 +82,7 @@
             </div>
 
             <div class="row">
-              <div class="col m6">
+              <div class="col s12 m6">
                   <div class="input-field">
                   <p>
                     {{ form.email.label_tag }}<br>
@@ -94,7 +94,7 @@
                   <p><small class="red-text">{{ form.email.errors }}</small></p>
                 </div>
               </div>
-              <div class="col m6">
+              <div class="col s12 m6">
                   <div class="input-field">
                   <p>
                     {{ form.password.label_tag }}<br>
@@ -108,13 +108,11 @@
               </div>
             </div>
 
-
             {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
             {% endif %}
             <button class="blue btn" type="submit">{% trans "Sign Up" %} &raquo;</button>
           </form>
-
 
         </div>
 
