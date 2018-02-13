@@ -49,7 +49,8 @@ class SignupForm(forms.Form):
         user.email = self.cleaned_data['email']
         password = self.cleaned_data['password']
         user.password = make_password(password)
-        user.username = user.first_name + str(random.randint(0,99))
+        username = user.first_name + str(random.randint(0,99))
+        user.username = username.lower()
         user.save()
         return user
 
