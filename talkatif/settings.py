@@ -213,6 +213,7 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_PRESERVE_USERNAME_CASING =False
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ""
 
 # Required by django-allauth to extend the sign up form to include profile data
 ACCOUNT_FORMS = {'signup': 'debate.forms.SignupForm'}
