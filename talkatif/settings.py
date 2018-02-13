@@ -101,7 +101,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'talkatif.urls'
 
-SITE_ID = 4
+SITE_ID = 2
 
 TEMPLATES = [
     {
@@ -148,8 +148,6 @@ DATABASES = {
         'PORT': '',
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -256,7 +254,7 @@ CACHES = {
 
 #comment manager
 MANAGERS = (
-    (config('ADMIN_NAME'), config('EMAIL') ),
+    (config('ADMIN_NAME'), ADMIN_EMAIL ),
 )
 
 #To allow comment flagging, likes and dislikes

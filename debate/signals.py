@@ -63,7 +63,7 @@ def email_confirmed_(request, email_address, **kwargs):
     # user.is_active = True
     # user.save()
     ctx = {'postdebate':postdebate, 'post':post, 'user':user, 'admin_email':settings.ADMIN_EMAIL}
-    from_email = settings.SERVER_EMAIL
+    from_email = settings.NOTIFICATION_EMAIL
     recipients_email = user.email
     subject = "Welcome to the Talkatif Community."
     html_content = render_to_string('welcome_mail.html', ctx)

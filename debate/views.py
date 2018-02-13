@@ -473,7 +473,7 @@ def profile(request, username):
 
 @login_required
 def deactivate_profile(request):
-    admin_email = settings.SERVER_EMAIL
+    admin_email = settings.ADMIN_EMAIL
     if request.method == 'POST':
         user = request.user
         user.is_active = False
