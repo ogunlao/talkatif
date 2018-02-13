@@ -36,14 +36,14 @@
 <td>
 
 <h3>Dear, {{user.get_full_name}}</h3>
-<p class="lead">We welcome you to the talkatif community. To get up-to-speed about the site, we have
-curated a list of present debates and talks. Click to access them.</p><br>
+<p class="lead">We welcome you to the talkatif community.
+To get up-to-speed about the site, we have curated a list
+of present debates and talks. Click to access them.</p><br>
 
 {% if postdebate %}
 <p class="callout">
 Debates.
 <ul>
-<li>
 {% for debate in postdebate %}
 <li><a href="https://talkatif.com{{debate.get_absolute_url}}">{{debate.title}}</a></li>
 {% endfor %}

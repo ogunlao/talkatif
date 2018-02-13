@@ -8,46 +8,30 @@
 {% block content %}
 
         <div class="row">
-
-
           <div class="col m6 offset-m3">
             <div class="card-panel">
               {% if post_id %}
-              <h5>Edit this talk.</h5>
-              {% else %}
-              <h5> Add a new talk. </h5>
+              <h5 class="main_title">Edit this talk.{% else %}Add a new talk.</h5>
               {% endif %}
-
                 <form class="" enctype="multipart/form-data" action="." method="post">
                   {% csrf_token %}
-
                     <div class="input-field">
                       {{ form.title|safe}}
                       <label for="{{ form.title.auto_id }}">{{form.title.label_tag}}</label>
                     </div>
-                    {% if form.title.help_text %}
-                    <p><small class="grey-text">{{ form.title.help_text }}</small></p>
-                    {% endif %}
-                    <!-- Text Editor -->
-                    <div class="row">
-
                     <div class="collection">
                       {% include "button_click.html" %}
+                      <label for="{{ form.summary.auto_id }}">{{form.summary.label_tag}}</label>
                       {{ form.summary|attr:"class:materialize-textarea"}}
                     </div>
-                  </div>
-                    <label for="{{ form.summary.auto_id }}">{{form.summary.label_tag}}</label>
                     {% if form.summary.help_text %}
-                    <p><small class="grey-text">{{ form.summary.help_text|markdownify }}</small></p>
+                    <small class="grey-text">{{ form.summary.help_text|markdownify }}</small>
                     {% endif %}
 
                     <div class="input-field">
+                      <label>Tags: e.g. music, culture, politics e.t.c.</label>
                       {{ form.tags}}
-                      <label for="{{ form.tags.auto_id }}">{{form.tags.label_tag}}e.g. Music, Culture, Politics e.t.c.</label>
                     </div>
-                    {% if form.tags.help_text %}
-                    <p><small class="grey-text">{{ form.tags.help_text|markdownify }}</small></p>
-                    {% endif %}
 
                     <div class="file-field input-field">
                       <div class="blue btn">
@@ -59,10 +43,9 @@
                       </div>
                     </div>
 
-
                   {% if post_id %}
                   <div class="row">
-                    <button type="submit" class="yellow btn black-text">Update Discourse</button>
+                    <button type="submit" class="yellow btn black-text">Update Talk</button>
                         OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
                   </div>
                   {% else %}
