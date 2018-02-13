@@ -12,21 +12,26 @@
       <div style="display:none">{{ form.honeypot }}</div>
 
       {% include "button_click.html" %}
-      {% render_field form.comment class="materialize-textarea" data-length="3000" %}
+      <div>
+        {% render_field form.comment class="materialize-textarea" data-length="3000" %}
+      </div>
+      <div class="row">
+        <div class="col m3">
+          <input type="submit" name="post" value='send' class="blue btn" />
+        </div>
+        <div class="col m3">
+          <input type="submit" name="preview" value="preview" class="btn grey" />
+        </div>
+        <div class="col m4 right">
+            {{form.comment_anonymous}}
+        </div>
+      </div>
+    <p>
+      {{ form.followup }}
+      <label for="id_followup{% if cid %}_{{ cid }}{% endif %}">{{ form.followup.label }}.</label>
+    </p>
 
-  <div class="row">
-    <div class="col m3">
-      <input type="submit" name="post" value='send' class="blue btn" />
-    </div>
-    <div class="col m3">
-      <input type="submit" name="preview" value="preview" class="btn grey" />
-    </div>
-    <div class="col m4 right">
-        {{form.comment_anonymous}}
-    </div>
-  </div>
-  <p class="small">
-    <a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported.
-  </p>
+  <small><a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported in preview.
+  </small>
 
 </form>
