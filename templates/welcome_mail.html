@@ -41,19 +41,24 @@ curated a list of present debates and talks. Click to access them.</p><br>
 
 {% if postdebate %}
 <p class="callout">
-Debates.<br>
+Debates.
+<ul>
+<li>
 {% for debate in postdebate %}
-<a href="https://talkatif.com{{debate.get_absolute_url}}">{{debate.title}}</a>
+<li><a href="https://talkatif.com{{debate.get_absolute_url}}">{{debate.title}}</a></li>
 {% endfor %}
+</ul>
 </p>
 {% endif %}
 <br>
 {% if post %}
 <p class="callout">
-Talks.<br>
+Talks.
+<ul>
 {% for discussion in post %}
-<a href="https://talkatif.com{{discussion.get_absolute_url}}">{{discussion.title}}</a>
+<li><a href="https://talkatif.com{{discussion.get_absolute_url}}">{{discussion.title}}</a></li>
 {% endfor %}
+</ul>
 </p>
 {% endif %}
 <br>
@@ -66,7 +71,7 @@ Talks.<br>
 <tr>
 <td>
 <h5 class="">Contact Info:</h5>
-Email: <strong><a href="emailto:{{admin_email}}">{{admin_email}}</a></strong></p>
+Email: <strong><a href="mailto:{{admin_email}}">{{admin_email}}</a></strong></p>
 </td>
 </tr>
 </table>
