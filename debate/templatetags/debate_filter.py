@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 
 register = template.Library()
 
@@ -29,3 +30,18 @@ def getReadingTime(content):
     words_time = round(words_time,2)
 
     return words_time
+
+import requests
+import json
+API_KEY = settings.GOO_API_KEY
+@register.filter()
+def goo_shorten_url(url):
+    post_url = 'https://www.googleapis.com/urlshortener/v1/url?key={}'.format(API_KEY)
+    payload = {'longUrl': url}
+    headers = {'content-type': 'application/json'}
+    r = requests.post(post_url, data=json.dumps(payload), headers=headers)
+    print(r.json())
+    try:
+        return r.json()["id"]
+    except:
+        return url

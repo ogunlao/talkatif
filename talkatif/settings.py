@@ -257,6 +257,9 @@ MANAGERS = (
     (config('ADMIN_NAME'), ADMIN_EMAIL ),
 )
 
+#Google url shortener
+GOO_API_KEY = config('GOO_API_KEY')
+
 #To allow comment flagging, likes and dislikes
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'debate.postdebate': {
