@@ -23,7 +23,7 @@ from django.conf.urls import include
 #Add URL maps to redirect the base URL to our application
 from debate import views as debate_views
 from discourse import views as discourse_views
-
+from tkcomments import views as tk_views
 #sitemap url config
 from django.contrib.sitemaps.views import sitemap
 from .sitemaps import StaticViewSitemap, PostSitemap, PostDebateSitemap
@@ -45,7 +45,8 @@ urlpatterns = [
     url(r'^avatar/', include('avatar.urls')),
     url(r'^profile/deactivate/$', debate_views.deactivate_profile, name='deactivate_profile'),
     url(r'^faq/$', debate_views.faq, name='faq'),
-    url(r'^delete_comment/(?P<comment_id>\d+)/$', debate_views.delete_my_comment, name='delete_my_comment'),
+    url(r'^comment/remove/(?P<comment_id>\d+)/$', tk_views.remove_my_comment, name='remove_my_comment'),
+    url(r'^comment/edit/(?P<comment_id>\d+)/$', tk_views.edit_my_comment, name='edit_my_comment'),
     url(r'^blog/', include('blog.urls', namespace='blog', app_name='blog')),
     url(r'^attachment/', include('markdownx.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),

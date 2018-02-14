@@ -86,12 +86,14 @@
         {% include "includes/django_comments_xtd/user_feedback.html" %}
         {% endif %}
         {% if item.comment.allow_thread and not item.comment.is_removed %}
-        {% if allow_feedback %}&nbsp;&nbsp;<span class="grey-text">&bull;</span>&nbsp;&nbsp;{% endif %}<a class="grey-text" href="{{ item.comment.get_reply_url }}">{% trans "Reply" %}</a>
+        {% if allow_feedback %}&nbsp;&nbsp;<span class="grey-text">&bull;</span>&nbsp;&nbsp;{% endif %}<small><a class="grey-text" href="{{ item.comment.get_reply_url }}">{% trans "Reply" %}</a></small>
         {% endif %}
     {% endif %}
         {% if request.user == item.comment.user %}
-        |<a href="{% url 'delete_my_comment' item.comment.id %}"><span class="grey-text"> Remove</span></a>
-
+        <small>
+        |<a href="{% url 'remove_my_comment' item.comment.id %}"><span class="grey-text"> Remove</span></a>
+        | <a href="{% url 'edit_my_comment' item.comment.id %}"><span class="grey-text">Edit</span></a>
+      </small>
         {% endif %}
       {% endif %}
     </p>

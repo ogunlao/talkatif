@@ -44,7 +44,7 @@
         <p>{{ comment|markdown:"safe, code-friendly, code-color" }}</p>
         <small>{{ comment|wordcount }} word{{ comment|wordcount|pluralize }}. | {{comment|minute_read}}<br>
           {% if form.cleaned_data.comment_anonymous == "B.A" %}Commenting as <em class="blue-text">Anonymous</em>.
-          {% else %}Commenting as <em class="blue-text">{{ form.cleaned_data.name }}</em>{% endif %}
+          {% else %}Commenting as <strong class="blue-text">{{ form.cleaned_data.name }}</strong>{% endif %}
         </small>
     </ul>
       {% endif %}

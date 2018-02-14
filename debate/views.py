@@ -54,7 +54,6 @@ def all_list(request):
         return item.created
     merged_list = sorted(merged_list, key=getKey, reverse=True)
 
-    form = PostForm() #for post for on main page
     #Get last 5 badge winners
     last_5_badges = TrackedBadge.objects.all()[:5]
 
@@ -70,7 +69,7 @@ def all_list(request):
     merged_list = paginator.page(page)
 
 
-    context = {'merged_list': merged_list, 'form':form, 'last_5_badges':last_5_badges, 'meta':meta,}
+    context = {'merged_list': merged_list, 'last_5_badges':last_5_badges, 'meta':meta,}
     template = 'all_list.html'
 
     return render(request, template , context)
@@ -809,41 +808,3 @@ def approve(request):
     ctx = {'approved': approved, 'username': user.username, }
     # use mimetype instead of content_type if django < 5
     return HttpResponse(json.dumps(ctx), content_type='application/json')
-
-
-
-# from django_comments_xtd import get_form
-# XtdComment = get_comment_model()
-#
-# import django_comments
-# @login_required
-# def edit_own_comment(request, comment_id):
-#     #comment = get_object_or_404(get_comment_model(),
-#                                 #pk=comment_id, site__pk=settings.SITE_ID)
-#     comment = XtdComment.objects.get(pk=comment_id)
-#     form = get_form()(comment.content_object, comment=comment)
-#     next = request.get_full_path()
-#     print(next)
-#
-#     template_arg = 'comments/preview.html'
-#     return render(request, template_arg,
-#                   {"comment": comment, "form": form, "cid": comment_id, "next": next})
-
-
-from django_comments_xtd import (comment_was_posted, signals, signed, get_model )
-
-@login_required
-def delete_my_comment(request, comment_id, next=None):
-    comment = get_object_or_404(get_model(), pk=comment_id, site__pk=settings.SITE_ID)
-    if comment.user == request.user:
-        if request.method == "POST":
-            comment.is_removed = True
-            comment.save()
-            post_id = comment.object_pk
-            post_model = comment.content_type.model
-
-            return redirect(comment.content_object.get_absolute_url())
-        else:
-            return render(request, 'comments/delete.html', {'comment': comment, 'next': next, 'meta':meta}, )
-    else:
-        raise Http404

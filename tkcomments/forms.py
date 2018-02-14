@@ -3,8 +3,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django_comments_xtd.forms import XtdCommentForm
 from django_comments_xtd.models import TmpXtdComment
+from django import forms
+from .models import TkComment
+from markdownx.fields import MarkdownxFormField
 
 class TkCommentForm(XtdCommentForm):
+    """Extended comment form"""
     COMMENT_CHOICES = (
         ('B.Y', 'BE YOURSELF'),
         ('B.A', 'BE ANONYMOUS'),
@@ -18,3 +22,10 @@ class TkCommentForm(XtdCommentForm):
 
         data.update({'comment_anonymous': comment_status,})
         return data
+
+class CommentForm(forms.ModelForm):
+    """Comment form used to edit comments."""
+    comment = MarkdownxFormField()
+    class Meta:
+        model = TkComment
+        fields = ('comment',)
