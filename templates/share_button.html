@@ -1,21 +1,24 @@
 {% load markdownify %}
+{% load debate_filter %}
 <div class="fixed-action-btn horizontal click-to-toggle">
   <a class="btn-floating btn-large red pulse">
     <i class="large material-icons">share</i>
   </a>
   <ul>
-    <li><a href="http://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}"
+    {% with request.build_absolute_uri as url %}
+    <li><a href="http://www.facebook.com/sharer/sharer.php?u={{ url|goo_shorten_url|urlencode }}"
        class="waves-effect waves-light btn-floating social facebook">
             <i class="fa fa-facebook"></i></a></li>
-    <li><a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}"
+    <li><a href="https://twitter.com/intent/tweet?url={{ url|goo_shorten_url|urlencode }}"
       class="waves-effect waves-light btn-floating social twitter">
             <i class="fa fa-twitter"></i></a></li>
-    <li><a href="http://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri|urlencode }}&title={{post.title}}&summary={{post.summary|markdownify}}&source={{ request.get_host }}"
+    <li><a href="http://www.linkedin.com/shareArticle?url={{ url|goo_shorten_url|urlencode }}&title={{post.title}}&summary={{post.title|markdownify}}&source={{ request.get_host }}"
       class="waves-effect waves-light btn-floating social linkedin">
             <i class="fa fa-linkedin"></i></a></li>
     {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
-    <li><a href="whatsapp://send?text=*{{post.title}}* - What do you think?... {{ request.build_absolute_uri|urlencode }}" data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
+    <li><a href="whatsapp://send?text=*{{post.title}}* - What do you think?... {{ url|goo_shorten_url|urlencode }}" data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
             <i class="fa fa-whatsapp"></i></a></li>
     {% endif %}
+    {% endwith %}
   </ul>
 </div>
