@@ -5,8 +5,8 @@
     <i class="large material-icons">share</i>
   </a>
   <ul>
-    {% with request.build_absolute_uri|goo_shorten_url as url %}
-    <li><a href="http://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|goo_shorten_url|urlencode }}"
+    {% with request.build_absolute_uri as url %}
+    <li><a href="http://www.facebook.com/sharer/sharer.php?u={{ url|goo_shorten_url|urlencode  }}"
        class="waves-effect waves-light btn-floating social facebook">
             <i class="fa fa-facebook"></i></a></li>
     <li><a href="https://twitter.com/intent/tweet?url={{url|goo_shorten_url|urlencode }}"
