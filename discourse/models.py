@@ -5,7 +5,8 @@ from django.utils.text import slugify
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField #For Profile
-from markdownx.models import MarkdownxField
+from martor.models import MartorField
+
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -19,9 +20,8 @@ class Post(models.Model):
     show = models.BooleanField('Post Enabled/Disabed', default=True)
     category = models.BooleanField('A field used to separate discourse from debates', default=True, blank = True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='author', default = User)
-    summary = MarkdownxField('What are we discussing today?', \
-                    max_length=1000, help_text="Be brief and cogent. Keep it hot. <a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported. You can \
-                    drag images here from your desktop.")
+    summary = MartorField('What are we discussing today?', \
+                     help_text="Be brief and cogent. Keep it hot. <a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported.")
     allow_comments = models.BooleanField('allow comments', default=True)
     tags = TaggableManager(blank = True)
     created = models.DateTimeField(auto_now_add=True)

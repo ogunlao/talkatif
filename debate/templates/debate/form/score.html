@@ -1,70 +1,60 @@
 {% extends "debate/base.html" %}
+{% load staticfiles %}
 {% load widget_tweaks %}
-{% load md2 %}
+{% load martortags %}
+
 
 {% block title %}Score Debate{% endblock %}
-{% load staticfiles %}
+
 
 {% block content %}
+          {% if related_post.winner_updated %}
+          <h2>Debate Scores and Vote Count
+          {% else %}
+          Score Debate for both teams</h2>
+          {% endif %}
+          <h3 class="main_title">Debate Topic</h3>
+          <p class="">{{ post.post }}</p>
+              <div class="ui fluid card">
+                <div class="content">
 
-        <div class="row">
-
-          <div class="col m6 offset-m3">
-              <div class="card-panel">
               {% if related_post.winner_updated %}
-              <h5 class="main_title">Debate Scores and Vote Count
-              {% else %}
-              Score Debate for both teams</h5>
-              {% endif %}
-              <h5 class="main_title">Debate Topic</h5>
-              <p class="blue-text">{{ post.post }}</p>
-              {% if related_post.winner_updated %}
-              <div class="row">
-                  <div class="col s12">
-                    <ul class="tabs tabs-fixed-width">
-                      <li class="tab col s3"><a class="active blue-text" href="#result">Result</a></li>
-                      <li class="tab col s3"><a class="blue-text" href="#raw_scores">Raw Scores</a></li>
-                      <li class="tab col s3"><a class="blue-text" href="#judge">Judges</a></li>
-                    </ul>
-                  </div>
-                  <div id="result" class="col s12">
-                    <ul>
-                    <li>Suppoting Team Score: <span class="right">{{post.st_verdict}} %</span></li>
-                    <li>Opposing Team Score: <span class="right">{{post.ot_verdict}} %</span></li>
-                    <li class="divider"></li>
-                    <li>Winner: {{related_post.winner|capfirst}}</li>
-                  </ul>
 
-                  </div>
-                  <div id="raw_scores" class="col s12">
-                    <ul>
-                    <li>Opposing Team Votes: <span class="right">{{post.opposing_vote }}</span></li>
-                    <li>Supporting Team Votes: <span class="right">{{post.supporting_vote }}</span></li>
-                    <li class="divider"></li>
-                    <li>Supporting Team Score: <span class="right">{% if post.supporting_score %}{{ post.supporting_score }}{% else %}Not used{% endif %}</span></li>
-                    <li>Opposing Team Score: <span class="right">{% if post.opposing_score %}{{ post.opposing_score }}{% else %}Not used{% endif %}</span></li>
-                    <li>Highest Possible Score: <span class="right">{{ post.highest_score }}</span></li>
-                  </ul>
-                  </div>
-                  <div id="judge" class="judge">
-                    <p>Judge Scores/{{post.judge_percent_share}}</p>
-                    <small class="grey-text">Score of zero or empty scores indicates no judge verdict was included in scoring</small>
-                    <ul>
-                    <li>Supporting Side: <span class="right">{% if judge_support_percent %}{{judge_support_percent}}%{% else %}Not used{% endif %}</span></li>
-                    <li>Opposing Side: <span class="right">{% if judge_support_percent %}{{judge_support_percent}}%{% else %}Not used{% endif %}</span></li>
-                    <li>Observations</li>
-                    <li class="divider"></li>
-                    {% if post.observation %}
-                    <li>{{post.observation|markdown:"safe, code-friendly, code-color"}}
-                    {% else %}
-                    No recorded observation or anomaly.</li>
-                    {% endif %}
-                   </ul>
-                  </div>
-              </div>
+              <p>Result</p>
+
+                <p>Suppoting Team Score: <span class="right">{{post.st_verdict}} %</span><br>
+                Opposing Team Score: <span class="right">{{post.ot_verdict}} %</span></p>
+                <div class="divider"></div>
+                <p>Winner: {{related_post.winner|capfirst}}</p>
+
+                <p>Raw Scores</p>
+
+                <p>Opposing Team Votes: <span class="right">{{post.opposing_vote }}</span><br>
+                Supporting Team Votes: <span class="right">{{post.supporting_vote }}</span>
+                <br>
+              </p>
+                <p>Supporting Team Score: <span class="right">{% if post.supporting_score %}{{ post.supporting_score }}{% else %}Not used{% endif %}</span><br>
+                Opposing Team Score: <span class="right">{% if post.opposing_score %}{{ post.opposing_score }}{% else %}Not used{% endif %}</span><br>
+                Highest Possible Score: <span class="right">{{ post.highest_score }}</span></p>
+
+                <p>Judges</p>
+                <p>Judge Scores/{{post.judge_percent_share}}</p>
+                <small class="grey-text">Score of zero or empty scores indicates no judge verdict was included in scoring</small>
+
+                <p>Supporting Side: <span class="right">{% if judge_support_percent %}{{judge_support_percent}}%{% else %}Not used{% endif %}</span><br>
+                Opposing Side: <span class="right">{% if judge_support_percent %}{{judge_support_percent}}%{% else %}Not used{% endif %}</span><br>
+                Observations
+                <br></p>
+
+                {% if post.observation %}
+                <p>{{post.observation|safe_markdown}}
+                {% else %}
+                No recorded observation or anomaly.</p>
+                {% endif %}
 
                   <p>Return to <a href="{{ related_post.get_absolute_url }}">debate</a><p>
-
+              </div>
+            </div>
               {% else %}
                 <br>
                 <form class="" action="." method="post">
@@ -87,10 +77,8 @@
                     <input type="range" name = "highest_score" id="id_highest_score" min="0" max="30" />
                   </p>
                 </div>
-                  {% include "button_click.html" %}
-                  {% render_field score_form.observation class+="materialize-textarea" %}<br>
-                  <label for="id_observation">Debate Score Summary and Observations.</label>
-                  <small>Markdown supported.</small>
+                  {% render_field score_form.observation %}
+                  <small>Debate Score Summary and Observations. Markdown supported.</small>
 
                   {% for error in score_form.errors%}
                   <p><strong class=red-text>{{error}}</strong></p>
@@ -120,7 +108,8 @@
                   <hr>
                 </div>
                 </form>
-                {{score_form.media}}
+                {{form.media}}
+
                 <p>Verify scores before submission since values cannot be changed after submission</p>
                 <p>Return to <a href="{% url 'debate:debate_detail' related_post.debate_category related_post.id related_post.slug %}">debate</a> without submitting.<p>
             </div>

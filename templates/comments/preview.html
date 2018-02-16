@@ -1,59 +1,41 @@
 {% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
 {% load comments_xtd %}
-{% load md2 %}
 {% load debate_filter %}
+{% load avatar_tags %}
+{% load martortags %}
 
 {% block title %}{% trans "Preview your comment" %}{% endblock %}
 
 {% block content %}
 
-<div class="row">
-
-  <div class="col m6 offset-m3">
-    <div class="card-panel">
-      <p class="center-align">
-        {% trans "Preview your comment for:" %}<br/>
+        <h3>{% trans "Preview your comment for:" %}<br/>
         <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
-      </p>
+      </h3>
       {% if not comment %}
       <em>{% trans "Empty comment." %}</em>
       {% else %}
-      <ul>
-      <li class="collection-item avatar">
-        <a href="{{ user.profile.get_absolute_url }}">
-          {% load avatar_tags %}
+
+      <div class="ui comments">
+      <div class="comment">
+        <a class="avatar">
           {% if user|has_avatar %}
-            {% avatar user 35 class="circle" %}
-          {% elif user.socialaccount_set.all.0.get_avatar_url %}
-            <img  src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="circle" width="35" height=35/>
+            {% avatar user 35 class="ui avatar circular image" %}
           {% else %}
-            <img src="{{user.profile.profile_image_url}}" class="circle" width="35" height="35" />
+            <img src="{{user.profile.profile_image_url}}" width="35" height="35" />
           {% endif %}
         </a>
+        <div class="content">
+          <a class="author">{% if form.cleaned_data.comment_anonymous == True %}Anonymous{% else %}{{ form.cleaned_data.name }}{% endif %}</a>
+          <a class="time">{% now "N j, Y, P" %}</a>
+          <div class="text">
+            {{ comment|safe_markdown }}
+            <small>{{ comment|wordcount }} word{{ comment|wordcount|pluralize }}. | {{comment|minute_read}}</small>
+          </div>
+                {% include "comments/form.html" %}
 
-      <span class="title">
-          {% now "N j, Y, P" %}&nbsp;-&nbsp;
-          {% if form.cleaned_data.url %}
-          <a href="{{ form.cleaned_data.url }}" target="_new">{% endif %}
-            {{ form.cleaned_data.name }}
-            {% if form.cleaned_data.url %}</a>{% endif %}
-      </span>
-      </li>
-
-        <p>{{ comment|markdown:"safe, code-friendly, code-color" }}</p>
-        <small>{{ comment|wordcount }} word{{ comment|wordcount|pluralize }}. | {{comment|minute_read}}<br>
-          {% if form.cleaned_data.comment_anonymous == "B.A" %}Commenting as <em class="blue-text">Anonymous</em>.
-          {% else %}Commenting as <strong class="blue-text">{{ form.cleaned_data.name }}</strong>{% endif %}
-        </small>
-    </ul>
-      {% endif %}
-    </div>
-
-<div class="row">
-      {% include "comments/form.html" %}
-</div>
-
-</div>
-</div>
+        </div>
+      </div>
+      </div>
+    {% endif %}
 {% endblock %}

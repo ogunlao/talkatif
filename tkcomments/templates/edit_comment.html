@@ -10,34 +10,19 @@
 
 {% block content %}
 
-<div class="row">
-    <div class="col m7 offset-m2">
       <h1 class="main_title">Edit comment.</h1>
       <form class="col s12" method="POST" action="./?next={% get_comment_permalink comment %}">
             <input type="hidden" name="next" value="{% get_comment_permalink comment %}"/>
             {% csrf_token %}
             <div class="red-text hidden" data-comment-element="errors"></div>
-              {% include "button_click.html" %}
-            <div>
-              {% render_field form.comment class="materialize-textarea" data-length="3000" %}
-            </div>
-            <div class="row">
-              <div class="col m3">
-                <input type="submit" name="post" value='send' class="blue btn" />
-              </div>
-            </div>
-          <p>
-            {{ form.followup }}
-            <label for="id_followup{% if cid %}_{{ cid }}{% endif %}">{{ form.followup.label }}.</label>
-          </p>
 
+              {% render_field form.comment class="materialize-textarea" data-length="3000" %}
+                <div class="inline field">
+                <button type="submit" name="post" class="ui primary basic button">Save</button>
+              </div>
         <small><a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported.
         </small>
       </form>
       {{form.media}}
-    </div>
-  </div>
-
-
 
 {% endblock %}

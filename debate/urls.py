@@ -13,7 +13,6 @@ urlpatterns = [
     url(r'^approve/$', views.approve, name='approve'),
     url(r'^badge/$', views.see_badge, name='see_badge'),
     url(r'^rules_guidelines/$', views.rules_guidelines, name='rules_guidelines'),
-    #url(r'^edit_comment/(?P<comment_id>\d+)/$', views.edit_own_comment, name='edit_own_comment'),
     url(r'^newpost/$', views.new_post, name='suggest_post'),
     url(r'^edit/(?P<post_id>\d+)/$', views.new_post, name='edit_debate_post'),
     url(r'^join/(?P<post_id>\d+)/(?P<position>\w+)',views.join_participants, name='join_participants'),

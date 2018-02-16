@@ -6,18 +6,15 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 class TkComment(XtdComment):
-    COMMENT_CHOICES = (
-        ('B.Y', 'BE YOURSELF'),
-        ('B.A', 'BE ANONYMOUS'),
-        )
-    comment_anonymous = models.CharField('Is this comment an anonymous comment', max_length=12, null=True, choices=COMMENT_CHOICES, blank=True, help_text="comment as anonymous")
+    comment_anonymous = models.BooleanField('Is this comment an anonymous comment', default = False, blank = True, help_text="comment as anonymous")
+
     anonymous_user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='anonymous_user')
 
     objects = XtdCommentManager()
 
     def save(self):
         if not self.id:
-            if self.comment_anonymous == "B.A":
+            if self.comment_anonymous == True:
                 self.anonymous_user = self.user
                 user = User.objects.get(username="AnonymousUser")
                 self.user = user

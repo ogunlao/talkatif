@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.db import models
 from .models import Post
-from markdownx.admin import MarkdownxModelAdmin #used by markdown editor
+from martor.widgets import AdminMartorWidget
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -20,6 +21,9 @@ class MarkdownPost(Post):
     """
     Custom admin to preview and edit postdebate in markdown.
     """
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
     class Meta:
         proxy = True
 

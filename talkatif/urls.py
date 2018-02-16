@@ -34,7 +34,13 @@ sitemaps = {
     'postdebate' : PostDebateSitemap,
 }
 
-urlpatterns = [
+from django.conf.urls.static import static
+from django.conf import settings
+
+urlpatterns = static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
     url(r'^$', debate_views.index, name = 'main_page'),
     url(r'^all/', debate_views.all_list, name='all_list'),
     url(r'^search/', include('haystack.urls')),
@@ -43,12 +49,13 @@ urlpatterns = [
     url(r'^talk/', include('discourse.urls', namespace='discourse', app_name='discourse')),
     url(r'^index/', debate_views.index, name = 'index'),
     url(r'^avatar/', include('avatar.urls')),
+    url(r'^attachment/uploader/$', discourse_views.markdown_uploader, name='markdown_uploader_page'),
     url(r'^profile/deactivate/$', debate_views.deactivate_profile, name='deactivate_profile'),
     url(r'^faq/$', debate_views.faq, name='faq'),
     url(r'^comment/remove/(?P<comment_id>\d+)/$', tk_views.remove_my_comment, name='remove_my_comment'),
     url(r'^comment/edit/(?P<comment_id>\d+)/$', tk_views.edit_my_comment, name='edit_my_comment'),
     url(r'^blog/', include('blog.urls', namespace='blog', app_name='blog')),
-    url(r'^attachment/', include('markdownx.urls')),
+    url(r'^martor/', include('martor.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
@@ -64,10 +71,7 @@ handler404 = 'discourse.views.handler404'
 handler500 = 'discourse.views.handler500'
 # Use static() to add url mapping to serve static files during development (only)
 
-from django.conf.urls.static import static
-from django.conf import settings
 
-if settings.DEBUG == True:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#if settings.DEBUG == True:
+#urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+#urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

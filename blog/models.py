@@ -4,7 +4,7 @@ from taggit.managers import TaggableManager
 from django.utils.text import slugify
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from markdownx.models import MarkdownxField
+from martor.models import MartorField
 
 # Create your models here.
 class PublishedManager(models.Manager):
@@ -18,7 +18,7 @@ class BlogPost(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
     show = models.BooleanField('BlogPost Enabled/Disabed', default=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='blogauthor', default = User)
-    body = MarkdownxField('Body of the blog post')
+    body = MartorField('Body of the blog post')
     allow_comments = models.BooleanField('allow comments', default=True)
     tags = TaggableManager(blank = True)
     created = models.DateTimeField(auto_now_add=True)

@@ -8,7 +8,7 @@
 {% block content %}
 
         <div class="row">
-          <div class="col m6 offset-m3">
+          <div class="col m9 offset-m2">
             <div class="card-panel">
               {% if post_id %}
               <h5 class="main_title">Edit this talk.{% else %}Add a new talk.</h5>
@@ -19,11 +19,7 @@
                       {{ form.title|safe}}
                       <label for="{{ form.title.auto_id }}">{{form.title.label_tag}}</label>
                     </div>
-                    <div class="collection">
-                      {% include "button_click.html" %}
-                      <label for="{{ form.summary.auto_id }}">{{form.summary.label_tag}}</label>
-                      {{ form.summary|attr:"class:materialize-textarea"}}
-                    </div>
+                      {{ form.summary}}
                     {% if form.summary.help_text %}
                     <small class="grey-text">{{ form.summary.help_text|markdownify }}</small>
                     {% endif %}
@@ -31,16 +27,6 @@
                     <div class="input-field">
                       <label>Tags: e.g. music, culture, politics e.t.c.</label>
                       {{ form.tags}}
-                    </div>
-
-                    <div class="file-field input-field">
-                      <div class="blue btn">
-                        <span>Image</span>
-                        <input type="file" accept="image/*" id="id_image" name="image">
-                      </div>
-                      <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text">
-                      </div>
                     </div>
 
                   {% if post_id %}
@@ -59,14 +45,13 @@
                     OR <span><a href={% url "discourse:post_list" %}>Return to talks</a>
                   </div>
                   {% endif %}
-
             </form>
-            {{ form.media }}
+            {{form.media}}
         </div><!-- End of card -->
 
 
       </div>
 
-        </div>
+    </div>
 
 {% endblock %}

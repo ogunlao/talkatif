@@ -2,13 +2,14 @@
 {% load markdownify %}
 {% load widget_tweaks %}
 
+
 {% block title %}{% if post_id %}Update Debate{% else %}New Debate{% endif %}{% endblock %}
 {% load staticfiles %}
 
 {% block content %}
 
         <div class="row">
-          <div class="col m7 offset-m2">
+          <div class="col s12 m9 offset-m2">
             <div class="card-panel">
               {% if post_id %}
               <h5 class="main_title">Edit this debate or argument.{% else %}Add a new debate or argument.</h5>
@@ -21,11 +22,8 @@
                     </div>
 
                     <!-- Text Editor -->
-                    <div class="collection">
-                      {% include "button_click.html" %}
-                      <label for="{{ form.summary.auto_id }}">{{form.summary.label_tag}}</label>
-                      {{ form.summary|attr:"class:materialize-textarea"}}
-                    </div>
+                      {{ form.summary}}
+
                     {% if form.summary.help_text %}
                     <small class="grey-text">{{ form.summary.help_text|markdownify }}</small>
                     {% endif %}
@@ -36,19 +34,7 @@
                     </div>
 
                     <div class="row">
-                      <div class="col m6">
-                      <div class="file-field input-field">
-                        <div class="blue btn">
-                          <span>Image</span>
-                          <input type="file" accept="image/*" id="id_image" name="image">
-                        </div>
-                        <div class="file-path-wrapper">
-                          <input class="file-path validate" type="text">
-                        </div>
-                      </div>
-                      <small class="grey-text">You can link up external images through the text above or drag images to the text on pc.</small>
-                    </div>
-                      <div class="col m6">
+                      <div class="col m3">
                         <label for="{{ form.debate_category.auto_id }}">{{form.debate_category.label_tag}}</label>
                         {{ form.debate_category }}
                         {% if form.debate_category.help_text %}
@@ -74,7 +60,8 @@
                   </div>
                   {% endif %}
             </form>
-            {{ form.media }}
+            {{form.media}}
+
         </div><!-- End of card -->
 
 

@@ -1,49 +1,52 @@
 {% extends "blog/base.html" %}
-{% load widget_tweaks %}
 {% load humanize %}
-{% load markdownify %}
 {% load comments %}
 {% load comments_xtd %}
+{% load avatar_tags %}
+{% load martortags %}
 {% load i18n %}
 
 {% block title %}Blog{% endblock %}
 
 {% block content %}
 
-<div class="row">
-  <div class="col m6 offset-m2">
-    {% if tag %}
-    <div class="row">
-      Results for:
-      <a href="{% url 'blog:blog_list_by_tag' tag.slug   %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
-    </div>
-    {% endif %}
+{% if tag %}
+  Results for:
+  <a href="{% url 'blog:blog_list_by_tag' tag.slug   %}" class="ui blue basic label">{{ tag.name }}</a>
+{% endif %}
 
     {% if object_list %}
       {% for post in object_list.object_list %}
 
-    <div class="card">
-      <div class="card-content">
-        {% for tag in post.tags.all %}
-          <a href="{% url 'blog:blog_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
-        {% endfor %}
-        <h5 class=""><a href="{{post.get_absolute_url}}">{{post.title}}</a></h5>
-        <p>{{post.body|truncatechars:300|markdownify|linebreaks}}</p>
-        <small>Written {{post.created|naturaltime}}
-          by <a href="{{post.author.profile.get_absolute_url}}">{{post.author.get_full_name}}</a>
-
-          {% get_comment_count for post as comment_count %}
-          <span class="right">
-            {{ comment_count }}
-            <i class="tiny material-icons">comment</i>
-          </span>
-
-        </small>
-
+      <div class="ui fluid card">
+        <div class="content">
+          <div class="right floated meta">{{post.created|naturaltime}}</div>
+          <a href="{{post.author.profile.get_absolute_url}}">
+            {% if post.author|has_avatar %}
+              {% avatar post.author 35 class="ui avatar image" %}
+            {% else %}
+              <img src="{{names.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
+            {% endif %}
+            {{post.author.get_full_name}}</a>
         </div>
-
-
-      </div><!-- End of card -->
+        <div class="content">
+          <div class="header"><a href="{{post.get_absolute_url}}">{{post.title}}</a></div>
+          <div class="meta">
+            {% for tag in post.tags.all %}
+            <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}" class="ui blue basic label">{{ tag.name }}</a>
+            {% endfor %}
+            <br>
+          </div>
+          <div class="description">
+            {{post.body|truncatechars:300|safe_markdown}}
+          </div>
+        </div>
+        <div class="content">
+          <i class="comment icon"></i>
+          {% get_comment_count for post as comment_count %}
+          {{ comment_count }} comment{{ comment_count|pluralize }}
+        </div>
+      </div>
 
     {% endfor %}
 
@@ -53,25 +56,11 @@
           {{ object_list.render }}
         {% endif %}
       </div>
+
   {% endif %}
   {% if not object_list.object_list %}
-  <p>There are no blog posts yet.</p>
+  <p>There are no blog posts.</p>
   {% endif %}
 
-</div>
 
-  <div class="col m3">
-
-    {% get_last_xtdcomments 5 as last_comments for blog.blogpost %}
-    {% if last_comments %}
-    <h6>Latest Comments</h6>
-        {% for comment in last_comments %}
-          {% include "django_comments_xtd/latest_comments.html" %}
-        {% endfor %}
-
-    {% endif %}
-
- </div>
-</div>
-
-{% endblock %}
+{% endblock content %}

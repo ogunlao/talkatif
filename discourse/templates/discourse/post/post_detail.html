@@ -1,106 +1,106 @@
 {% extends "discourse/base.html" %}
+{% load staticfiles %}
 {% load humanize %}
-{% load md2 %}
-{% load markdownify %}
 {% load comments %}
 {% load comments_xtd %}
-{% load widget_tweaks %}
 {% load avatar_tags %}
-
-{% load staticfiles %}
+{% load martortags %}
 
 {% block title %}Talks - {{post.title}}{% endblock %}
 
 {% block extra_nav %}
   {% if post.author == user %}
   <p>
-    <a href="{% url 'discourse:edit_post' post.id %}">
+    <a class="blue" href="{% url 'discourse:edit_post' post.id %}">
         Edit this talk</a>
   </p>
   {% endif %}
 {% endblock extra_nav %}
 
-
-
-<!-- Main Post details -->
 {% block content %}
 
-<div class="row">
-
-
-  <div class="col m7 offset-m2">
     {% if post %}
 
-    <div class="card">
-        <div class="card-content">
-          {% for tag in post.tags.all %}
-            <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
-          {% endfor %}
-          {% if post.updated != post.created %}<small class="grey-text">Last Updated {{post.updated|naturaltime}}</small>{% endif %}
-          <h5 class="blue-text main_title">{{post.title}}</h5>
-          <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"|linebreaks}}</p>
-          {% if post.author == user %}
-          <p>
-            <a class="small_text" href="{% url 'discourse:edit_post' post.id %}">
-                Edit this talk.</a>
-          </p>
+    <div class="ui fluid card">
+      <div class="content">
+        <div class="right floated meta">{{post.created|naturaltime}}</div>
+        <a href="{{post.author.profile.get_absolute_url}}">
+          {% if post.author|has_avatar %}
+            {% avatar post.author 35 class="ui avatar image" %}
+          {% else %}
+            <img src="{{names.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
           {% endif %}
-
-          {% get_comment_count for post as comment_count %}
-          <span class="right">
-            <i class="material-icons">comment</i> {{ comment_count }}
-          </span>
-
-          <span class="right">
-              {% if user.is_authenticated %}
-
-                  <span class="total_likes right">{{ post.total_likes }}</span>
-                  <a class="btn-floating waves-effect white"><i class="material-icons like-button
-                    {% if liked %} blue-text {% else %} grey-text {% endif %} " name="{{ post.slug }}" value="Like">thumb_up</i></a>
-
-            {% else %}
-            <a class="btn-floating tooltipped" data-position="top" data-delay="50" data-tooltip="Login or Signup to like.">
-              <i class="material-icons">thumb_up</i></a>
-            <span>{{post.total_likes}}</span>
-            {% endif %}
-          </span>
-
-          {% include "share_button.html" %}
-
-            <p class="grey-text small_text">
-            Posted {{post.created|naturaltime}},
-            By {{post.author.get_full_name}}</p>
+          {{post.author.get_full_name}}</a>
+      </div>
+      <div class="content">
+        <div class="header"><a href="{{post.get_absolute_url}}">{{post.title}}</a></div>
+        <div class="meta">
+          {% for tag in post.tags.all %}
+          <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}" class="ui blue basic label">{{ tag.name }}</a>
+          {% endfor %}
+          <br>
         </div>
+        <div class="description">
+          {{post.summary|safe_markdown}}
+        </div>
+      </div>
+      <div class="content">
+        <span class="right floated">
+          {% if user.is_authenticated %}
+            <a class="btn white">
+              <i class="heart outline like icon like-button {% if liked %} blue {% else %}grey {% endif %} " name="{{ post.slug }}" value="Like"></i></a>
 
-      </div><!-- End of card -->
+          <span class="total_likes right">{{ post.total_likes }} like{{ post.total_likes|pluralize }}</span>
 
+        {% else %}
+        <a class="btn btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Login or Signup to like.">
+          <i class="heart outline like icon"></i></a>
+        <span>{{post.total_likes}} likes</span>
+        {% endif %}
+        </span>
+
+        <i class="comment icon"></i>
+        {% get_comment_count for post as comment_count %}
+        {{ comment_count }} comment{{ comment_count|pluralize }}
+      </div>
+      <div class="extra content">
+        {% if post.author == user %}
+        <span>
+          <a class="small_text" href="{% url 'discourse:edit_post' post.id %}">
+              Edit this talk.</a>
+        </span>
+        {% endif %}
+        <span class="right floated">{% include "share_button.html" %}</span>
+      </div>
+    </div><!-- End of card -->
 
       {% get_comment_form for post as form %}
-      {% if user.is_authenticated %}
-    <div class="card">
-      <div class="row">
+
+      <div class="ui form">
+        <div class="field">
+          <label>Comment:</label>
           {% include "comments/form.html" %}
+        </div>
       </div>
-    </div>
-      {% endif %}
 
     {% if comment_count %}
-            {% render_xtdcomment_tree for post allow_flagging allow_feedback show_feedback  %}
+    <div class="ui threaded comments">
+      <h3 class="ui dividing header">Comments</h3>
+          {% render_xtdcomment_tree for post allow_flagging allow_feedback show_feedback  %}
+      </div>
     {% endif %}
 
     {% endif %}
 
-  </div><!-- End of colm7 -->
+{% endblock content %}
 
-  <div class="col s12 m3">
-    <div class="row">
-      <br>
+{% block right_content %}
+
         <a href="{% url 'discourse:new_post' %}">
-      <button class="yellow btn black-text">New Talk &raquo;</button></a>
-    </div>
+      <button class="ui primary basic button">New Talk &raquo;</button></a>
 
     {% if similar_posts %}
-    <p class="small_text">Related talks{{similar_postso.count|pluralize}}.</p>
+    <p class="small_text">Related talks{{similar_posts.count|pluralize}}.</p>
     <ul>
       {% for lists in similar_posts %}
       <li><a class="small_text" href="{{lists.get_absolute_url}}">{{lists|capfirst}}</a></li>
@@ -110,18 +110,19 @@
     {% endif %}
 
 
-    {% if post.count %}
-          <div class="card-panel small_text">
-        Total Followers : <br>{{post.count}} person{{ post.count|pluralize }}.
-          </div>
-    {% endif %}
+    <div class="ui card">
+      <div class="content">
+      {% if post.count %}
+            <p class="small_text">
+          Total Followers : <br>{{post.count}} person{{ post.count|pluralize }}.
+        </p>
+      {% endif %}
+      </div>
+    </div>
 
+{% endblock right_content %}
 
- </div>
-</div><!-- End of main row -->
-
-
-
+{% block extra_js %}
 <script>
 $('.like-button').click(function(){
       $.ajax({
@@ -132,13 +133,13 @@ $('.like-button').click(function(){
                success: function(response) {
                       // alert(response.message);
                       // alert('Post likes count is now ' + response.likes_count);
-                      $(".total_likes").text(response.likes_count);
+                      $(".total_likes").text(response.likes_count  + " likes");
                       if (response.liked){
-                        if($(".like-button").hasClass("grey-text")){
-                             $(".like-button").removeClass("grey-text").addClass("blue-text");
+                        if($(".like-button").hasClass("grey")){
+                             $(".like-button").removeClass("grey").addClass("blue");
                            };
                       }else{
-                        $(".like-button").removeClass("blue-text").addClass("grey-text");
+                        $(".like-button").removeClass("blue").addClass("grey");
                       };
                 },
                 error: function(rs, e) {
@@ -172,13 +173,13 @@ $('.like-comment').click(function(ev){
                           liked_value = Number(liked_value) - 1
                           if (liked_value == -1){ liked_value = 0};
                            $('.like-comment').removeClass("liked");
-                           $('.mtl').removeClass("blue-text").addClass("grey-text");
+                           $('.mtl').removeClass("blue").addClass("grey");
 
                       }else{
                           liked_value = Number(liked_value) + 1
 
                           $('.like-comment').addClass("liked");
-                          $('.mtl').removeClass("grey-text").addClass("blue-text");
+                          $('.mtl').removeClass("grey").addClass("blue");
                         };
                     $("#"+liked_id).text(liked_value);
                     }
@@ -208,12 +209,12 @@ $('.dislike-comment').click(function(ev){
                           liked_value = Number(liked_value) - 1
                           if (liked_value == -1){ liked_value = 0};
                            $('.dislike-comment').removeClass("disliked");
-                           $('.mtdl').removeClass("red-text").addClass("grey-text");
+                           $('.mtdl').removeClass("red-text").addClass("grey");
 
                       }else{
                           liked_value = Number(liked_value) + 1
                           $('.dislike-comment').addClass("disliked");
-                          $('.mtdl').removeClass("grey-text").addClass("red-text");
+                          $('.mtdl').removeClass("grey").addClass("red-text");
                         };
                     $("#"+disliked_id).text(liked_value);
                     }
@@ -221,5 +222,4 @@ $('.dislike-comment').click(function(ev){
 });
 
 </script>
-
-{% endblock %}
+{% endblock extra_js %}

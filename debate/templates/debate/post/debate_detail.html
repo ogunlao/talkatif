@@ -1,21 +1,21 @@
 {% extends "debate/base.html" %}
 {% load staticfiles %}
 {% load humanize %}
-{% load md2 %}
-{% load markdownify %}
 {% load comments %}
 {% load comments_xtd %}
 {% load widget_tweaks %}
 {% load debate_filter %}
 {% load avatar_tags %}
+{% load martortags %}
 
 {% block title %}debate - {{post.title}}{% endblock title %}
+{% block extra_css %}{% endblock extra_css %}
 {% block extra_nav %}
 
       {% if user_is_moderator %}
         <li class="divider"></li>
         <li>
-          <a href="{% url 'debate:edit_debate_post' post.id %}">
+          <a class="blue-text" href="{% url 'debate:edit_debate_post' post.id %}">
               Edit Debate</a></li>
         <li class="divider"></li>
 
@@ -31,20 +31,43 @@
 
 {% endblock extra_nav %}
 
-
 <!-- Main Post details -->
-{% block content %}
 
-<div class="row">
-  <div class="col m2 l2">
-    <div class="hide-on-small-only">
+{% block left_content %}
+
+<div class="ui card">
+  <div class="content">
+  <p>Category: {{post.debate_category | capfirst}} Debate <br>
+  {% if post.winner_updated %}
+  <p>Winning Team:
+    <span><i class="fa fa-glass fa-lg" aria-hidden="true">{{post.winner|capfirst}}</i></span>
+  </p>
+  {% endif %}
+  {% if post.begin %}<p>Starting time:  {{post.begin|naturaltime}}</p>{% else %}<p>Debate starts soon.</p>{% endif %}
+  {% if post.end %} <p>Ending time: {{post.end|naturaltime}}</p>{% endif %}
+
+  {% if debate_in_progress %}
+  Status: Debate in progress
+  {% endif %}
+  {% if debate_has_ended %}
+  Status: Debate had ended
+  {% endif %}<br>
+  Comment Settings: {% if post.allow_follower_comment %} Comments opened after close of debate {% else %}
+  Debate is closed to all form of comments {% endif %}
+</div>
+</div>
+
+
+
         {% if user_is_moderator %}
+          <div class="ui card">
+            <div class="content">
+                <div class="header">Moderator Panel</div>
+                  <a class="blue btn tooltipped" href="{% url 'debate:mod_debate' post.pk %}"><button class="ui secondary basic button">Goto Mod</button></a>
 
-          <div class="card-panel">
-                <h6>Moderator Panel</h6>
-                  <a class="blue btn tooltipped" href="{% url 'debate:mod_debate' post.pk %}"
-                      data-position="top" data-delay="50" data-tooltip="Approve debaters and edit debate start and end times.">Goto Mod</a>
-                </div>
+                <p><small>Approve debaters and edit debate start and end times.</small></p>
+          </div>
+        </div>
 
         {% endif %}
 
@@ -58,237 +81,161 @@
             </div>
 
           {% endif %}
-      </div>
-    </div>
 
+{% endblock left_content %}
 
-<div class="col m7 l7">
+{% block content %}
 
 {% if post %}
 
 <!-- Card Projects -->
-    <div class="card">
-      <div class="card-content">
-        {% for tag in post.tags.all %}
-          <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag.name }}</span></a>
-        {% endfor %}
-        {% if post.updated != post.created %}<small class="grey-text">Last Edited {{post.updated|naturaltime}}</small>{% endif %}
-        <h5 class="blue-text main_title">{{post.title}}</h5>
-        <p class="justify">{{post.summary|markdown:"safe, code-friendly, code-color"}}</p>
-        {% if user_is_moderator %}
-          <a href="{% url 'debate:edit_debate_post' post.id %}">
-              <span class="small_text">Edit Debate</span></a>
-        {% endif %}
-
-        {% get_comment_count for post as comment_count %}
-        <span class="right">
-          <i class="material-icons">comment</i> {{ comment_count }}
-        </span>
-
-    <span class="right">
-        {% if user.is_authenticated %}
-
-          <a class="btn btn-floating waves-effect white">
-            <i class="tiny material-icons like-button {% if liked %} blue-text {% else %}grey-text {% endif %} " name="{{ post.slug }}" value="Like">thumb_up</i></a>
-
-        <span class="total_likes right">{{ post.total_likes }}</span>
-
+<div class="ui fluid card">
+  <div class="content">
+    <div class="right floated meta">{{post.created|naturaltime}}</div>
+    <a href="{{post.author.profile.get_absolute_url}}">
+      {% if post.author|has_avatar %}
+        {% avatar post.author 35 class="ui avatar image" %}
       {% else %}
-      <a class="btn btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Login or Signup to like.">
-        <i class="tiny material-icons">thumb_up</i></a>
-      <span>{{post.total_likes}}</span>
+        <img src="{{names.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
       {% endif %}
-    </span>
+      {{post.author.get_full_name}}</a>
+  </div>
+  <div class="content">
+    <div class="header"><a href="{{post.get_absolute_url}}">{{post.title}}</a></div>
+    <div class="meta"><i class="hourglass start icon"></i> {{post.begin|naturaltime}}</div>
+    <div class="meta">
+      {% for tag in post.tags.all %}
+      <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}" class="ui blue basic label">{{ tag.name }}</a>
+      {% endfor %}
+      <br>
+    </div>
+    <div class="description">
+      {{post.summary|safe_markdown}}
+    </div>
+  </div>
+  <div class="content">
+    <span class="right floated">
+      {% if user.is_authenticated %}
+        <a class="btn white">
+          <i class="heart outline like icon like-button {% if liked %} blue-text {% else %}grey-text {% endif %} " name="{{ post.slug }}" value="Like"></i></a>
 
+      <span class="total_likes right">{{ post.total_likes }} like{{ post.total_likes|pluralize }}</span>
+
+    {% else %}
+    <a class="btn btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Login or Signup to like.">
+      <i class="heart outline like icon"></i></a>
+    <span>{{post.total_likes}} likes</span>
+    {% endif %}
+  </span>
+    <i class="comment icon"></i>
+    {% get_comment_count for post as comment_count %}
+    {{ comment_count }} comment{{ comment_count|pluralize }}
+  </div>
+  <div class="extra content">
+    {% if user_is_moderator %}
+      <a href="{% url 'debate:edit_debate_post' post.id %}">
+          <span class="small_text">Edit Debate</span></a>
+    {% endif %}
+      <span class="right floated">
         {% include "share_button.html" %}
-      </div>
-      <div class="card-tabs">
-        <ul class="tabs tabs-fixed-width">
-          <li class="tab"><a class="blue-text active" href="#details">Details</a></li>
-          <li class="tab"><a class="blue-text" href="#debaters">Debaters</a></li>
-          <li class="tab"><a class="blue-text" href="#panel">Panel</a></li>
-        </ul>
-      </div>
-      <div class="card-content grey lighten-4">
-        <div id="details">
-          <p>Category: {{post.debate_category | capfirst}} Debate <br>
-          By <a href="{{post.author.profile.get_absolute_url}}">{{post.author.get_full_name}}</a></p>
-          {% if post.winner_updated %}
-          <p>Winning Team:
-            <span><i class="fa fa-glass fa-lg" aria-hidden="true">{{post.winner|capfirst}}</i></span>
-          </p>
-          {% endif %}
-          {% if post.begin %}<p>Starting time:  {{post.begin|naturaltime}}</p>{% else %}<p>Debate starts soon.</p>{% endif %}
-          {% if post.end %} <p>Ending time: {{post.end|naturaltime}}</p>{% endif %}
+    </span>
+  </div>
 
-          {% if debate_in_progress %}
-          Status: Debate in progress
-          {% endif %}
-          {% if debate_has_ended %}
-          Status: Debate had ended
-          {% endif %}<br>
-          Comment Settings: {% if post.allow_follower_comment %} Comments opened after close of debate {% else %}
-          Debate is closed to all form of comments {% endif %}
+</div>
 
-        </div>
+{% if post.debate_category == "open" %}
+  <p>Specific debaters are not included for open debates. Contribution from all are welcome.</p>
+{% else %}
 
-    <div id="debaters">
-      <div class="row">
-      {% if post.debate_category == "open" %}
-        <p>Specific debaters are not included for open debates. Contribution from all are welcome.</p>
-      {% else %}
-        <div class="col m6">
-        {% if post.supporting_debaters.all %}
-          <h6>Supporting </h6><span><i class="material-icons">group</i></span>
-          <ul class="collection">
-            {% for names in post.supporting_debaters.all %}
-            <li class="collection-item avatar">
-              {% if names|has_avatar %}
-                {% avatar names 35 class="circle responsive-img" %}
-              {% elif names.socialaccount_set.all.0.get_avatar_url %}
-                <img  src="{{ names.socialaccount_set.all.0.get_avatar_url }}" class="circle responsive-img" width="35" height="35" />
-              {% else %}
-                <img src="{{names.profile.profile_image_url}}" class="circle responsive-img" width="35" height="35" />
-              {% endif %}
-              <span class="title">{{ names.get_full_name }}</span>
-              <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a> <br>
-                 Speaker {{forloop.counter}}
-              </p>
-
-            </li>
-            {% endfor %}
-            </ul>
-        {%endif%}
-
-        {% if user.is_authenticated and not user_is_moderator and not debate_in_progress and post.debate_category == "closed"  %}
-        <a href={% url 'debate:join_participants' post_id=post.id position="supporting"  %}>
-          Apply to join supporting team.
-        </a>
-        {% endif %}
-        </div>
-
-        <div class="col m6">
-        {% if post.opposing_debaters.all %}
-          <h6>Opposing </h6><span><i class="material-icons">group</i></span>
-          <ul class="collection">
-            {% for names in post.opposing_debaters.all %}
-            <li class="collection-item avatar">
-              {% if names|has_avatar %}
-                {% avatar names 35 class="circle responsive-img" %}
-              {% elif names.socialaccount_set.all.0.get_avatar_url %}
-                <img  src="{{ names.socialaccount_set.all.0.get_avatar_url }}" class="circle responsive-img" width="35" height="35" />
-              {% else %}
-                <img src="{{names.profile.profile_image_url}}" class="circle responsive-img" width="35" height="35" />
-              {% endif %}
-              <span class="title">{{ names.get_full_name }}</span>
-              <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a> <br>
-                 Speaker {{forloop.counter}}
-              </p>
-
-            </li>
-            {% endfor %}
-            </ul>
-          {%endif%}
-
-        {% if user.is_authenticated and not user_is_moderator and not debate_in_progress and post.debate_category == "closed"%}
-        <a href={% url 'debate:join_participants' post_id=post.id position="opposing"  %}>
-          Apply to join opposing team.
-        </a>
-        {% endif %}
-        </div>
-      {% endif %}
-
-          {% if user_is_moderator and not debate_in_progress %}
-            Share post amidst your friends and colleagues to gain the audience it deserves.
-          {% endif %}
-      </div><!-- End of row div -->
-    </div><!-- End of debaters div -->
-
-        <div id="panel">
-          <div class="row">
-            <div class="col m6">
-            {% if post.moderator.all %}
-              <h6>Moderator(s) </h6><span><i class="material-icons">group</i></span>
-              <ul class="collection">
-                {% for names in post.moderator.all %}
-                <li class="collection-item avatar">
-                  {% if names|has_avatar %}
-                    {% avatar names 35 class="circle responsive-img" %}
-                  {% elif names.socialaccount_set.all.0.get_avatar_url %}
-                    <img  src="{{ names.socialaccount_set.all.0.get_avatar_url }}" class="circle responsive-img" width="35" height="35" />
-                  {% else %}
-                    <img src="{{names.profile.profile_image_url}}" class="circle responsive-img" width="35" height="35" />
-                  {% endif %}
-                  <span class="title">{{ names.get_full_name }}</span>
-                  <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a> <br>
-                     Mod {{forloop.counter}}
-                  </p>
-
-                </li>
-                {% endfor %}
-              </ul>
-            {%endif%}
-          </div>
-          <div class="col m6">
-              {% if post.judges.all %}
-                <h6>Judge(s) </h6><span><i class="material-icons">group</i></span>
-                <ul class="collection">
-                  {% for names in post.judges.all %}
-                  <li class="collection-item avatar">
-                    {% if names|has_avatar %}
-                      {% avatar names 35 class="circle responsive-img" %}
-                    {% elif names.socialaccount_set.all.0.get_avatar_url %}
-                      <img  src="{{ names.socialaccount_set.all.0.get_avatar_url }}" class="circle responsive-img" width="35" height="35" />
-                    {% else %}
-                      <img src="{{names.profile.profile_image_url}}" class="circle responsive-img" width="35" height="35" />
-                    {% endif %}
-                    <span class="title">{{ names.get_full_name }}</span>
-                    <p><a href={{names.profile.get_absolute_url}}>@{{names.username}}</a> <br>
-                       Judge {{forloop.counter}}
-                    </p>
-
-                  </li>
-                  {% endfor %}
-                </ul>
-              {%endif%}
-
-            </div>
-
-          </div><!-- End of row div -->
-
-
-        </div>
-      </div>
-
-    </div> <!-- End of card -->
+{% if post.supporting_debaters.all %}
+<p>Supporting Debaters</p>
+  <span>
+  {% for names in post.supporting_debaters.all %}
+    {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a>{% if not forloop.last %},{% endif %}
+  {% endfor %}
+</span>
+<br>
 {% endif %}
+
+{% if user.is_authenticated and not user_is_moderator and not debate_in_progress  %}
+<a href={% url 'debate:join_participants' post_id=post.id position="supporting"  %}>
+  <button class="ui primary basic button">Apply to join supporting team.</button>
+</a>
+{% endif %}
+
+{% if post.opposing_debaters.all %}
+<p>Opposing Debaters</p>
+<span>
+  {% for names in post.opposing_debaters.all %}
+    {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a>{% if not forloop.last %},{% endif %}
+  {% endfor %}
+</span><br>
+{% endif %}
+
+{% if user.is_authenticated and not user_is_moderator and not debate_in_progress %}
+<a href={% url 'debate:join_participants' post_id=post.id position="opposing"  %}>
+  <button class="ui primary basic button">Apply to join opposing team.</button>
+</a>
+{% endif %}
+
+{% if post.moderator.all %}
+<p>Moderator(s)</p>
+<span>
+  {% for names in post.moderator.all %}
+    {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a>{% if not forloop.last %},{% endif %}
+  {% endfor %}
+</span>
+{% endif %}
+
+{% if post.judges.all %}
+<p>Moderator(s)</p>
+<span>
+  {% for names in post.judges.all %}
+    {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a>{% if not forloop.last %},{% endif %}
+  {% endfor %}
+</span>
+{% endif %}
+
+    {% if user_is_moderator and not debate_in_progress %}
+      Share post amidst your friends and colleagues to gain the audience it deserves.
+    {% endif %}
+
+{% endif %}
+
       <p>Confused? Read our <a href="{% url 'faq' %}">FAQs</a> and <a href="{% url 'debate:rules_guidelines' %}">Rules</a> to understand how things work here.</p>
 
   {% get_comment_form for post as form %}
-  {% if open_comment %}
-    <div class="card">
-      <div class="row">
-        {% include "comments/form.html" %}
-      </div>
+
+  <div class="ui form">
+    <div class="field {% if not open_comment %}disabled{% endif %}">
+      <label>Comment:</label>
+      {% include "comments/form.html" %}
+    </div>
+  </div>
+
+  {% if comment_count %}
+  <div class="ui threaded comments">
+    <h3 class="ui dividing header">Comments</h3>
+          {% render_xtdcomment_tree for post allow_flagging allow_feedback show_feedback  %}
     </div>
   {% endif %}
 
-      {% if comment_count %}
-            {% render_xtdcomment_tree for post allow_flagging allow_feedback show_feedback  %}
-    {% endif %}
+{% endif %}
 
 {% if not post %}
   <p>There are currently no debates posted. You can add a debate or check back</p>
 {% endif %}
 
-</div><!-- End of col -->
+{% endblock content %}
 
-  <div class="col m3 l3">
+{% block right_content %}
     <p>
-      <a class="yellow btn black-text" href="{% url 'debate:suggest_post' %}">New debate</a>
+      <a class="yellow btn black-text" href="{% url 'debate:suggest_post' %}"><button class="ui primary basic button">New debate</button></a>
     </p>
+
+
     {% if similar_posts %}
-    <p class="small_text">Related Debate{{similar_postso.count|pluralize}}.</p>
+    <p class="small_text">Related Debate{{similar_posts.count|pluralize}}.</p>
     <ul>
       {% for lists in similar_posts %}
       <li><a class="small_text" href="{{lists.get_absolute_url}}">{{lists|capfirst}}</a></li>
@@ -297,101 +244,101 @@
     </ul>
     {% endif %}
 
-    {% if post.winner_updated or debate_has_ended %}
-    <div class="card-panel">
-      <p class="text-danger small_text">Results:<br>
-      Supporting: {{total_support_vote}} vote{{total_support_vote|pluralize }}<br>
-      Opposing: {{total_oppose_vote}} vote{{total_oppose_vote|pluralize }}
-      <br>
-      Winner: {{post.winner|capfirst}}
-      <br>
-      See full <a href="{% url 'debate:score_debate' post.pk %}">result details.</a>
-
-      </p>
-    </div>
-    {% endif %}
-
-    <div class="card-panel">
-        <div class="row">
-        {% if voted_before or not voting_has_started %}
-        <div class="col s12 m6">
-          <a name="{{ post.slug }}" value="support" class="waves-effect waves-light vote btn-floating disabled">
-            <i class="material-icons">thumbs_up_down</i></a>
-            Support
-        </div>
-        <div class="col s12 m6">
-          <a name="{{ post.slug }}" value="oppose" class="waves-effect waves-light vote btn-floating disabled">
-            <i class="material-icons">thumbs_up_down</i></a>
-            Oppose
-        </div>
-        {% else %}
-        <div class="col s12 m6">
-          <a name="{{ post.slug }}" value="support" class="waves-effect waves-light vote btn-floating">
-            <i class="blue material-icons">thumbs_up_down</i></a>
-            Support
-        </div>
-        <div class="col s12 m6">
-          <a name="{{ post.slug }}" value="oppose" class="waves-effect waves-light vote btn-floating">
-            <i class="blue material-icons">thumbs_up_down</i></a>
-            Oppose
-        </div>
-
-        {% endif %}
+    <div class="ui card">
+    <div class="content">
+      <i class="large thumbs up icon blue right floated"></i>
+      <div class="header">
+        Vote for your team.
       </div>
-
-
-        <p class="debate_stand small_text"><br>
+      <div class="meta">
+        Support or Oppose?
+      </div>
+      <div class="description">
+        <p class="debate_stand"><br>
         {% if vote_message %}{{vote_message}}
-        {% else %}You have not voted in this debate{% endif %}
+        {% else %}You have not voted in this debate.{% endif %}
         <br>
           {% if not user.is_authenticated %}
           <a href="{% url 'account_login' %}">Login</a> or <a href="{% url 'account_signup' %}">SignUp</a> to vote.
           {% endif %}
-        </p><hr/>
+        </p>
+
+        {% if post.winner_updated or debate_has_ended %}
+          <p class="small_text">Results:<br>
+          Supporting: {{total_support_vote}} vote{{total_support_vote|pluralize }}<br>
+          Opposing: {{total_oppose_vote}} vote{{total_oppose_vote|pluralize }}
+          <br>
+          Winner: {{post.winner|capfirst}}
+          <br>
+          See full <a href="{% url 'debate:score_debate' post.pk %}">result details.</a>
+
+          </p>
+        {% else %}
+
         <p class="small_text">Voting Starts :
             <span class="right">{% if post.vote_starts %}{{post.vote_starts}}{% else %}Not yet set by Mod{%endif%}</span><br>
           Voting Ends :
             <span class="right">{% if post.end %}{{post.end}}{% else %}Not yet set by Mod{%endif%}</span><br>
           Result displayed afterwards. Please be patient.</p>
+        {% endif %}
+        
       </div>
+    </div>
+    <div class="extra content">
+      <div class="ui two buttons">
+        {% if voted_before or not voting_has_started %}
+          <a name="{{ post.slug }}" value="support" class="vote btn-floating disabled">
+            <div class="ui basic grey button">Support</div></a>
 
+          <a name="{{ post.slug }}" value="oppose" class="vote btn-floating disabled">
+            <div class="ui basic grey button">Oppose</div></a>
+
+        {% else %}
+
+          <a name="{{ post.slug }}" value="support" class="vote btn-floating">
+            <div class="ui basic blue button">Support</div></a>
+
+          <a name="{{ post.slug }}" value="oppose" class="vote btn-floating">
+            <div class="ui basic green button">Oppose</div></a>
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ui card">
+    <div class="content">
     {% if post.count %}
-          <div class="card-panel small_text">
-        Total Followers : <br>{{post.count}} person{{ post.count|pluralize }}.
-          </div>
+          <p class="small_text">
+        Total Viewers : <br>{{post.count}} person{{ post.count|pluralize }}.
+      </p>
     {% endif %}
+    </div>
+  </div>
 
-      <div class="card-panel">
-          <i class="small material-icons">access_alarm</i>
+
+  <div class="ui card">
+    <div class="content">
+
           {% if notify_status or not user.is_authenticated %}
-            <button  name="{{ post.slug }}" value="notify" class="small yellow btn black-text disabled notify">Notify Me</button>
+            <button  name="{{ post.slug }}" value="notify" class="small ui secondary basic button disabled notify">Notify Me</button>
           {% else %}
-            <button  name="{{ post.slug }}" value="notify" class="small yellow btn black-text btn notify">Notify Me</button>
+            <button  name="{{ post.slug }}" value="notify" class="small ui primary basic button notify">Notify Me</button>
           {% endif %}
-          <hr>
+          <br><br><hr>
           {% if notify_status %}
             <p class="has_set_notification small_text">You have previously set notification for this debate. You would be notified via email 15 mins before debate starts.</p><br>
           {% else %}
             <p class="has_set_notification small_text">Enable alert for debate and get notified before debate starts. {%if not user.is_authenticated %}You must be <a href="{% url 'account_login' %}">logged in</a>.{%endif%}</p><br>
           {% endif %}
       </div>
+    </div>
 
- </div>
 
- </div>
-
-{% endblock %}
+{% endblock right_content %}
 
 {% block extra-js %}
 <script>
-
-$(document).ready(function(){
-    $("select#debate_option").change(function(){
-        var text_content =$("textarea#id_comment").val();
-        var debate_option = $("#debate_option option:selected").val();
-        $("textarea#id_comment").val("`"+debate_option + "`\n" + text_content);
-    });
-});
 
 $('.like-button').click(function(){
       $.ajax({
@@ -402,7 +349,7 @@ $('.like-button').click(function(){
                success: function(response) {
                       // alert(response.message);
                       // alert('Debate likes count is now ' + response.likes_count);
-                      $(".total_likes").text(response.likes_count);
+                      $(".total_likes").text(response.likes_count + " likes");
                       if (response.liked){
                         if($(".like-button").hasClass("grey-text")){
                              $(".like-button").removeClass("grey-text").addClass("blue-text");
@@ -476,13 +423,13 @@ $('.like-comment').click(function(ev){
                           liked_value = Number(liked_value) - 1
                           if (liked_value == -1){ liked_value = 0};
                            $('.like-comment').removeClass("liked");
-                           $('.mtl').removeClass("blue-text").addClass("grey-text");
+                           $('.mtl').removeClass("blue").addClass("grey");
 
                       }else{
                           liked_value = Number(liked_value) + 1
 
                           $('.like-comment').addClass("liked");
-                          $('.mtl').removeClass("grey-text").addClass("blue-text");
+                          $('.mtl').removeClass("grey").addClass("blue");
                         };
                     $("#"+liked_id).text(liked_value);
                     }

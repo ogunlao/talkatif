@@ -24,7 +24,6 @@ def edit_my_comment(request, comment_id):
     comment = get_object_or_404(get_model(),
                                 pk=comment_id, site__pk=settings.SITE_ID)
     redirect_to = request.GET.get('next', '/all/')
-    print('redirect_to', redirect_to)
     if comment.user == request.user:
         if request.method == 'POST':
             form = CommentForm(request.POST, instance=comment)

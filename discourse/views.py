@@ -10,7 +10,6 @@ from django.utils import timezone
 from meta.views import Meta #to include metatags in view for display, check django-meta
 from taggit.models import Tag
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
-from markdownx.forms import ImageForm
 
 #Default meta details for post
 meta = Meta(
@@ -117,20 +116,9 @@ def new_post(request, post_id = None):
     if request.method == 'POST':
         # Form was submitted
         form = PostForm(request.POST, instance=post)
-
         if form.is_valid():
-            # Form fields passed validation
             post = form.save(commit=False)
-            if request.FILES:
-                image_form = ImageForm(request.POST, request.FILES)
-                if image_form.is_valid:
-                    file = image_form.save()
-                    if file:
-                        image_tag = "\n\n![](" + file +")\n"
-                        post.summary = post.summary + image_tag
-
             post.author = request.user
-
             try:
                 post.save()
                 form.save_m2m()
@@ -150,8 +138,7 @@ def new_post(request, post_id = None):
             messages.info(request, "We encourage a maximum of 2 images per post." )
     else:
         form = PostForm(instance=post)
-        image_form = ImageForm()
-        context =  {'form': form, 'post_id':post_id, 'image_form':image_form, 'meta':meta}
+        context =  {'form': form, 'post_id':post_id, 'meta':meta}
         return render(request, 'discourse/form/new_post.html', context)
 
 from django.http import HttpResponse
@@ -192,3 +179,61 @@ def go_to_post(request, post_slug):
         goto_page_no = 1
     url = "reverse('discourse:go_to_post', kwargs={'post_id':post_id, 'post_slug':post_slug, 'goto_page_no':goto_page_no})"
     return HttpResponseRedirect('url')
+
+
+import os
+import json
+import uuid
+
+from django.conf import settings
+from django.http import HttpResponse
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.decorators import login_required
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
+from martor.utils import LazyEncoder
+
+@login_required
+def markdown_uploader(request):
+    """
+    Makdown image upload for locale storage
+    and represent as json to markdown editor.
+    """
+    if request.method == 'POST' and request.is_ajax():
+        if 'markdown-image-upload' in request.FILES:
+            image = request.FILES['markdown-image-upload']
+            image_types = [
+                'image/png', 'image/jpg',
+                'image/jpeg', 'image/pjpeg', 'image/gif'
+            ]
+            if image.content_type not in image_types:
+                data = json.dumps({
+                    'status': 405,
+                    'error': _('Bad image format.')
+                }, cls=LazyEncoder)
+                return HttpResponse(
+                    data, content_type='application/json', status=405)
+
+            if image._size > settings.MAX_IMAGE_UPLOAD_SIZE:
+                to_MB = settings.MAX_IMAGE_UPLOAD_SIZE / (1024 * 1024)
+                data = json.dumps({
+                    'status': 405,
+                    'error': _('Maximum image file is %(size) MB.') % {'size': to_MB}
+                }, cls=LazyEncoder)
+                return HttpResponse(
+                    data, content_type='application/json', status=405)
+
+            img_uuid = "{0}-{1}".format(uuid.uuid4().hex[:10], image.name.replace(' ', '-'))
+            tmp_file = os.path.join(settings.MARTOR_UPLOAD_PATH, img_uuid)
+            def_path = default_storage.save(tmp_file, ContentFile(image.read()))
+            img_url = os.path.join(settings.MEDIA_URL, def_path)
+            
+            data = json.dumps({
+                'status': 200,
+                'link': img_url,
+                'name': image.name
+            })
+            return HttpResponse(data, content_type='application/json')
+        return HttpResponse(_('Invalid request!'))
+    return HttpResponse(_('Invalid request!'))

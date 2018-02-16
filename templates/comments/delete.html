@@ -1,7 +1,8 @@
 {% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
 {% load comments_xtd %}
-{% load md2 %}
+{% load avatar_tags %}
+{% load martortags %}
 
 {% block title %}{% trans "Remove comment" %}{% endblock %}
 
@@ -11,58 +12,36 @@
 
 {% block content %}
 
-<div class="row">
-<div class="col m3"></div>
+    <h2 class="center-align">{% trans "Remove this comment?" %}</h2>
+    <small class="">{% trans "Comment removal cannot be undone." %}</small>
 
-<div class="col m6">
-  <div class="card">
-    <div class="card-content">
+    <hr/>
 
-    <h5 class="center-align">{% trans "Remove this comment?" %}</h5>
-    <small class="red-text">{% trans "As the comment owner or a moderator you can remove comments from the site. This prevents talkatif.com from showing the text. It cannot be undone." %}</small>
-
-      <div class="media">
-        <div class="media-left">
-          {% if comment.user.profile.image %}
-          <img src="{{ item.comment.user.profile.image.thumbnail.25x25 }}"/>
-          {% endif %}
+    <div class="ui comments">
+    <div class="comment">
+      <a class="avatar">
+        {% if comment.user|has_avatar %}
+          {% avatar comment.user 35 class="ui avatar circular image" %}
+        {% else %}
+          <img src="{{comment.user.profile.profile_image_url}}" width="35" height="35" />
+        {% endif %}
+      </a>
+      <div class="content">
+        <a class="author">{{ comment.user_name }}</a>
+        <a class="time">{{ comment.submit_date|date:"N j, Y, P" }}</a>
+        <div class="text">
+          {{ comment.comment|safe_markdown }}
         </div>
-        <div class="media-body">
-          <h6 class="media-heading">
-            {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-            {% if comment.user.profile.get_absolute_url %}
-            <a href="{{ comment.user.profile.get_absolute_url }}" target="_new">{% endif %}
-              {{ comment.user_name }}
-              {% if comment.user.profile.get_absolute_url%}
-            </a>{% endif %}
-          </h6>
-          <p>{{ comment.comment|markdown:"safe, code-friendly, code-color" }}</p>
-        </div>
+              <form action="." method="post" class="ui reply form">{% csrf_token %}
+                <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
+
+                <button type="submit" name="submit" class="ui negative basic button">{% trans "Remove" %}</button>
+                <a class="" href="{{ comment.get_absolute_url }}">
+                <button type="submit" name="preview" class="ui secondary basic button">{% trans "Cancel" %}</button></a>
+
+              </form>
       </div>
-
-    <div class="hide-on-small-only">
-      <hr/>
     </div>
-  </div>
-
-
-<div class="row">
-    <form action="." method="post" class="form-horizontal">{% csrf_token %}
-      <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
-      <div class="form-group">
-        <div class="row center-align">
-          <input type="submit" name="submit" class="red btn" value="{% trans "Remove" %}"/>
-          <a class="grey btn" href="{{ comment.get_absolute_url }}">cancel</a>
-        </div>
-      </div>
-    </form>
-</div>
-
-</div>
-</div>
-
-
-</div><!-- End of row -->
-
+    </div>
 
 {% endblock %}

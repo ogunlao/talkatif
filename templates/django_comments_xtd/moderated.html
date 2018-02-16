@@ -5,14 +5,11 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col m2"></div>
-  <div class="col m7">
     <h5 class="text-center">{% trans "Comment in moderation" %}</h5>
     <p class="text-center">
       {% blocktrans %}
       Your comment is in moderation.<br/>
-      It has violted the rules of the site and would have to be reviewed before being published.<br/>
+      It has violated the rules of the site and would have to be reviewed before being published.<br/>
       Thank you for your patience and understanding.
       {% endblocktrans %}
     </p>
@@ -24,6 +21,3 @@
   {% endwith %}
 </p>
 {% endblock %}
-</div>
-<div class="col-md-2"></div>
-</div>

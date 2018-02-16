@@ -1,24 +1,20 @@
-{% load markdownify %}
 {% load debate_filter %}
-<div class="fixed-action-btn horizontal click-to-toggle">
-  <a class="btn-floating btn-large red pulse">
-    <i class="large material-icons">share</i>
-  </a>
-  <ul>
-    {% with request.build_absolute_uri as url %}
-    <li><a href="http://www.facebook.com/sharer/sharer.php?u={{ url|goo_shorten_url|urlencode }}"
-       class="waves-effect waves-light btn-floating social facebook">
-            <i class="fa fa-facebook"></i></a></li>
-    <li><a href="https://twitter.com/intent/tweet?url={{ url|goo_shorten_url|urlencode }}"
-      class="waves-effect waves-light btn-floating social twitter">
-            <i class="fa fa-twitter"></i></a></li>
-    <li><a href="http://www.linkedin.com/shareArticle?url={{ url|goo_shorten_url|urlencode }}&title={{post.title}}&summary={{post.title|markdownify}}&source={{ request.get_host }}"
-      class="waves-effect waves-light btn-floating social linkedin">
-            <i class="fa fa-linkedin"></i></a></li>
-    {% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
-    <li><a href="whatsapp://send?text=*{{post.title}}* - What do you think?... {{ url|goo_shorten_url|urlencode }}" data-action="share/whatsapp/share" class="waves-effect waves-light btn-floating social whatsapp">
-            <i class="fa fa-whatsapp"></i></a></li>
-    {% endif %}
-    {% endwith %}
-  </ul>
-</div>
+{% with request.build_absolute_uri as url %}
+<a href="http://www.facebook.com/sharer/sharer.php?u={{ url|goo_shorten_url|urlencode }}">
+<button class="ui circular facebook icon button">
+  <i class="facebook icon"></i>
+</button></a>
+<a href="https://twitter.com/intent/tweet?url={{ url|goo_shorten_url|urlencode }}">
+<button class="ui circular twitter icon button">
+  <i class="twitter icon"></i>
+</button></a>
+<a href="http://www.linkedin.com/shareArticle?url={{ url|goo_shorten_url|urlencode }}&title={{post.title}}&summary={{post.title}}&source={{ request.get_host }}">
+<button class="ui circular linkedin icon button">
+  <i class="linkedin icon"></i>
+</button></a>
+<a href="whatsapp://send?text=*{{post.title}}* - What do you think?... {{ url|goo_shorten_url|urlencode }}" data-action="share/whatsapp/share">
+<button class="ui circular whatsapp icon button">
+  <i class="whatsapp icon"></i>
+</button></a>
+
+{% endwith %}

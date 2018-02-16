@@ -1,11 +1,11 @@
+from django.db import models
 from django.contrib import admin
-from markdownx.admin import MarkdownxModelAdmin #used by markdown editor
+from martor.widgets import AdminMartorWidget
 
 from .models import PostDebate, Profile, Participation, Suggest, Votes, \
             Notifyme, Stat, Scores, Badge, TrackedPost, PostDebater
 
 admin.site.register(Participation)
-
 admin.site.register(Suggest)
 
 @admin.register(PostDebate)
@@ -41,6 +41,9 @@ class MarkdownPostDebate(PostDebate):
     """
     Custom admin to preview and edit postdebate in markdown.
     """
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
     class Meta:
         proxy = True
 

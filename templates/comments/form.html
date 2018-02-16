@@ -2,7 +2,7 @@
 {% load comments %}
 {% load widget_tweaks %}
 
-<form class="col s12" method="POST" action="{% comment_form_target %}">
+<form class="ui reply form" method="POST" action="{% comment_form_target %}">
       <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
       {% csrf_token %}
       <div class="red-text hidden" data-comment-element="errors"></div>
@@ -11,27 +11,27 @@
       {% endfor %}
       <div style="display:none">{{ form.honeypot }}</div>
 
-      {% include "button_click.html" %}
-      <div>
-        {% render_field form.comment class="materialize-textarea" data-length="3000" %}
+      <div class="inline field {% if not user.is_authenticated %}disabled{% endif %}">
+        {% render_field form.comment class="" %}
       </div>
-      <div class="row">
-        <div class="col m3">
-          <input type="submit" name="post" value='send' class="blue btn" />
-        </div>
-        <div class="col m3">
-          <input type="submit" name="preview" value="preview" class="btn grey" />
-        </div>
-        <div class="col m4 right">
-            {{form.comment_anonymous}}
+      <div class="inline field {% if not user.is_authenticated %}disabled{% endif %}">
+        <div class="ui checkbox">
+          {{ form.followup }}
+          <label for="id_followup{% if cid %}_{{ cid }}{% endif %}">{{ form.followup.label }}.</label>
         </div>
       </div>
-    <p>
-      {{ form.followup }}
-      <label for="id_followup{% if cid %}_{{ cid }}{% endif %}">{{ form.followup.label }}.</label>
-    </p>
+      <div class="inline field {% if not user.is_authenticated %}disabled{% endif %}">
+          <button type="submit" name="post" class="ui primary basic button">Send</button>
+          <button type="submit" name="preview" class="ui secondary basic button">Preview</button>
 
-  <small><a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported in preview.
+        <div class="ui toggle checkbox">
+          <br>
+          <label for="id_comment_anonymous">Comment Anonymously.</label>
+          {{form.comment_anonymous}}
+        </div>
+      </div>
+
+  <small><a href='http://commonmark.org/help/' target='_blank'>Markdown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported.
   </small>
 
 </form>

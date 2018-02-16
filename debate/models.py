@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField #For Profile
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from markdownx.models import MarkdownxField
+from martor.models import MartorField
 from django.conf import settings
 
 import random
@@ -45,8 +45,7 @@ class PostDebate(models.Model):
     debate_category = models.CharField(max_length=6, choices=DEBATE_CATEGORY, default='open', help_text="Open debates do not require predefined debaters and judges. Reverse for closed debates.")
     status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='st')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='suggested_post')
-    summary = MarkdownxField('What is your inspiration for the debate?', max_length=1000, help_text="<a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported. You can \
-    drag images here from your desktop.")
+    summary = MartorField('What is your inspiration for the debate?', help_text="<a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported.")
     allow_comments = models.BooleanField('allow comments', default=True)
     tags = TaggableManager(blank = True)
     begin = models.DateTimeField(null=True, blank = True)
@@ -149,7 +148,7 @@ class Scores(models.Model):
             MinValueValidator(0)
         ], blank = True, help_text="Score for Opposing Side on a scale of 10")
     highest_score = models.PositiveSmallIntegerField(default=10,blank = True, help_text="Highest Score Possible")
-    observation = MarkdownxField(max_length=1000, null=True, blank = True, help_text="Give brief summary of scores. Markdown supported.")
+    observation = MartorField(null=True, blank = True, help_text="Give brief summary of scores. Markdown supported.")
 
     supporting_vote = models.PositiveIntegerField(default = 0, blank = True,)
     opposing_vote = models.PositiveIntegerField(default = 0, blank = True,)

@@ -15,8 +15,6 @@ from meta.views import Meta #to include metatags in view for display, check djan
 from taggit.models import Tag
 import random
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
-
-from markdownx.forms import ImageForm
 from django.conf import settings
 
 #Default meta details for post
@@ -256,8 +254,6 @@ def debate_detail(request, post_id, category=None,  post_slug=None):
 
     return render(request, 'debate/post/debate_detail.html', context)
 
-
-
 @login_required
 def join_participants(request, post_id, position):
     post = get_object_or_404(PostDebate, id=post_id)
@@ -294,22 +290,11 @@ def new_post(request, post_id = None):
     if request.method == 'POST':
         # Form was submitted
         form = PostDebateForm(request.POST, instance=post)
-
         if form.is_valid():
-            # Form fields passed validation
             post = form.save(commit=False)
-            if request.FILES:
-                image_form = ImageForm(request.POST, request.FILES)
-                if image_form.is_valid:
-                    file = image_form.save()
-                    if file:
-                        image_tag = "\n\n![](" + file +")\n"
-                        post.summary = post.summary + image_tag
-
             post.author = request.user
             if post.debate_category == "open":
                 post.begin = timezone.now()
-
             try:
                 post.save()
                 form.save_m2m()
@@ -320,9 +305,7 @@ def new_post(request, post_id = None):
                     messages.info(request, message_info )
                 return redirect('all_list')
             sent = True
-
             post = get_object_or_404(PostDebate, title = post.title )
-
             post.moderator.add(request.user)
             post.save()
             message_info = "Debate uploaded Successfully! You have been made a debate moderator. Choose time to start and end debate"
@@ -334,9 +317,7 @@ def new_post(request, post_id = None):
                     post_slug = post.slug )
     else:
         form = PostDebateForm(instance=post)
-        image_form = ImageForm()
-        context = {'form': form, 'sent': sent, 'post_id':post_id,\
-            'image_form':image_form, 'meta':meta}
+        context = {'form': form, 'sent': sent, 'post_id':post_id, 'meta':meta}
         return render(request, 'debate/form/new_debate.html', context)
 
 @login_required

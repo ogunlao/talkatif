@@ -5,7 +5,7 @@
     <span class="small" id="liked_{{item.comment.pk}}">{{ item.likedit_users|length }}</span></a>
   {% endif %}
 
-  <a data-toggle="tooltip" title="like" id={{item.comment.pk}} class="like-comment {% if item.likedit %}liked{% endif %}"><i class="tiny material-icons mtl {% if item.likedit %}blue-text{% else %}grey-text{% endif %}">thumb_up</i></a>
+  <a data-toggle="tooltip" title="like" id={{item.comment.pk}} class="like-comment {% if item.likedit %}liked{% endif %}"><i class="angle double up icon mtl {% if item.likedit %}blue{% else %}grey{% endif %}"></i></a>
   <span class="text-muted">|</span>
 
   {% if show_feedback %}
@@ -13,6 +13,6 @@
     <span class="small" id="disliked_{{item.comment.pk}}">{{ item.dislikedit_users|length }}</span></a>
   {% endif %}
 
-  <a data-toggle="tooltip" title="dislike" id={{item.comment.pk}} class="dislike-comment {% if item.dislikedit %}disliked{% endif %}"><i class="tiny material-icons mtdl {% if item.dislikedit %}red-text{% else %}grey-text{% endif %}">thumb_down</i></a>
+  <a data-toggle="tooltip" title="dislike" id={{item.comment.pk}} class="dislike-comment {% if item.dislikedit %}disliked{% endif %}"><i class="angle double down icon mtdl {% if item.dislikedit %}red-text{% else %}grey{% endif %}"></i></a>
 </span>
 {% endif %}
