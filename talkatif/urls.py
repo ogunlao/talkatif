@@ -37,10 +37,10 @@ sitemaps = {
 from django.conf.urls.static import static
 from django.conf import settings
 
-urlpatterns = static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# urlpatterns = static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += [
+urlpatterns = [
     url(r'^$', debate_views.index, name = 'main_page'),
     url(r'^all/', debate_views.all_list, name='all_list'),
     url(r'^search/', include('haystack.urls')),
@@ -72,6 +72,6 @@ handler500 = 'discourse.views.handler500'
 # Use static() to add url mapping to serve static files during development (only)
 
 
-#if settings.DEBUG == True:
-#urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-#urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG == True:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

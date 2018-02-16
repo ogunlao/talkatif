@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'tkcomments.apps.TkcommentsConfig',
     'anymail',
-    'markdownx',
+    'martor',
     'avatar',
     'django_user_agents',
 
@@ -332,19 +332,6 @@ NEWSLETTER_BATCH_SIZE = 100
 #MAthjax
 MATHJAX_ENABLED=True
 
-
-#Markdown Settings
-
-from datetime import datetime
-MARKDOWNX_URLS_PATH = '/attachment/markdownify/'
-MARKDOWNX_UPLOAD_URLS_PATH = '/attachment/upload/'
-MARKDOWNX_MEDIA_PATH = datetime.now().strftime('attachment/%Y/%m/%d/')
-MARKDOWNX_UPLOAD_MAX_SIZE = 4 * 1024 * 1024 #4 MB in bytes
-MARKDOWNX_IMAGE_MAX_SIZE = {
-    'size': (500, 0),
-    'quality': 80
-}
-
 #Avatar settings
 AVATAR_CLEANUP_DELETED = True
 AVATAR_MAX_AVATARS_PER_USER = 3
@@ -352,3 +339,57 @@ AVATAR_CLEANUP_DELETED = True
 
 #Django countries
 COUNTRIES_FIRST = ('NG','US')
+
+MARTOR_ENABLE_CONFIGS = {
+    'imgur': 'true',     # to enable/disable imgur/custom uploader.
+    'mention': 'true',  # to enable/disable mention
+    'jquery': 'true',    # to include/revoke jquery (require for admin default django)
+}
+
+# Upload to locale storage
+import time
+MARTOR_UPLOAD_PATH = 'attachment/uploads/{}'.format(time.strftime("%Y/%m/%d/"))
+MARTOR_UPLOAD_URL = '/attachment/uploader/'  # change to local uploader
+# Markdown urls
+MARTOR_SEARCH_USERS_URL = '/martor/search-user/' # default
+
+MAX_IMAGE_UPLOAD_SIZE = 4 * 1024 * 1024 #4 MB in bytes
+
+# To setup the martor editor with label or not (default is False)
+MARTOR_ENABLE_LABEL = False
+
+# Imgur API Keys
+#MARTOR_IMGUR_CLIENT_ID = 'your-client-id'
+#MARTOR_IMGUR_API_KEY   = 'your-api-key'
+
+# Safe Mode
+MARTOR_MARKDOWN_SAFE_MODE = True # default
+
+# Markdownify
+MARTOR_MARKDOWNIFY_FUNCTION = 'martor.utils.markdownify' # default
+MARTOR_MARKDOWNIFY_URL = '/martor/markdownify/'# default
+
+
+
+# Markdown extensions (default)
+MARTOR_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',
+    'markdown.extensions.nl2br',
+    'markdown.extensions.smarty',
+    'markdown.extensions.fenced_code',
+
+    # Custom markdown extensions.
+    'martor.extensions.urlize',
+    'martor.extensions.del_ins', # ~~strikethrough~~ and ++underscores++
+    'martor.extensions.mention', # require for mention
+    'martor.extensions.emoji',   # require for emoji
+]
+
+# Markdown Extensions Configs
+MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
+
+
+
+# Markdown Extensions
+MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://assets-cdn.github.com/images/icons/emoji/' # default
+MARTOR_MARKDOWN_BASE_MENTION_URL = 'https://talkatif.com/'
