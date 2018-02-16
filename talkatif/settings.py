@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
-#uSED FOR DEVELOPMENT ONLY
 import os
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +20,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'a$yxwa&18e$7*nttu++4e^p2dqgt+_posnhj+(_b@-js)__1@0'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+from decouple import config, Csv
+
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+
 
 # Application definition
 
@@ -45,10 +48,9 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'tkcomments.apps.TkcommentsConfig',
     'anymail',
-    'sorl.thumbnail', #both used for serving thum
+    'markdownx',
     'avatar',
     'django_user_agents',
-    'martor',
 
     #used by chron to send emails
     'django.contrib.sites',
@@ -59,11 +61,13 @@ INSTALLED_APPS = [
 
     #used by newsletter
     'django_extensions',
+    'sorl.thumbnail',
     'newsletter',
 
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    # ... include the providers you want to enable:
 
     #social signin plugins
     'allauth.socialaccount.providers.facebook',
@@ -77,23 +81,12 @@ INSTALLED_APPS = [
 
     'meta', #adds metadata to sites
     'robots', #Generates site.xml file for crawlers
-
     'django_comments_xtd',
     'django_comments',
     'django_markdown2',
     'rest_framework',
     'django_countries',
 ]
-
-# Either enable sending mail messages to the console:
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# ANYMAIL = {
-#     # (exact settings here depend on your ESP...)
-#     "POSTMARK_SERVER_TOKEN": "ba6214ee-e172-4c7c-8c5c-a0b51e02d80d",
-# }
-# EMAIL_BACKEND = "anymail.backends.postmark.EmailBackend"
-# DEFAULT_FROM_EMAIL = "notification@talkatif.com"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -107,7 +100,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'talkatif.urls'
-SITE_ID = 5
+
+SITE_ID = 2
 
 TEMPLATES = [
     {
@@ -146,11 +140,14 @@ WSGI_APPLICATION = 'talkatif.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -184,20 +181,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATICFILES_DIRS = [    os.path.join(BASE_DIR, "static"),]
 
 COMPRESS_ROOT =  os.path.join(BASE_DIR, "static")
-#STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-SITE_EMAIL = "notification@talkatif.com"
-ADMIN_EMAIL = "laolu@talkatif.com"
-SERVER_EMAIL = "notification@talkatif.com"
-NOTIFICATION_EMAIL = "notification@talkatif.com"
+ADMIN_EMAIL = config('EMAIL')
+SERVER_EMAIL = config('EMAIL2')
+NOTIFICATION_EMAIL = config('EMAIL2') #configured email for sending notifications
+
+ANYMAIL = {
+    # (exact settings here depend on your ESP...)
+    "POSTMARK_SERVER_TOKEN": config('POSTMARK_TOKEN'),
+}
+EMAIL_BACKEND = "anymail.backends.postmark.EmailBackend"  # or sendgrid.EmailBackend, or...
+DEFAULT_FROM_EMAIL = config('EMAIL2')  # if you don't already have this in settings
 
 #Authentication Setting
 LOGIN_URL = "/accounts/login/"
@@ -213,35 +213,13 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ""
 
-SOCIALACCOUNT_PROVIDERS = \
-    {'facebook':
-       {'METHOD': 'oauth2',
-        'SCOPE': ['email','public_profile', 'user_friends'],
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-        'FIELDS': [
-            'id',
-            'email',
-            'name',
-            'first_name',
-            'last_name',
-            'verified',
-            'locale',
-            'timezone',
-            'link',
-            'gender',
-            'updated_time'],
-        'EXCHANGE_TOKEN': True,
-        'LOCALE_FUNC': lambda request: 'kr_KR',
-        'VERIFIED_EMAIL': False,
-        'VERSION': 'v2.4'}}
-
 # Required by django-allauth to extend the sign up form to include profile data
 ACCOUNT_FORMS = {'signup': 'debate.forms.SignupForm'}
 
 #Django-meta settings
-META_SITE_PROTOCOL = 'http'
-META_SITE_DOMAIN = "talkatif.com"
-META_DEFAULT_KEYWORDS = ["debate","faceoff","opinions", "criticism", "rebuttal", "arguement", "discourse", "discussion"]
+META_SITE_PROTOCOL = config('META_SITE_PROTOCOL')
+META_SITE_DOMAIN = config('META_SITE_DOMAIN')
+META_DEFAULT_KEYWORDS = ["debate","faceoff","talk", "opinions", "criticism", "rebuttal", "argument", "discourse", "discussion", "polls", "poll"]
 META_USE_SITES = True
 
 STATICFILES_FINDERS = (
@@ -254,19 +232,13 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'haystack',
+        'INDEX_NAME': config('HAYSTACK_NAME'),
     },
 }
 
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 TAGGIT_CASE_INSENSITIVE = True #taggit settings
-
-#Django-chrontab settings
-
-# CRONJOBS = [
-#     ('*/1 * * * *', 'myapp.cron.my_scheduled_job')
-# ]
 
 CACHES = {
     'default': {
@@ -282,8 +254,11 @@ CACHES = {
 
 #comment manager
 MANAGERS = (
-    ('Ogun Sewade', 'laolu@talkatif.com'),
+    (config('ADMIN_NAME'), ADMIN_EMAIL ),
 )
+
+#Google url shortener
+GOO_API_KEY = config('GOO_API_KEY')
 
 #To allow comment flagging, likes and dislikes
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
@@ -305,6 +280,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 COMMENTS_APP = 'django_comments_xtd'
 COMMENTS_XTD_MODEL = 'tkcomments.models.TkComment' #2
 COMMENTS_XTD_FORM_CLASS = 'tkcomments.forms.TkCommentForm' #3
+
 COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
 
 #Comment Threading settings
@@ -319,10 +295,10 @@ COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
                      b"Aequam memento rebus in arduis servare mentem.")
 
 # Source mail address used for notifications.
-COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
+COMMENTS_XTD_FROM_EMAIL = NOTIFICATION_EMAIL
 
 # Contact mail address to show in messages.
-COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
+COMMENTS_XTD_CONTACT_EMAIL = ADMIN_EMAIL
 
 SERIALIZATION_MODULES = {
     'xml':    'tagulous.serializers.xml_serializer',
@@ -356,6 +332,19 @@ NEWSLETTER_BATCH_SIZE = 100
 #MAthjax
 MATHJAX_ENABLED=True
 
+
+#Markdown Settings
+
+from datetime import datetime
+MARKDOWNX_URLS_PATH = '/attachment/markdownify/'
+MARKDOWNX_UPLOAD_URLS_PATH = '/attachment/upload/'
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime('attachment/%Y/%m/%d/')
+MARKDOWNX_UPLOAD_MAX_SIZE = 4 * 1024 * 1024 #4 MB in bytes
+MARKDOWNX_IMAGE_MAX_SIZE = {
+    'size': (500, 0),
+    'quality': 80
+}
+
 #Avatar settings
 AVATAR_CLEANUP_DELETED = True
 AVATAR_MAX_AVATARS_PER_USER = 3
@@ -363,60 +352,3 @@ AVATAR_CLEANUP_DELETED = True
 
 #Django countries
 COUNTRIES_FIRST = ('NG','US')
-
-#Google url shortener
-GOO_API_KEY = "AIzaSyC1JCexah2mk2dPmDEWbh6kfjBqFcR7_2o"
-
-MARTOR_ENABLE_CONFIGS = {
-    'imgur': 'true',     # to enable/disable imgur/custom uploader.
-    'mention': 'true',  # to enable/disable mention
-    'jquery': 'true',    # to include/revoke jquery (require for admin default django)
-}
-
-# Upload to locale storage
-import time
-MARTOR_UPLOAD_PATH = 'attachment/uploads/{}'.format(time.strftime("%Y/%m/%d/"))
-MARTOR_UPLOAD_URL = '/attachment/uploader/'  # change to local uploader
-# Markdown urls
-MARTOR_SEARCH_USERS_URL = '/martor/search-user/' # default
-
-MAX_IMAGE_UPLOAD_SIZE = 4 * 1024 * 1024 #4 MB in bytes
-
-# To setup the martor editor with label or not (default is False)
-MARTOR_ENABLE_LABEL = False
-
-# Imgur API Keys
-#MARTOR_IMGUR_CLIENT_ID = 'your-client-id'
-#MARTOR_IMGUR_API_KEY   = 'your-api-key'
-
-# Safe Mode
-MARTOR_MARKDOWN_SAFE_MODE = True # default
-
-# Markdownify
-MARTOR_MARKDOWNIFY_FUNCTION = 'martor.utils.markdownify' # default
-MARTOR_MARKDOWNIFY_URL = '/martor/markdownify/'# default
-
-
-
-# Markdown extensions (default)
-MARTOR_MARKDOWN_EXTENSIONS = [
-    'markdown.extensions.extra',
-    'markdown.extensions.nl2br',
-    'markdown.extensions.smarty',
-    'markdown.extensions.fenced_code',
-
-    # Custom markdown extensions.
-    'martor.extensions.urlize',
-    'martor.extensions.del_ins', # ~~strikethrough~~ and ++underscores++
-    'martor.extensions.mention', # require for mention
-    'martor.extensions.emoji',   # require for emoji
-]
-
-# Markdown Extensions Configs
-MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
-
-
-
-# Markdown Extensions
-MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://assets-cdn.github.com/images/icons/emoji/' # default
-MARTOR_MARKDOWN_BASE_MENTION_URL = 'http://127.0.0.1:8000/'
