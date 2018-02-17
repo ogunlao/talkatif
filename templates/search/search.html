@@ -28,7 +28,7 @@
               {% else %}
                 <img src="{{result.object.author.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
               {% endif %}
-              {{result.object.author.get_full_name}}</a>
+              {{result.object.author}}</a>
           </div>
           <div class="content">
             <div class="header"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></div>
@@ -78,7 +78,7 @@
               {% else %}
                 <img src="{{result.object.author.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
               {% endif %}
-              {{result.object.author.get_full_name}}</a>
+              {{result.object.author}}</a>
           </div>
           <div class="content">
             <div class="header"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></div>
