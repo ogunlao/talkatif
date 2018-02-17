@@ -9,6 +9,14 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+    <div class="ui two column grid">
+      <div class="column">
+        <a href="{% url 'debate:suggest_post' %}" ><button class="ui mini primary basic button">New debate &raquo;</button></a>
+      </div>
+        <div class="column">
+        <a href="{% url 'discourse:new_post' %}"><button class="ui mini primary basic button">New talk &raquo;</button></a>
+      </div>
+    </div>
         {% if merged_list %}
           {% for post in merged_list.object_list%}
 
@@ -21,7 +29,7 @@
                   {% if post.author|has_avatar %}
                     {% avatar post.author 35 class="ui avatar image" %}
                   {% else %}
-                    <img src="{{names.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
+                    <img src="{{post.author.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
                   {% endif %}
                   {{post.author.get_full_name}}</a>
               </div>
@@ -34,7 +42,10 @@
                   <br>
                 </div>
                 <div class="description">
-                  {{post.summary|truncatechars:300|safe_markdown}}
+                  {{post.summary|truncatewords:50|safe_markdown}}
+                  {% ifnotequal post.summary|truncatewords_html:50|length post.summary|truncatewords_html:51|length %}
+                    <a href="{{post.get_absolute_url}}">read more...</a>
+                  {% endifnotequal %}
                 </div>
               </div>
               <div class="content">
@@ -58,7 +69,7 @@
                 {% if post.author|has_avatar %}
                   {% avatar post.author 35 class="ui avatar image" %}
                 {% else %}
-                  <img src="{{names.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
+                  <img src="{{post.author.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
                 {% endif %}
                 {{post.author.get_full_name}}</a>
             </div>
@@ -72,7 +83,11 @@
                 <br>
               </div>
               <div class="description">
-                {{post.summary|truncatechars:300|safe_markdown}}
+                {{post.summary|truncatewords:50|safe_markdown}}
+                {% ifnotequal post.summary|truncatewords_html:50|length post.summary|truncatewords_html:51|length %}
+                  <a href="{{post.get_absolute_url}}">read more...</a>
+                {% endifnotequal %}
+
               </div>
             </div>
             <div class="content">
@@ -113,17 +128,13 @@
 {% endblock content %}
 
 {% block right_content %}
-    {% if user.is_authenticated %}
-    <p>What's your inspiration?</p>
-    <a href="{% url 'debate:suggest_post' %}" ><button class="yellow btn black-text">New debate &raquo;</button></a>
-    <br/>
-    <p>OR</p>
-    <a href="{% url 'discourse:new_post' %}" ><button class="yellow btn black-text">New talk &raquo;</button></a>
-    {% endif %}
-
 
     {% if last_5_badges %}
-        <h4>Latest Badge Winners</h4>
+    <div class="ui card">
+      <div class="content">
+        <div class="header">Latest Badge Winners</div>
+      </div>
+      <div class="content">
         {% for winner in last_5_badges %}
           <p>
             {% with ''|center:winner.badge.rank as range %}
@@ -132,8 +143,8 @@
             {{winner.user.get_full_name}} - {{winner.badge.name}}</p>
         {% endfor %}
         <p>Enter for a debate to get your first badge<p>
-          <br/>
+      </div>
+    </div>
     {% endif %}
-
 
 {% endblock right_content %}

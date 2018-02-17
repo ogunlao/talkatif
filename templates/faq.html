@@ -1,105 +1,120 @@
 {% extends "debate/base.html" %}
-
+{% load staticfiles %}
 {% block title %}FAQ{% endblock %}
-
+{% block extra_js %}<script src="{% static 'serve/components/accordion.min.js' %}"></script>{% endblock extra_js %}
 {% block content %}
+{% load i18n %}
 
 
-<div class="row">
+<h2 class="ui dividing header">{% trans "Frequently Asked Questions." %}</h2>
 
-  <div class="col m7 offset-m2">
-
-<h5>Frequently Asked Questions.</h5>
 <p>We have compiled a list of FAQs. Read through before contacting a SuperMod with questions. </p>
-<ul class="collapsible" data-collapsible="accordion">
-  <li>
-    <div class="collapsible-header">How do I enter for a debate?</div>
-    <div class="collapsible-body">
-      <p>
+
+<div class="ui styled fluid accordion">
+  <div class="title">
+    <i class="dropdown icon"></i>
+    How do I enter for a debate?
+  </div>
+  <div class="content">
+    <p class="transition hidden">
         Go to the dabate post, under the debaters section, click "apply to join supporting team" or
         "apply to join opposing team". You would be added to a pool of intending debaters.
       </p>
-      <p>
+      <p class="transition hidden">
         It lies on the moderator to confirm debaters for the debate. You would be notified via email
         when confirmed.</p>
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header">How do I become a moderator?</div>
-    <div class="collapsible-body">
-      <p>Simply by creating a debate, you become that debate moderator. A supermod may add extra moderators for coordination.</p>
   </div>
-  </li>
-  <li>
-    <div class="collapsible-header">How many moderators, debaters and judges can a debate have?</div>
-    <div class="collapsible-body">
-      <p>Debaters in each team are currently limited to 5. That makes 10 in total. Moderators are usually
-        two or one
+  <div class="title">
+    <i class="dropdown icon"></i>
+    How do I become a moderator?
+  </div>
+  <div class="content">
+    <p>Simply by creating a debate, you become that debate moderator. A supermod may add extra moderators for coordination.</p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    How many moderators, debaters and judges can a debate have?
+  </div>
+  <div class="content">
+    <p>Debaters in each team are currently limited to 5. That makes 10 in total. Moderators are usually
+      two or one
     </p>
   </div>
-  </li>
-  <li>
-    <div class="collapsible-header">Can I make a debate closed to outside comments except from debaters and moderators?</div>
-    <div class="collapsible-body">
-        <p>Debates are automatically closed to comments from the audience during the debating period. By default, it becomes open to
-        comments when voting starts. However, a moderator can disable comments for the moderator dashboard.</p>
-      </div>
-  </li>
-  <li>
-    <div class="collapsible-header">Can I delete or edit my comments?</div>
-    <div class="collapsible-body">
-      <p>
-        We presently do not allow the editing of comments but comments can be deleted by the owner. Deleting means
-        "removal from comment feed", and may still have its relies enabled.
-      </p>
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header">Can I add images to comments?</div>
-    <div class="collapsible-body">
-      Images can be added using markdown syntax. Upload your image to an image sharing site and link to the url.
-      Direct image upload is not supported.
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header">What is the difference between open and closed debate?</div>
-    <div class="collapsible-body">
-      <p>
-        Open debates allow comments from all audience. It is good practice to choose a side using our emoticon
-        when posting comments.
-       </p>
-        <p>Comments are open to only debaters, moderators and judges in closed debate until after debate ends.
-        A moderator might even enable greater stricness by disabling comments from the audience.</p>
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header">What is Markdown and Mathjax.</div>
-    <div class="collapsible-body">
-      <p>
-        <a href="http://commonmark.org/help/" target="_blank">Mathdown</a> and <a href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference" target="_blank">MathJax</a>
-        enable good presentation of text. Our editor comes with a preview which allow you to style your comments and post.
-        MathJax helps to prettify maths equations and symbols, making it readable.
-      </p>
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header">I can't see the comment box. Why is it not available?</div>
-    <div class="collapsible-body">
-      <p>
-        Comment box is disabled in some cases, which has been highlighted above. Read FAQ from beginning.
-      </p>
-    </div>
-  </li>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Can I make a debate closed to outside comments except from debaters and moderators?
+  </div>
+  <div class="content">
+    <p>Debates are automatically closed to comments from the audience during the debating period. By default, it becomes open to
+    comments when voting starts. However, a moderator can disable comments for the moderator dashboard.</p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Can I delete or edit my comments?
+  </div>
+  <div class="content">
+    <p>
+      Yes, comments can be removed by the owner or moderator. Deleting means
+      "removal from comment feed", and may still have its replies shown.
+    </p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Can I add images to comments?
+  </div>
+  <div class="content">
+    <p>
+      Images can be added using markdown syntax. Upload your image to an image sharing site like Imgur and link to the url.
+      or post your comment and edit to bring up the markdown editing interface. where you can upload images.
+    </p>
+    <p>Emoticons can be added via the edit interface.</p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    What is the difference between open and closed debate?
+  </div>
+  <div class="content">
+    <p>
+      Open debates allow comments from all audience. It is good practice to choose a side using our emoticon
+      when posting comments.
+     </p>
+      <p>Comments are open to only debaters, moderators and judges in closed debate until after debate ends.
+      A moderator might even enable greater stricness by disabling comments from the audience.</p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    What is Markdown and Mathjax.
+  </div>
+  <div class="content">
+    <p>
+      <a href="http://commonmark.org/help/" target="_blank">Mathdown</a> and <a href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference" target="_blank">MathJax</a>
+      enable good presentation of text. Our editor comes with a preview which allow you to style your comments and post.
+      MathJax helps to prettify maths equations and symbols, making it readable.
+    </p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Why is the comment box disabled?
+  </div>
+  <div class="content">
+    <p>Comment box can be disabled due to many reasons which include;
+    </p>
+    <div class="ui segment">
+    <ul class="lists">
+      <li>You are not logged in.</li>
+      <li>Debate has started and you are not a participant.</li>
+      <li>Debate has ended and moderator has disabled comments from followers</li>
+      <li>Debate has not started.</li>
+    </ul>
+  </div>
+  </div>
+</div>
 
-</ul>
-
+  <br><br>
   <p>FAQs are constantly being updated to cover the most asked questions. If your question has not been answered, you can send a mail <tbody>
     notify@talkatif.com</p>
   <p>Thank you for being a part of the community.</p>
   <p>The talkatif Team.</p>
 
-  </div>
-
-</div>
 
   {% endblock %}

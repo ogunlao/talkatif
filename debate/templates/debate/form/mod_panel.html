@@ -6,16 +6,15 @@
 
 {% block content %}
 
-        <div class="row">
-
+      <h3>Debate Period for: <br>
+        <a href="{{related_post.get_absolute_url}}">{{related_post.title|capfirst}}</a> </h3>
           {% if debaters_supporting or debaters_opposing %}
-          <div class="col m7 offset-m2">
-            <h5>Debate Period for: <br>
-            <span class="blue-text">{{related_post.title}}</span> </h5>
+          <div class="ui fluid card">
             {% if debaters_supporting %}
-              <div class="card-panel">List of Debaters Showing Interest in Supporting
-                  <p class="red-text">Approve 5 or less debaters from this category based on your choice.</p>
-                  <table class="responsive-table highlight">
+                <div class="content">
+                  <div class="header">List of Debaters Showing Interest in Supporting</div>
+                  <div class="meta">Approve 5 or less debaters from this category based on your choice.</div>
+                  <table class="ui fluid table">
                     <thead>
                       <tr>
                         <th>Name</th>
@@ -45,14 +44,14 @@
                         {% endfor %}
                   </tbody>
                   </table>
-            </div> <!-- End of card -->
+                </div>
             {% endif %}
 
             {% if debaters_opposing %}
-              <div class="card-panel">List of Debaters Showing Interest in Opposing
+              <div class="content">List of Debaters Showing Interest in Opposing
 
-                <p class="red-text">Approve 5 or less debaters from this category based on your choice.</p>
-                <table class="">
+                <div class="meta">Approve 5 or less debaters from this category based on your choice.</div>
+                <table class="ui fluid table">
                   <thead>
                     <tr>
                       <th>Name</th>
@@ -81,72 +80,65 @@
                       {% endfor %}
                 </tbody>
                 </table>
-            </div><!--  End of card -->
+            </div>
             {% endif %}
 
-          </div>
+          </div><!--  End of card -->
           {% else %}
-          <div class="col m6 offset-m2">
+
             {% if related_post.debate_category == "closed" %}
               <p>No person has indicated interest in debate yet. Share debate on social media to get the attention it deserves </p>
             {% endif %}
-          </div>
+
           {% endif %}
 
-          {% if not debaters_supporting and not debaters_opposing %}
-              <div class="col m6 offset-m2">
-                <h5>Debate Period for: <br>
-                <span class="blue-text">{{related_post.title}}</span> </h5>
-          {% else %}<div class="col m3">
-          {% endif %}
-              <div class="card-panel">
-                <form class="" action="." method="post">
+          <div class="ui fluid card">
+            <div class="content">
+
+                <form class="ui fluid form" action="." method="post">
                   {% csrf_token %}
-                  <div class="row">
                     <!-- Switch to allow comments -->
-                      <div class="switch">
-                        <label class="blue-text">
-                          Off
-                          <input type="checkbox" {% if related_post.allow_follower_comment %}checked {% endif %} name="allow_follower_comment">
-                          <span class="lever"></span>
-                          On
-                        </label>
-                        <span> Allow comments from observers after debate ends.</span>
+                    <div class="inline field">
+                      <div class="ui toggle checkbox">
+                        <input type="checkbox" {% if related_post.allow_follower_comment %}checked {% endif %} name="allow_follower_comment">
+                        <label>Allow comments from observers after debate ends.</label>
                       </div>
-                      <p>Debate Start Date/Time</p>
-                      <div class='input-field'>
-                        <i class="material-icons prefix">update</i>
+                    </div>
+
+                    <div class="three column fields">
+                      <div class='field {% if mod_form.begin.errors %}error{% endif %}'>
+                        <label>Debate Start Date/Time</label>
+                        <i class="checked calendar icon"></i>
                         {% render_field mod_form.begin class+="datetimepicker" %}
+                        {% if mod_form.end.errors %}{{errors}}{% endif %}
                       </div>
 
-
-                      <p>Vote Start Date/Time</p>
-                      <div class='input-field'>
-                        <i class="material-icons prefix">update</i>
+                      <div class='field {% if mod_form.vote_starts.errors %}error{% endif %}'>
+                        <label>Vote Start Date/Time</label>
+                        <i class="checked calendar icon"></i>
                         {% render_field mod_form.vote_starts class+="datetimepicker" %}
+                        {% if mod_form.vote_starts.errors %}{{errors}}{% endif %}
                       </div>
 
-
-                      <p>Debate End Date/Time</p>
-                      <div class='input-field'>
-                        <i class="material-icons prefix">update</i>
+                      <div class='field {% if mod_form.end.errors %}error{% endif %}'>
+                        <label>Debate End Date/Time</label>
+                        <i class="checked calendar icon"></i>
                         {% render_field mod_form.end class+="datetimepicker" %}
+                        {% if mod_form.end.errors %}{{errors}}{% endif %}
                       </div>
-                      <small class="red-text">N.B: Votes or scores would not be counted after this end time.</small>
+                    </div>
 
+                      <br>
+                      <small class="red text">N.B: Votes or scores would not be counted after this end time.</small>
 
+                  <div class="inline field">
+                    <div class="ui checkbox">
+                      <input type="checkbox" id="verified" required tabindex="0" class="hidden">
+                      <label for="verified">I have read the <a href="{% url 'debate:rules_guidelines' %}">terms of moderation</a> and understand what I am doing.</label>
+                    </div>
+                  </div>
 
-
-                  {% for error in mod_form.errors %}
-                    <p class="red-text">{{error}}</p>
-                  {% endfor %}
-                </div>
-                <p>
-                  <input type="checkbox" id="verified" required />
-                  <label for="verified">I have read the <a href="{% url 'debate:rules_guidelines' %}">terms of moderation</a> and understand what I am doing.</label>
-                </p><br>
-
-                  <input type="submit" value="Update" class="yellow btn black-text" /> Or <small>Return to <a href="{{related_post.get_absolute_url }}">debate</a></small>
+                  <button type="submit" value="Update" class="ui basic secondary button">Update Debate Settings</button> Or <small>Return to <a href="{{related_post.get_absolute_url }}">debate</a></small>
                   <hr>
 
                   <small>Only edit necessary fields. Do not tamper with debate settings if unsure
@@ -156,7 +148,6 @@
           </div>
 
           </div>
-        </div>
 
     {% block extra-js %}
 

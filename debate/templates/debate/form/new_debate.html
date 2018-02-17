@@ -8,65 +8,56 @@
 
 {% block content %}
 
-        <div class="row">
-          <div class="col s12 m9 offset-m2">
-            <div class="card-panel">
-              {% if post_id %}
-              <h5 class="main_title">Edit this debate or argument.{% else %}Add a new debate or argument.</h5>
-              {% endif %}
-                <form class="" enctype="multipart/form-data" action="." method="post">
+  <h2 class="ui dividing header">
+    {% if post_id %}
+    Edit this debate or argument.{% else %}Add a new debate or argument.
+    {% endif %}
+  </h2>
+                <form class="ui form" enctype="multipart/form-data" action="." method="post">
                   {% csrf_token %}
-                    <div class="input-field">
+                    <div class="required field">
                       {{ form.title|safe}}
                       <label for="{{ form.title.auto_id }}">{{form.title.label_tag}}</label>
                     </div>
 
                     <!-- Text Editor -->
-                      {{ form.summary}}
-
+                    {{ form.summary}}
                     {% if form.summary.help_text %}
                     <small class="grey-text">{{ form.summary.help_text|markdownify }}</small>
                     {% endif %}
 
-                    <div class="input-field">
-                      {{ form.tags}}
+                  <div class="ui two column fields">
+                    <div class="field">
                       <label for="{{ form.tags.auto_id }}">Tags e.g. Music, Culture, Politics e.t.c.</label>
+                      {{ form.tags}}
                     </div>
 
-                    <div class="row">
-                      <div class="col m3">
+                      <div class="field">
                         <label for="{{ form.debate_category.auto_id }}">{{form.debate_category.label_tag}}</label>
                         {{ form.debate_category }}
                         {% if form.debate_category.help_text %}
+                        <a data-position="top" data-delay="50" data-tooltip="{{ form.debate_category.help_text }}"><i class="attention icon"></i></a>
                         {% endif %}
                       </div>
-                      <small class="grey-text">{{ form.debate_category.help_text }}</small>
                     </div>
 
+
                   {% if post_id %}
-                  <div class="row">
-                    <button type="submit" class="btn">Update Debate</button>
-                    OR <span><a href={% url "debate:debate_detail" post_id=post_id category=None post_slug=None  %}>Return to debate</a>
-                  </div>
+                    <br>
+                    <button type="submit" class="ui basic secondary button">Update Debate</button>
+                    OR <span><a href={% url "debate:debate_detail" post_id=post_id category=None post_slug=None  %}>Return to debate</a></span>
                   {% else %}
-                  <p>
+                  <div class="ui checkbox">
                     <input type="checkbox" id="verified" required />
                     <label for="verified">I have read the <a href="{% url 'debate:rules_guidelines' %}">terms of posting debates</a> and willing to abide.</label>
-                  </p>
-
-                  <div class="row">
-                    <button type="submit" class="yellow btn black-text">Add Debate</button>
-                    OR <span><a href={% url "debate:debate_list" %}>Return to home</a>
                   </div>
+
+                    <br><br>
+                    <button type="submit" class="ui basic secondary button">Add Debate</button>
+                    OR <span><a href={% url "debate:debate_list" %}>Return to home</a></span>
+
                   {% endif %}
             </form>
             {{form.media}}
 
-        </div><!-- End of card -->
-
-
-      </div>
-
-        </div>
-
-{% endblock %}
+{% endblock content %}

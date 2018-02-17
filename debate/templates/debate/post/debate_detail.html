@@ -13,20 +13,19 @@
 {% block extra_nav %}
 
       {% if user_is_moderator %}
-        <li class="divider"></li>
-        <li>
-          <a class="blue-text" href="{% url 'debate:edit_debate_post' post.id %}">
-              Edit Debate</a></li>
-        <li class="divider"></li>
 
-        <li><a href="{% url 'debate:mod_debate' post.pk %}">
-          Go to Mod<i class="material-icons">remove_red_eye</i></a></li>
+          <a class="item" href="{% url 'debate:edit_debate_post' post.id %}">
+              Edit Debate</a>
+
+
+        <a class="ui basic secondary button" href="{% url 'debate:mod_debate' post.pk %}">
+          Go to Mod<i class="ui eye icon"></i></a>
       {% endif %}
 
       {% if user_is_judge %}
-          <li class="divider"></li>
-        <li><a href="{% url 'debate:score_debate' post.pk %}">
-          Score Debate<i class="material-icons">playlist_add_check</i></a></li>
+
+        <a class="ui basic secondary button" href="{% url 'debate:score_debate' post.pk %}">
+          Score Debate</a>
       {% endif %}
 
 {% endblock extra_nav %}
@@ -40,7 +39,7 @@
   <p>Category: {{post.debate_category | capfirst}} Debate <br>
   {% if post.winner_updated %}
   <p>Winning Team:
-    <span><i class="fa fa-glass fa-lg" aria-hidden="true">{{post.winner|capfirst}}</i></span>
+    <span>{{post.winner|capfirst}}</span>
   </p>
   {% endif %}
   {% if post.begin %}<p>Starting time:  {{post.begin|naturaltime}}</p>{% else %}<p>Debate starts soon.</p>{% endif %}
@@ -63,7 +62,7 @@
           <div class="ui card">
             <div class="content">
                 <div class="header">Moderator Panel</div>
-                  <a class="blue btn tooltipped" href="{% url 'debate:mod_debate' post.pk %}"><button class="ui secondary basic button">Goto Mod</button></a>
+                  <a class="ui secondary basic button" href="{% url 'debate:mod_debate' post.pk %}">Goto Mod</a>
 
                 <p><small>Approve debaters and edit debate start and end times.</small></p>
           </div>
@@ -74,11 +73,12 @@
 
         {% if user_is_judge %}
 
-          <div class="card-panel">
-              <h5>Judges Panel</h5>
-              <a class="blue btn" href="{% url 'debate:score_debate' post.pk %}"
-              data-position="top" data-delay="50" data-tooltip="Input debate score when it ends.">Score Debate</a>
+        <div class="ui card">
+          <div class="content">
+              <div class="header">Judges Panel</div>
+              <a class="ui secondary basic button" href="{% url 'debate:score_debate' post.pk %}">Score Debate</a>
             </div>
+          </div>
 
           {% endif %}
 
@@ -98,7 +98,7 @@
       {% else %}
         <img src="{{names.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
       {% endif %}
-      {{post.author.get_full_name}}</a>
+      {{post.author}}</a>
   </div>
   <div class="content">
     <div class="header"><a href="{{post.get_absolute_url}}">{{post.title}}</a></div>
@@ -147,62 +147,81 @@
   <p>Specific debaters are not included for open debates. Contribution from all are welcome.</p>
 {% else %}
 
-{% if post.supporting_debaters.all %}
-<p>Supporting Debaters</p>
-  <span>
-  {% for names in post.supporting_debaters.all %}
-    {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a>{% if not forloop.last %},{% endif %}
-  {% endfor %}
-</span>
-<br>
+<div class="ui styled fluid accordion">
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Supporting Debaters.
+  </div>
+  <div class="content">
+      <p class="transition hidden">
+        {% for names in post.supporting_debaters.all %}
+          <p>{{forloop.counter}}. {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a></p>
+        {% endfor %}
+      </p>
+
+      {% if user.is_authenticated and not user_is_moderator and not debate_in_progress  %}
+      <p class="transition hidden">
+      <a class="ui primary basic button" href={% url 'debate:join_participants' post_id=post.id position="supporting"  %}>
+        Apply to join supporting team.
+      </a>
+      </p>
+      {% endif %}
+
+
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Opposing Debaters.
+  </div>
+  <div class="content">
+    <p>
+      {% if post.opposing_debaters.all %}
+      {% for names in post.opposing_debaters.all %}
+      <p>{{forloop.counter}}. {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a></p>
+      {% endfor %}
+      {% else %}
+      No opposing debaters yet.
+      {% endif %}
+    </p>
+    <p>
+      {% if user.is_authenticated and not user_is_moderator and not debate_in_progress %}
+      <a class="ui primary basic button" href={% url 'debate:join_participants' post_id=post.id position="opposing"  %}>
+      </a>
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Moderators.
+  </div>
+  <div class="content">
+    <p>
+      {% for names in post.moderator.all %}
+      <p>{{forloop.counter}}. {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a></p>
+    {% endfor %}
+    </p>
+  </div>
+
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Judges.
+  </div>
+  <div class="content">
+    <p>
+      {% if post.judges.all %}
+      {% for names in post.judges.all %}
+      <p>{{forloop.counter}}. {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a></p>
+      {% endfor %}
+      {% else %}
+      No Judges included.
+      {% endif %}
+    </p>
+  </div>
+</div>
 {% endif %}
 
-{% if user.is_authenticated and not user_is_moderator and not debate_in_progress  %}
-<a href={% url 'debate:join_participants' post_id=post.id position="supporting"  %}>
-  <button class="ui primary basic button">Apply to join supporting team.</button>
-</a>
-{% endif %}
-
-{% if post.opposing_debaters.all %}
-<p>Opposing Debaters</p>
-<span>
-  {% for names in post.opposing_debaters.all %}
-    {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a>{% if not forloop.last %},{% endif %}
-  {% endfor %}
-</span><br>
-{% endif %}
-
-{% if user.is_authenticated and not user_is_moderator and not debate_in_progress %}
-<a href={% url 'debate:join_participants' post_id=post.id position="opposing"  %}>
-  <button class="ui primary basic button">Apply to join opposing team.</button>
-</a>
-{% endif %}
-
-{% if post.moderator.all %}
-<p>Moderator(s)</p>
-<span>
-  {% for names in post.moderator.all %}
-    {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a>{% if not forloop.last %},{% endif %}
-  {% endfor %}
-</span>
-{% endif %}
-
-{% if post.judges.all %}
-<p>Moderator(s)</p>
-<span>
-  {% for names in post.judges.all %}
-    {{ names.get_full_name }} <a href="{{names.profile.get_absolute_url}}">@{{names.username}}</a>{% if not forloop.last %},{% endif %}
-  {% endfor %}
-</span>
-{% endif %}
-
-    {% if user_is_moderator and not debate_in_progress %}
-      Share post amidst your friends and colleagues to gain the audience it deserves.
-    {% endif %}
-
-{% endif %}
-
-      <p>Confused? Read our <a href="{% url 'faq' %}">FAQs</a> and <a href="{% url 'debate:rules_guidelines' %}">Rules</a> to understand how things work here.</p>
+  <p><br>Confused? Read our <a href="{% url 'faq' %}">FAQs</a> and <a href="{% url 'debate:rules_guidelines' %}">Rules</a> to understand how things work here.</p>
 
   {% get_comment_form for post as form %}
 
@@ -230,21 +249,24 @@
 
 {% block right_content %}
     <p>
-      <a class="yellow btn black-text" href="{% url 'debate:suggest_post' %}"><button class="ui primary basic button">New debate</button></a>
+      <a class="ui primary basic button" href="{% url 'debate:suggest_post' %}">New debate</a>
     </p>
 
-
     {% if similar_posts %}
-    <p class="small_text">Related Debate{{similar_posts.count|pluralize}}.</p>
-    <ul>
+    <div class="ui fluid card">
+      <div class="content">
+        <div class="header">Related Debate{{similar_posts.count|pluralize}}.</div>
+
       {% for lists in similar_posts %}
-      <li><a class="small_text" href="{{lists.get_absolute_url}}">{{lists|capfirst}}</a></li>
+      <div class="description">
+        <p>&raquo; <a class="small_text" href="{{lists.get_absolute_url}}">{{lists|capfirst}}</a></p>
+      </div>
       {% endfor %}
-      <li class="divider"></li>
-    </ul>
+    </div>
+  </div>
     {% endif %}
 
-    <div class="ui card">
+    <div class="ui fluid card">
     <div class="content">
       <i class="large thumbs up icon blue right floated"></i>
       <div class="header">
@@ -281,7 +303,7 @@
             <span class="right">{% if post.end %}{{post.end}}{% else %}Not yet set by Mod{%endif%}</span><br>
           Result displayed afterwards. Please be patient.</p>
         {% endif %}
-        
+
       </div>
     </div>
     <div class="extra content">

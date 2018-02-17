@@ -8,35 +8,44 @@
 
 {% block content %}
 
-<div class="row">
-
-  <div class="col m6 offset-m2">
       {% if post %}
 
-      {% for badge in post %}
 
-      <div class="card-panel">
-        <h4>Badge: {{badge.name|capfirst}} <span class="badge"></span></h4>
 
-          <p>Decription: {{badge.description|capfirst}}
-          <br>Badge Category: {{badge.category|capfirst}}
-          <br>Badge Rank:
-            {% with ''|center:badge.rank as range %}
-                {% for _ in range %}<i class="blue-text material-icons">star</i></span>{% endfor %}
-            {% endwith %}
+<div class="ui cards">
+  {% for badge in post %}
+  <div class="card">
+    <div class="content">
+      <span class="right floated ui image">
+      {% with ''|center:badge.rank as range %}
+          {% for _ in range %}<i class="blue star icon"></i>{% endfor %}
+      {% endwith %}
+    </span>
+      <div class="header">
+        Badge: {{badge.name|capfirst}}
+      </div>
+      <div class="meta">
+        {{badge.category|capfirst}}
+      </div>
+      <div class="meta">
 
-          <br>Badge Owned by
-          <span>{% for person in badge.collected_by.all %}
-            <a href="{{ person.profile.get_absolute_url }}">{{person.username}}</a>{% if not forloop.last %},{% endif %}{% endfor %}
-          <span></p>
-        </div>
-    {% endfor %}
-    {% else %}
-      <h5>There are no badges registered</h5>
-    {% endif %}
-
+      </div>
+      <div class="description">
+        {{badge.description|capfirst}}
+      </div>
+    </div>
+    <div class="extra content">
+      Badge Owned by
+      <span>{% for person in badge.collected_by.all %}
+        <a href="{{ person.profile.get_absolute_url }}">{{person.username}}</a>{% if not forloop.last %},{% endif %}{% endfor %}
+      <span>
+    </div>
+  </div>
+  {% endfor %}
 </div>
+{% else %}
+  <h5>There are no badges registered</h5>
+{% endif %}
 
-</div>
 
 {% endblock %}

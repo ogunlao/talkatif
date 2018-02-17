@@ -5,165 +5,190 @@
 
 {% block content %}
 
-<div class="row">
+<h3 class="ui dividing header">{{ profile_user_name|title }}</h3>
 
-  <div class="col m7 offset-m1">
 
-            <div class="row">
-              <div class="col s12 m7">
-                <div class="card">
-
-              <ul class="collection with-header">
-                <li class="collection-header"><h4>{{ profile_user_name|title }}</h4>
-                  {% if profile_user == request.user %}
-                    <a class="yellow btn black-text" href="{% url 'update_profile'%}">Edit Profile</a>
-                    {% if request.user == profile_user %}
-                    <small class="right"><a class="grey-text"  href="{% url 'deactivate_profile' %}">Deactivate</a></small>
-                    {% endif %}
+                <div class="ui fluid card">
+                  <div class="content">
+                    {% if profile_user == request.user %}
+                    <span class="meta"><a href="{% url 'update_profile'%}">Edit Profile</a></span>
+                    <span class="right floated meta"><a href="{% url 'deactivate_profile' %}">Deactivate</a></span>
                   {% endif %}
-                </li>
-                <li class="collection-item">Username <span class="right">{{ profile_user.username }}</span></li>
-                <li class="collection-item">Name <span class="right">{{ profile_user.first_name|capfirst }} {% if post.other_name %}{{ post.other_name|capfirst }}{% endif %} {{ profile_user.last_name|capfirst }}</span></li>
-                <li class="collection-item">Gender<span class="right">{{ post.gender|capfirst }}</span></li>
-
-              {% if profile_user == request.user %}
-                <li class="collection-item"><span class="red-text">*</span>Email:
-                  <p class="">{{ profile_user.email }}<br>
-                    <span class="blue-text"><a href={% url 'account_email'%}>Add</span></a></p></li>
-                <li class="collection-item"><span class="red-text">*</span>DoB:
-                  <span class="right">{{ post.date_of_birth }}</span></li>
-              {% endif %}
-                <li class="collection-item">Participating in
-                  <span class="right">
-                    {% if post.participation_type.all %}
-                      {% for participation in post.participation_type.all %}{{ participation }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                    {% else %} Not set
+                 </div>
+                 <div class="content">
+                    <div class="ui two column stackable grid">
+                      <div class="column">
+                     <table class="ui fluid table">
+                      <tbody>
+                        <tr>
+                          <td>Username</td>
+                          <td>{{ profile_user.username }}</td>
+                        </tr>
+                        <tr>
+                          <td>Gender</td>
+                          <td>{{ post.gender|capfirst }}</td>
+                        </tr>
+                        {% if profile_user == request.user %}
+                        <tr>
+                          <td><i class="attention icon"></i>Email</td>
+                          <td>
+                            {{ profile_user.email }}
+                          </td>
+                          <td>
+                              <a href={% url 'account_email'%}>Add</a>
+                          </td>
+                        </td>
+                        <tr>
+                          <td><i class="attention icon"></i> DoB</td>
+                          <td>
+                            {{ post.date_of_birth|date:"M/d" }}
+                          </td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                          <td>Specialization</td>
+                          <td>{{ post.specialization }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Location</td>
+                          <td>{% if post.city %}{{ post.city|capfirst }},{% endif %} {{post.country.name}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Brief Bio</td>
+                          <td>{{post.bio}}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    {% if profile_user == request.user %}
+                    <p><i class="attention icon"></i> Only visible to the profile owner.</p>
                     {% endif %}
-                  </span></li>
-                <li class="collection-item">Specialization <span class="right">{{ post.specialization }}</span></li>
-                <li class="collection-item">Location <span class="right">{% if post.city %}{{ post.city|capfirst }},{% endif %} {{post.country.name}}</span></li>
-                <li class="collection-item">Bio <span class="right">{{post.bio}}</span></li>
-              </ul>
-              {% if request.user == profile_user %}
-                <small><span class="red-text">*<span> Only visible to the account owner</small>
-              {% endif %}
-            </div><!-- End of card -->
-          </div><!-- End of column -->
+                  </div>
+                  <div class="column">
+                    <div class="ui fluid right floated content">
+                    {% load avatar_tags %}
 
-              <div class="col m5">
-                      {% load avatar_tags %}
-                      <div class="card-panel">
-                        {% if profile_user|has_avatar %}
-                        {% avatar profile_user 150 class="circle responsive-img" %}
-                          {% if request.user == profile_user %}
-                            <p><a href="{% url 'avatar_delete' %}">Remove avatar</a></p>
-                          {% endif %}
-                        {% elif profile_user.socialaccount_set.all.0.get_avatar_url %}
-                        <img  src="{{ profile_user.socialaccount_set.all.0.get_avatar_url }}" alt="Default social avater" width="100%" height=100%/>
-                        <small class="grey-text">This is your social avatar.</small>
-                        {% else %}
-                        <img src="{{profile_user.profile.profile_image_url}}" width="100%" height=100% />
-                        {% endif %}
+                      {% if profile_user|has_avatar %}
+                      {% avatar profile_user class="ui small rounded image" %}
                         {% if request.user == profile_user %}
-                          <p><a href="{% url 'avatar_change' %}">Change avatar</a></p>
+                          <p><br><a class="ui secondary basic small button" href="{% url 'avatar_delete' %}">Remove avatar</a></p>
                         {% endif %}
+
+                      {% else %}
+                      <img src="{{profile_user.profile.profile_image_url}}" width="100%" height=100% class="ui small rounded image" />
+                      {% endif %}
+                      {% if request.user == profile_user %}
+                        <p><a class="ui secondary basic small button" href="{% url 'avatar_change' %}">Change avatar</a></p>
+                      {% endif %}
                     </div>
+                    </div>
+                  </div>
 
+                </div>
+              </div><!-- End of card -->
+
+        {% if supported or opposed or moderated or judged %}
+          <div class="ui fluid card">
+            {% if supported %}
+            <div class="content">
+              <div class="header">
+                  <h3><i class="ui basic blue label">{{supported.count}}</i>
+                  Debate on Supporting Side.</h3>
               </div>
-
-            </div><!-- End of row -->
-
-          {% if supported or opposed or moderated or judged %}
-            <div class="row">
-              <div class="card-panel">
-                {% if supported %}
-                <h5 class="main_title">Debate on Supporting Side <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{supported.count}}</span></h5>
-                <ul>
-                  <li class="divider"></li>
+              <div class="text">
                 {% for debate_list in supported %}
-                  <li><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></li>
+                  <p>&raquo; <a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
                 {% endfor %}
-                </ul>
-                {% endif %}
+              </div>
+            </div>
+            {% endif %}
 
-                {% if opposed %}
-                <h5 class="main_title">Debate on Opposing Side <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{opposed.count}}</span></h5>
-                <ul>
-                  <li class="divider"></li>
+            {% if opposed %}
+            <div class="content">
+              <div class="header">
+                <h3 class="main_title"><i class="ui basic blue label">{{opposed.count}}</i> Debate on Opposing Side. </h3>
+              </div>
+              <div class="text">
                 {% for debate_list in opposed %}
-                  <li><a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></li>
-                </ul>
+                  <p>&raquo; <a href="{{ debate_list.post.get_absolute_url }}">{{debate_list.post}}</a></p>
                 {% endfor %}
-                {% endif %}
+              </div>
+            </div>
+            {% endif %}
 
-
-                {% if moderated %}
-                <h5 class="main_title">Moderated <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{moderated.count}}</span></h5>
-                <ul>
-                  <li class="divider"></li>
+            {% if moderated %}
+            <div class="content">
+              <div class="header">
+                <h3 class="main_title"><i class="ui basic blue label">{{moderated.count}}</i> Moderated </h3>
+              </div>
+              <div class="text">
                 {% for debate_list in moderated %}
-                  <li><a href="">{{debate_list.post}}</a></li>
+                  <p>&raquo; <a href="">{{debate_list.post}}</a></p>
                 {% endfor %}
-              </ul>
-                {% endif %}
+              </div>
+            </div>
+            {% endif %}
 
-                {% if judged %}
-                <h5 class="main_title">Judged <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{judged.count}}</span></h5>
-                <ul>
-                  <li class="divider"></li>
+            {% if judged %}
+            <div class="content">
+              <div class="header">
+                <h3 class="main_title"><i class="ui basic blue label">{{judged.count}}</i> Judged </h3>
+              </div>
+              <div class="text">
                 {% for debate_list in judged %}
-                  <li><a href="">{{debate_list.post}}</a></li>
+                  <p>&raquo; <a href="">{{debate_list.post}}</a></p>
                 {% endfor %}
-              </ul>
-                {% endif %}
+              </div>
+          </div>
+            {% endif %}
 
             </div><!-- End of card -->
-          </div><!-- End of row -->
         {% endif %}
-      </div><!-- End of main colm7 -->
 
-      <div class="col s12 m3">
+      {% endblock content %}
 
-        <div class="card">
-          <div class="card-content">
-            <h6>Stats</h6>
-            <ul>
-            <li>Won<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{won.count}}</span></li><br>
-            <li>Lost<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{lost.count}}</span></li><br>
-            <li>Draw(s)<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{drew.count}}</span></li><br>
-            <li>Moderated<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{moderated.count}}</span></li><br>
-            <li>Judged<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{judged.count}}</li>
-            </ul>
+      {% block right_content %}
 
-            <ul>
-              <li class="divider"></li>
-            <li>Debates in Supporting Team<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{supported.count}}</span></li>
-            <br><li>Debates in Opposing Team<span class="new badge amber lighten-4 black-text" data-badge-caption="">{{opposed.count}}</span> </li>
-            </ul>
+        <div class="ui card">
+          <div class="content">
+            <div class="header">Stats</div>
+            <div class="text">
+              <p><i class="ui basic blue label">{{won.count}}</i> Won</p>
+              <p><i class="ui basic blue label">{{lost.count}}</i> Lost</p>
+              <p><i class="ui basic blue label">{{drew.count}}</i> Draw(s)</p>
+              <p><i class="ui basic blue label">{{moderated.count}}</i> Moderated</p>
+              <p><i class="ui basic blue label">{{judged.count}}</i> Judged</p>
+            </div>
           </div>
-          <div class="card-content">Active <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{debate_involved.count}}</span></div>
+          <div class="content">
+            <p><i class="ui basic blue label">{{supported.count}}</i> Debates in Supporting Team</p>
+            <p><i class="ui basic blue label">{{opposed.count}}</i> Debates in Opposing Team</p>
+          </div>
+          <div class="content"><i class="ui basic blue label">{{debate_involved.count}}</i> Active</div>
         </div><!-- End of card -->
 
-        <div class="card">
-          <div class="card-content">
-            <h6>Badges</h6>
-
-            {% if badges %}
+        {% if badges %}
+        <div class="ui card">
+          <div class="content">
+            <div class="header">Badges</div>
             {% for badge in badges %}
-            <p>
+            <div class="text">
               {% with ''|center:badge.rank as range %}
-                  {% for _ in range %}<i class="material-icons">star</i>{% endfor %}
+                  {% for _ in range %}<i class="ui blue star icon"></i>{% endfor %}
               {% endwith %}
-              {{badge.category|capfirst}} - <a href="{{badge.get_absolute_url}}" data-toggle="tooltip" title="{{badge.description}}">{{badge.name|capfirst}}</a> </p>
+              {{badge.category|capfirst}} - <a href="{{badge.get_absolute_url}}" data-toggle="tooltip" title="{{badge.description}}">{{badge.name|capfirst}}</a>
+            </div>
             {% endfor %}
             {% else %}
             <p>No badge earned yet.</p>
             {% endif %}
           </div>
-          <div class="card-content">Badges <span class="new badge amber lighten-4 black-text" data-badge-caption="">{{badges.count}}</span></div>
+          <div class="content"><i class="ui basic blue label">{{badges.count}}</i> Badge{{badges.count|pluralize}}</div>
         </div>
 
         </div><!-- End of colm3 -->
 
    </div>
-    {% endblock %}
+    {% endblock right_content %}

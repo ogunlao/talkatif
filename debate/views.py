@@ -519,7 +519,9 @@ def score_debate(request, post_id):
     status = Scores.objects.filter(post = related_post).exists() #Has debate previously been scored?
     judge_available = related_post.judges.all().count() #Are judges included in debate? 0 indiates non
     vote_ended = False
-    if timezone.now() > related_post.end:
+    template = "debate/form/score.html"
+
+    if related_post.end and timezone.now() > related_post.end:
         vote_ended = True
     if not status and not vote_ended: #Allow judge scores only if debate has not ended
         if request.method == 'POST':
@@ -531,14 +533,16 @@ def score_debate(request, post_id):
                 post.save()
                 scored = True
                 messages.success(request, 'Debate score updated successfully')
-                return render(request, 'debate/form/score.html', {'post': post, 'scored':scored})
+                template = reverse('debate:score_debate', kwargs={'post_id':post_id})
+                return render(request, template, {'post': post, 'scored':scored})
             else:
                 print (score_form.errors)
         else:
             #Display form when scores is yet to be submitted
             score_form = ScoresForm()
+
             context = {'score_form': score_form, 'scored': scored, 'related_post' : related_post }
-            return render(request, 'debate/form/score.html', context )
+            return render(request, template, context )
 
     else:
         post, created = Scores.objects.get_or_create(post=related_post)
@@ -560,15 +564,17 @@ def score_debate(request, post_id):
             total_votes = post.supporting_vote + post.opposing_vote
             if related_post.debate_category == "closed" and judge_available:
                 #Assuming debate is closed and judges are to give verdict
-                judge_support_percent = (post.supporting_score / post.highest_score) * post.judge_percent_share
-                judge_oppose_percent = (post.opposing_score / post.highest_score) * post.judge_percent_share
-
-                vote_support_percent = (post.supporting_vote / total_votes) * post.vote_percent_share
-                vote_oppose_percent = (post.opposing_vote / total_votes) * post.vote_percent_share
+                if post.highest_score > 0:
+                    judge_support_percent = (post.supporting_score / post.highest_score) * post.judge_percent_share
+                    judge_oppose_percent = (post.opposing_score / post.highest_score) * post.judge_percent_share
+                if total_votes > 0:
+                    vote_support_percent = (post.supporting_vote / total_votes) * post.vote_percent_share
+                    vote_oppose_percent = (post.opposing_vote / total_votes) * post.vote_percent_share
             else:
                 #Use votes only, 100 percent used
-                vote_support_percent = (post.supporting_vote / total_votes) * 100
-                vote_oppose_percent = (post.opposing_vote / total_votes) * 100
+                if total_votes > 0:
+                    vote_support_percent = (post.supporting_vote / total_votes) * 100
+                    vote_oppose_percent = (post.opposing_vote / total_votes) * 100
 
             supporting_team_percent_score = vote_support_percent + judge_support_percent
             opposing_team_percent_score = vote_oppose_percent + judge_oppose_percent
@@ -610,7 +616,7 @@ def score_debate(request, post_id):
         context = {'scored': scored, 'post': post, 'related_post':related_post,
         'meta':meta }
 
-        return render(request, 'debate/form/score.html', context )
+        return render(request, template, context )
 
 from django.db import transaction
 from django.utils.translation import gettext as _

@@ -35,7 +35,7 @@ def notify_all(schedule_post):
             message_list = message_detail = []
             if notification_post.moderator.all(): #checks if there are modertors
                 for person in notification_post.moderator.all():
-                    ctx = {'name':person.get_full_name(), 'username': person.username, \
+                    ctx = {'username': person.username, \
                             'debate_time':notification_post.begin, \
                             'debate_job' : 'moderating', 'debate_title':notification_post.title,\
                             'debate_summary':notification_post.summary, 'debate_team':notification_post.moderator.all(),
@@ -49,7 +49,7 @@ def notify_all(schedule_post):
 
             if notification_post.supporting_debaters.all():
                 for person in notification_post.supporting_debaters.all():
-                    html_content = render_to_string('notification_template.html', {'name':person.get_full_name(),\
+                    html_content = render_to_string('notification_template.html', {'name':person.username,\
                             'debate_job' : 'supporting', 'debate_title':notification_post.title,\
                             'debate_time':notification_post.begin, \
                             'debate_summary':notification_post.summary, 'debate_team':notification_post.supporting_debaters.all()})
@@ -61,7 +61,7 @@ def notify_all(schedule_post):
 
             if notification_post.opposing_debaters.all():
                 for person in notification_post.opposing_debaters.all():
-                    html_content = render_to_string('notification_template.html', {'name':person.get_full_name(),\
+                    html_content = render_to_string('notification_template.html', {'name':person.username,\
                             'debate_job' : 'opposing', 'debate_title':notification_post.title,\
                             'debate_summary':notification_post.summary, 'debate_team':notification_post.opposing_debaters.all()})
                     message = strip_tags(html_content) #strips the html of tags to get the raw text.
@@ -72,7 +72,7 @@ def notify_all(schedule_post):
 
             if notification_post.judges.all():
                 for person in notification_post.judges.all():
-                    html_content = render_to_string('notification_template.html', {'name':person.get_full_name(),\
+                    html_content = render_to_string('notification_template.html', {'name':person.username,\
                             'debate_job' : 'judges', 'debate_title':notification_post.title,\
                             'debate_summary':notification_post.summary, 'debate_team':notification_post.judges.all()})
                     message = strip_tags(html_content) #strips the html of tags to get the raw text.

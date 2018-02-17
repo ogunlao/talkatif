@@ -6,11 +6,13 @@
 
 {% block content %}
 
-    <div class="row">
-      <div class="col m6 offset-m2">
-        <h3>{% trans "Verify Your E-mail Address" %}</h3>
+    <div class="ui fluid card">
+      <div class="column">
+        <div class="header">
+        <h3 class="ui dividing header">{% trans "Verify Your E-mail Address" %}</h3>
+      </div>
 
-        <p>{% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
+        <div class="description">{% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktrans %}</div>
       </div>
     </div>
 

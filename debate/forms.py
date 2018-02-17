@@ -62,7 +62,7 @@ class ProfileForm(forms.ModelForm):
 class ScoresForm(forms.ModelForm):
     class Meta:
         model = Scores
-        exclude = ('post',)
+        exclude = ('post', 'uploaded_by',)
         #fields = ('supporting_score', 'opposing_score', 'observation')
 
 class ModeratorForm(forms.ModelForm):

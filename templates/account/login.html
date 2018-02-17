@@ -7,93 +7,94 @@
 <a href="{% provider_login_url "facebook" method="js_sdk" %}">Facebook Connect</a>
 
 {% block title %}{% trans "Sign In" %}{% endblock %}
-
+{% block extra_css %}   {% endblock %}
 {% block content %}
 
-<div class="row">
+{% get_providers as socialaccount_providers %}
 
-<div class="col offset-m3 m7">
-  {% get_providers as socialaccount_providers %}
 
-  {% if socialaccount_providers %}
-    <div class="col m12">
-      <h4 class="title center-align">Login or <a href="{{ signup_url }}">Sign up</a></h3>
-    </div>
-    <div class="row">
-      <div class="col s4">
-        <a href="/accounts/facebook/login/?process=login" class="btn blue omb_btn-facebook">
-          <i class="fa fa-facebook show-on-small"></i>
-          <span class="hide-on-small-only">Facebook</span>
-        </a>
-      </div>
-      <div class="col s4">
-        <a href="/accounts/twitter/login" class="btn blue lighten-3 omb_btn-twitter">
-          <i class="fa fa-twitter show-on-small"></i>
-          <span class="hide-on-small-only">Twitter</span>
-        </a>
-      </div>
-      <div class="col s4">
-        <a href="/accounts/google/login" class="btn red omb_btn-google">
-          <i class="fa fa-google-plus show-on-small"></i>
-          <span class="hide-on-small-only">Google+</span>
-        </a>
-      </div>
-      {% include "socialaccount/snippets/login_extra.html" %}
-    </div>
+{% if socialaccount_providers %}
+<div class="ui three column equal grid">
 
-  <div class="row">
-      <div class="col s12">
-        <p class="center-align">OR</p>
-      </div>
-  </div>
+<div class="computer tablet only column">
+<a href="/accounts/facebook/login/?process=login" class="ui facebook button">
+  <i class="facebook icon"></i>
+  Facebook
+</a>
+</div>
+<div class="mobile only column">
+<a href="/accounts/facebook/login/?process=login" class="ui facebook button">
+  <i class="facebook icon"></i>
+</a>
+</div>
 
+<div class="computer tablet only column">
+<a href="/accounts/twitter/login" class="ui twitter button">
+  <i class="twitter icon"></i>
+  Twitter
+</a>
+</div>
+<div class="mobile only column">
+<a href="/accounts/twitter/login" class="ui twitter button">
+  <i class="twitter icon"></i>
+</a>
+</div>
+
+<div class="computer tablet only column">
+<a href="/accounts/google/login" class="ui google plus button">
+  <i class="google plus icon"></i>
+  Google Plus
+</a>
+</div>
+<div class="mobile only column">
+<a href="/accounts/google/login" class="ui google plus button">
+  <i class="google plus icon"></i>
+</a>
+</div>
+{% include "socialaccount/snippets/login_extra.html" %}
+</div>
 {% endif %}
 
-<div class="row">
-  <div class="col m12">
-      <form action="{% url 'account_login' %}" autocomplete="off" method="POST">
-        {% csrf_token %}
-        <div class="input-field">
-          <i class="material-icons prefix">account_circle</i>
-          {{ form.login }}
-          <label for="id_login">Username or Email</label>
-        </div>
+<h4 class="ui horizontal header divider">
+  <a href="#">OR</a>
+</h4>
 
-      <div class="input-field">
-        <i class="material-icons prefix">lock</i>
-        {{ form.password }}
-        <label for="id_password">password</label>
-      </div>
-      <br/>
-      {% if form.errors %}
-        {% for field in form %}
-            {% for error in field.errors %}
-                    <p><strong class="red-text">{{ error|escape }}</strong></p>
-            {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-      </p><strong class="red-text">{{ error|escape }}</strong></p>
-        {% endfor %}
-      {% endif %}
-
-      <button class="yellow btn black-text" type="submit">Get Inside</button>
-      {% if redirect_field_value %}
-        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-      {% endif %}
-    </form>
-  </div><!-- End of col m7 -->
+<form class="ui form" action="{% url 'account_login' %}" method="POST">{% csrf_token %}
+  <h2 class="ui dividing header">Login<span class="small_text"> or <a href={% url 'account_signup' %}>signup</a></span></h2>
+  <div class="field {% if form.errors %}error{% endif %}">
+    <label>Login</label>
+    {{form.login}}
   </div>
 
-  <div class="col m7">
-    <p>
-      <a href="{% url 'account_reset_password' %}">Forgot password?</a>
-    </p>
-    <!--
-    <label class="checkbox">
-      <input type="checkbox" id="id_remember" name="remember" class="form-control" value="remember-me">Remember Me
-    </label> -->
+  <div class="field {% if form.errors %}error{% endif %}">
+    <label>Password</label>
+    {{form.password}}
   </div>
-</div>
-</div><!-- End of main row -->
+  {% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+                <p class="red">{{error|escape}}</p>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+            <p class="red">{{error|escape}}</p>
+    {% endfor %}
+  {% endif %}
+
+
+  <div class="field">
+    <div class="ui checkbox">
+      <input type="checkbox" tabindex="0" class="hidden">
+      <label>Remember me.</label>
+    </div>
+  </div>
+  <button class="ui basic primary button" type="submit">Get Inside</button>
+  {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <p>
+    <a href="{% url 'account_reset_password' %}">Forgot password?</a>
+  </p>
+</form>
 
 {% endblock %}

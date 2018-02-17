@@ -12,9 +12,12 @@
 <button class="ui circular linkedin icon button">
   <i class="linkedin icon"></i>
 </button></a>
+
+{% if request.user_agent.is_mobile or request.user_agent.is_tablet %}
 <a href="whatsapp://send?text=*{{post.title}}* - What do you think?... {{ url|goo_shorten_url|urlencode }}" data-action="share/whatsapp/share">
-<button class="ui circular whatsapp icon button">
+<button class="ui circular green whatsapp icon button">
   <i class="whatsapp icon"></i>
 </button></a>
+{% endif %}
 
 {% endwith %}

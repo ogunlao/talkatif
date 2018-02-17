@@ -1,144 +1,130 @@
 {% extends "account/base.html" %}
 {% load widget_tweaks %}
+{% load i18n %}
+{% load staticfiles %}
 
-{% block title %}Edit Profile for {{user.get_full_name|title}} {% endblock %}
+{% block title %}Edit Profile for {{user.get_full_name|title}} {% endblock title %}
+
 {% load staticfiles %}
 
 {% block content %}
 
-<div class="row">
-  <div class="col m6 offset-m2">
-    <h5>{{user.get_full_name|title}}</h5>
-    <h6>Edit Profile</h6>
-    <div class="row">
-      <div class="col s12">
-        <ul class="tabs tabs-fixed-width">
-          <li class="tab col s3"><a class="blue-text active" href="#main">Main</a></li>
-          <li class="tab col s3"><a class="blue-text" href="#other">Other</a></li>
-          <li class="tab col s3"><a class="blue-text" href="#location">Personal</a></li>
-        </ul>
-      </div>
-      <div id="main" class="col s12">
-        <form method="post">
-          {% csrf_token %}
-        {% for field in user_form %}
+<h2 class="ui dividing header"><span class="small_text">{% trans "Edit Profile for" %} </span>{{user.get_full_name|title}}</h2>
 
-          <div class="input-field">
-            {{ field.label_tag }}
-            {{ field}}
-          </div>
+<form class="ui form" method="post">{% csrf_token %}
+  <h3 class="ui dividing header">Main</h3>
 
-          {% if field.help_text %}
-            <small style="color: grey">{{ field.help_text }}</small>
-          {% endif %}
-          {% for error in field.errors %}
-                  <strong class="red-text">{{ error|escape }}</strong>
-          {% endfor %}
-        {% endfor %}
+  <div class="two fields">
+    <div class="required field {% if user_form.username.errors %}error{% endif %}">
+      {{user_form.username.label_tag}}
+      {{user_form.username}}
+      <p><small class="red text">{{ user_form.username.errors }}</small></p>
+    </div>
+    <div class="required field">
+      {{user_form.email.label_tag}}
+      {{user_form.email|attr:"readonly:''"}}<a href={% url 'account_email'%}>Edit</a>
+    </div>
+  </div>
+  <div class="two fields">
+    <div class="required field {% if user_form.first_name.errors %}error{% endif %}">
+      {{user_form.first_name.label_tag}}
+      {{user_form.first_name}}
+      {% for error in user_form.first_name.errors %}
+              <strong class="">{{ error|escape }}</strong>
+      {% endfor %}
+    </div>
+    <div class="field {% if profile_form.other_name.errors %}error{% endif %}">
+      {{profile_form.other_name.label_tag}}
+      {{profile_form.other_name}}
+      {% for error in profile_form.other_name.errors %}
+              <strong class="">{{ error|escape }}</strong>
+      {% endfor %}
+    </div>
+    <div class="required field {% if user_form.last_name.errors %}error{% endif %}">
+      {{user_form.last_name.label_tag}}
+      {{user_form.last_name}}
+      {% for error in user_form.last_name.errors %}
+              <strong class="">{{ error|escape }}</strong>
+      {% endfor %}
+    </div>
+  </div>
 
-        <div class="input-field">
-          <small class="grey-text">Gender</small>
-          {{ profile_form.gender}}
-        </div>
+  <h3 class="ui dividing header">Others</h3>
 
-        </div>
+  <div class="three fields">
+    <div class="required field {% if profile_form.gender.errors %}error{% endif %}">
+      {{ profile_form.gender.label_tag }}
+      {{ profile_form.gender}}
+    </div>
 
-      <div id="other" class="col s12">
+    <div class="field">
+    {{ profile_form.date_of_birth.label_tag }}
+    {{ profile_form.date_of_birth|add_class:"datepicker"}}
+    <small>Not visible to others. Used to celebrate birthdays</small>
+    {% if profile_form.date_of_birth.help_text %}
+      <small style="color: grey">{{ profile_form.date_of_birth.help_text }}</small>
+    {% endif %}
+    {% for error in profile_form.date_of_birth.errors %}
+            <strong style="color: red">{{ error|escape }}</strong>
+    {% endfor %}
+   </div>
+   <div class="field">
+     {{ profile_form.specialization.label_tag }}
+     {{ profile_form.specialization}}
+     {% if profile_form.specialization.help_text %}
+       <small class="grey text">{{ profile_form.specialization.help_text }}</small>
+     {% endif %}
+   </div>
 
-        <div class="input-field">
-          <small class="grey-text">What activities would you like to participate in?</small>
-          {{ profile_form.participation_type}}
-        </div>
-        <!-- Switch -->
-        <small class="grey-text">Notify me of upcoming debates</small>
-        <div class="switch">
-          <label>
-            Off
-            {{ profile_form.notify}}
-            <span class="blue lever"></span>
-            On
-          </label>
-        </div>
+  </div>
 
-        <div class="input-field">
-          {{ profile_form.bio.label_tag }}
-          {{ profile_form.bio|add_class:"materialize-textarea"}}
-        </div>
-        {% if profile_form.bio.help_text %}
-          <small class="grey-text">{{ profile_form.bio.help_text }}</small>
-        {% endif %}
-        {% for error in profile_form.bio.errors %}
-                <strong class="red-text">{{ error|escape }}</strong>
-        {% endfor %}
+  <div class="field">
+    {{ profile_form.bio.label_tag }}
+    {{ profile_form.bio|attr:"rows:2"}}
+  </div>
+  {% if profile_form.bio.help_text %}
+    <small>{{ profile_form.bio.help_text }}</small>
+  {% endif %}
+  {% for error in profile_form.bio.errors %}
+          <strong class="red text">{{ error|escape }}</strong>
+  {% endfor %}
 
-        <div class="input-field">
-          {{ profile_form.date_of_birth.label_tag }}
-          {{ profile_form.date_of_birth|add_class:"datepicker"}}
-          <small>Not visible to others. Used to celebrate birthdays</small>
-        </div>
-        {% if profile_form.date_of_birth.help_text %}
-          <small class="grey-text">{{ profile_form.date_of_birth.help_text }}</small>
-        {% endif %}
-        {% for error in profile_form.date_of_birth.errors %}
-                <strong class="red-text">{{ error|escape }}</strong>
-        {% endfor %}
+  <!-- Switch -->
+  <div class="inline field">
+    <br>
+    <div class="ui toggle checkbox">
+      {{ profile_form.notify}}
+      <label>{% trans "Notify me of upcoming debates." %}</label>
+    </div>
+  </div>
 
-      </div>
-
-   <div id="location" class="col s12">
-        <div class="input-field">
-          {{ profile_form.other_name.label_tag }}
-          {{ profile_form.other_name}}
-        </div>
-        {% if profile_form.other_name.help_text %}
-          <small class="grey-text">{{ profile_form.other_name.help_text }}</small>
-        {% endif %}
-        {% for error in profile_form.other_name.errors %}
-                <strong class="red-text">{{ error|escape }}</strong>
-        {% endfor %}
-
-        <div class="input-field">
-          {{ profile_form.specialization.label_tag }}
-          {{ profile_form.specialization}}
-        </div>
-        {% if profile_form.specialization.help_text %}
-          <small class="grey-text">{{ profile_form.specialization.help_text }}</small>
-        {% endif %}
-        {% for error in profile_form.specialization.errors %}
-                <strong class="red-text">{{ error|escape }}</strong>
-        {% endfor %}
-
-        <div class="input-field">
+    <h3 class="ui dividing header">{% trans "Location" %}</h3>
+    <div class="three fields">
+        <div class="field">
           {{ profile_form.city.label_tag }}
           {{ profile_form.city}}
+          {% if profile_form.city.help_text %}
+            <small class="grey-text">{{ profile_form.city.help_text }}</small>
+          {% endif %}
+          {% for error in profile_form.city.errors %}
+                  <strong class="red-text">{{ error|escape }}</strong>
+          {% endfor %}
         </div>
-        {% if profile_form.city.help_text %}
-          <small class="grey-text">{{ profile_form.city.help_text }}</small>
-        {% endif %}
-        {% for error in profile_form.city.errors %}
-                <strong class="red-text">{{ error|escape }}</strong>
-        {% endfor %}
 
-
-        <div class="input-field">
+        <div class="field {% if profile_form.country.errors %}error{% endif %}">
+          {{ profile_form.country.label_tag}}
           {{ profile_form.country}}
+          {% if profile_form.country.help_text %}
+            <small class="grey text">{{ profile_form.country.help_text }}</small>
+          {% endif %}
+          {% for error in profile_form.country.errors %}
+                  <strong class="red text">{{ error|escape }}</strong>
+          {% endfor %}
         </div>
-        {% if profile_form.country.help_text %}
-          <small class="grey-text">{{ profile_form.country.help_text }}</small>
-        {% endif %}
-        {% for error in profile_form.country.errors %}
-                <strong class="red-text">{{ error|escape }}</strong>
-        {% endfor %}
-
       </div>
-    </div>
 
-        <div class="row"><br>
-          <button class="blue btn" type="submit">Save changes</button><br/>
-        </div>
+        <button class="ui primary basic button" type="submit">{% trans "Update Profile" %} &raquo;</button>
+
       </form>
-      </div>
-
-    </div>
 
     {% endblock %}

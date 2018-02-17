@@ -9,6 +9,6 @@ def site_processor(request):
     created__month = today.month, created__day = today.day)
     daily_debate = daily_posted_debate.filter(debate_category="closed").count()
     daily_argument = daily_posted_debate.filter(debate_category="open").count()
-    daily_discourse = Post.published.all().filter(created__year=today.year, \
+    daily_talk = Post.published.all().filter(created__year=today.year, \
     created__month = today.month, created__day = today.day).count()
-    return {'daily_debate': daily_debate, 'daily_discourse':daily_discourse, 'daily_argument':daily_argument}
+    return {'daily_debate': daily_debate, 'daily_talk':daily_talk, 'daily_argument':daily_argument}

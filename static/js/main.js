@@ -13,8 +13,6 @@ $(document).ready(function() {
 
  });
 
-
-
  $(document).ready(function(){
 	$('.right.menu.open').on("click",function(e){
         e.preventDefault();
@@ -38,6 +36,12 @@ $(document).ready(function() {
    $('.ui .item').removeClass('active');
    $(this).addClass('active');
 });
+
+  $('.ui.accordion')
+  .accordion();
+
+  $('#multi-select')
+  .dropdown();
 
 
 });

@@ -1,2 +1,3 @@
-
-<li class="waves-effect endless_page_link"><a href="{{ page.path }}" data-el-querystring-key="{{ querystring_key }}{% if add_nofollow %} nofollow{% endif %}">{{ page.label|safe }}</a></li>
+<a href="{{ page.path }}"
+    data-el-querystring-key="{{ querystring_key }}{% if add_nofollow %} nofollow{% endif %}"
+    class="item endless_page_link">{{ page.label|safe }}</a>

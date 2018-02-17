@@ -1,147 +1,151 @@
 {% extends "debate/base.html" %}
 {% block title %}Debate Rules and Guide {% endblock %}
+{% block extra_js %}<script src="{% static 'serve/components/accordion.min.js' %}"></script>{% endblock extra_js %}
 {% block content %}
 
+{% load i18n %}
 
-<div class="row">
 
-  <div class="col m7 offset-m2">
+<h2 class="ui dividing header">{% trans "Debate Rules and Guidelines." %}</h2>
 
-<h5>Rules and Guidelines.</h5>
-<p>This guideline is not exhaustive but serve to guide how the community create posts and comments for debate.</p>
-<ul class="collapsible" data-collapsible="accordion">
-  <li>
-    <div class="collapsible-header"><i class="material-icons">sort_by_alpha</i>Creating Posts.</div>
-    <div class="collapsible-body">
-      <p>
+<p>This guideline is not exhaustive but serve to guide how the community create posts and comments on debates.</p>
+
+<div class="ui styled fluid accordion">
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Creating Posts.
+  </div>
+  <div class="content">
+      <p class="transition hidden">
         We require that debates should be cogent and worth talking about. Endeavour to add a good summary that portrays your findings and interest in the topic.
         Pictures can also be added.
         The user who posts a debate is automatically made a moderator and can verify debaters and set debate time.
       </p>
-      <p>
+      <p class="transition hidden">
         Use of various sharing options to popularize your debate and gain the audience it deserves. Users can also get notifified for debates.
       </p>
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header"><i class="material-icons">comment</i>Commenting and Debating</div>
-    <div class="collapsible-body">
-      <p>Put simply; No mud slinging, no tantrum throwing.</p>
-      <p>Swear words and obscene statements are filtered in comments as you post them. If you do not see your comments , it must have been put up for moderation. Moderators regularly review comments, edit if suitable or delete if found unworthy.
-        Word filters are updated regularly to keep the site fresh and full of ideas.
-        Only write interesting comments and contributions. Make sure it is informative and cogents.
-        Plagiarism</p>
-      <p>It is necessary to avoid copying content from elsewhere without reference. The comment section supports <a href="http://commonmark.org/help/" target="_blank">markdown</a> for prettifying and ordering ideas.
-      </p>
   </div>
-  </li>
-  <li>
-    <div class="collapsible-header"><i class="material-icons">accessibility</i>Moderation.</div>
-    <div class="collapsible-body">
-      <p>Debate moderation is a criticial aspect of the whole setup and we have put in place modalities to achieve that.
-      For example, comments are automatically checked for obscence words and place in moderation if found.
-      A supermod is required to review the comments and modify or delete if found unworthy.
-      Our word database is updated regularly and suggestions could also be made to block out particular words or phrases.
-    </p>
-    <p>
-      When a user posts a debate, he/she is auto made a moderator. It gives him the chance to add debaters and regulate debate timing.
-      Additional moderators can also be added when required.
-      A dashboard has been created for such purposes.
-    </p>
-    <p>
-      In general,
-      <ul>
-        <li>Start Date should be earlier than end date.</li>
-        <li>Add end date when you know when to or want to end a debate</li>
-        <li>Voting starts when debate ends,</li>
-        <li>Add date in which vote ends. Make sure judges has inputed their scores too if available.</li>
-        <li>Dates should be in the following 24hr format YYYY/MM/DD HR:MIN:SEC e.g 2017-12-08 20:59:28</li>
-      </ul>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Commenting on Posts and Debating.
+  </div>
+  <div class="content">
+    <p>Put simply; No mud slinging, no tantrum throwing.</p>
+    <p>Swear words and obscene statements are filtered in comments as you post them. If you do not see your comments , it must have been put up for moderation. Moderators regularly review comments, edit if suitable or delete if found unworthy.
+      Word filters are updated regularly to keep the site fresh and full of ideas.
+      Only write interesting comments and contributions. Make sure it is informative and cogents.
+      Plagiarism</p>
+    <p>It is necessary to avoid copying content from elsewhere without reference. The comment section supports <a href="http://commonmark.org/help/" target="_blank">markdown</a> for prettifying and ordering ideas.
     </p>
   </div>
-  </li>
-  <li>
-    <div class="collapsible-header"><i class="material-icons">access_time</i>Timing.</div>
-    <div class="collapsible-body">
-        <p>Closed Debate</p>
-        <p>
-          Debate starts at the stated time and may be modified by moderator due to reasons which may include unavailability of debaters. Debaters must have sought permission. Comments and opinions are open to all participating moderators and debaters when debate starts, closed to all others.
-          Voting is enabled after debate ends and rebuttal is ongoing. Only registered followers can vote and votes cannot be retrieved or changed after being cast. Registered followers can then give opinions, rebuttals or seek clarification on points raised.
-          Moderators close the debate when debate ends or at a preset time set.
-        </p>
-        <p>Open Debates.</p>
-        <p>The same rules apply to open debates except that no judges are necessary and all community users are free to take sides and post their points. It does not limit posting to any group. Moderators still do their jobs and decide when voting ends.
-        </p>
-      </div>
-  </li>
-  <li>
-    <div class="collapsible-header"><i class="material-icons">alarm</i>Notifications</div>
-    <div class="collapsible-body">
-      <p>
-        Logged in users can set notifications for each debate interested in following. Notifications are sent 15 minutes before commencement of debate to confirmed emails of followers. Your email provider may try to spam notifications from us, so add us to your address list or “mark as not spam”.
-      </p>
-      <p>Notifications are automatically sent to moderators, judges and debaters an hour before commencement of debate. For open debates, only moderators get notified.
-        Regular notifications may be sent to update you on happenings and hot debates.
-      </p>
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header"><i class="material-icons">playlist_add_check</i>Judging debates</div>
-    <div class="collapsible-body">
-      Judges access debaters as a group and on individual basis. Debaters are accessed on the following criteria;
-      <ul>
-        <li>Grammar/Vocabulary</li>
-        <li>Articulation/Enunciation</li>
-        <li>Brevity</li>
-      </ul>
-      <p>
-      Each of these are scored on a scale of 10 for each debater and adds up to the group’s average score of 30.
-      N.B: Votes make up 70% (and may be increased for use case) of total points and may be the only judging criteria in open debates or debates excluding judges’ observation.
-       Each judge gives his verdict (in his admin panel), collated and added to votes, to get the winner.
-     </p>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Moderation.
+  </div>
+  <div class="content">
+    <p>Debate moderation is a criticial aspect of the whole setup and we have put in place modalities to achieve that.
+    For example, comments are automatically checked for obscence words and place in moderation if found.
+    A supermod is required to review the comments and modify or delete if found unworthy.
+    Our word database is updated regularly and suggestions could also be made to block out particular words or phrases.
+  </p>
+  <p>
+    When a user posts a debate, he/she is auto made a moderator. It gives him the chance to add debaters and regulate debate timing.
+    Additional moderators can also be added when required.
+    A dashboard has been created for such purposes.
+  </p>
+  <p>
+    In general,
+    <ul class="list">
+      <li>Start Date should be earlier than end date.</li>
+      <li>Add end date when you know when to or want to end a debate</li>
+      <li>Voting starts when debate ends,</li>
+      <li>Add date in which vote ends. Make sure judges has inputed their scores too if available.</li>
+      <li>Dates should be in the following 24hr format YYYY/MM/DD HR:MIN:SEC e.g 2017-12-08 20:59:28</li>
+    </ul>
+  </p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Timing.
+  </div>
+  <div class="content">
+    <p>Closed Debate</p>
     <p>
-     <ul>
-       <li>Score is on a scale of ten for each team.</li>
-       <li>Any observation during debate should be written in the observation box. Details of scores can also be included.</li>
-       <li>Scores should be fair and just</li>
-     </ul>
+      Debate starts at the stated time and may be modified by moderator due to reasons which may include unavailability of debaters. Debaters must have sought permission. Comments and opinions are open to all participating moderators and debaters when debate starts, closed to all others.
+      Voting is enabled after debate ends and rebuttal is ongoing. Only registered followers can vote and votes cannot be retrieved or changed after being cast. Registered followers can then give opinions, rebuttals or seek clarification on points raised.
+      Moderators close the debate when debate ends or at a preset time set.
+    </p>
+    <p>Open Debates.</p>
+    <p>The same rules apply to open debates except that no judges are necessary and all community users are free to take sides and post their points. It does not limit posting to any group. Moderators still do their jobs and decide when voting ends.
+    </p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Notification.
+  </div>
+  <div class="content">
+    <p>
+      Logged in users can set notifications for each debate interested in following. Notifications are sent 15 minutes before commencement of debate to confirmed emails of followers. Your email provider may try to spam notifications from us, so add us to your address list or “mark as not spam”.
+    </p>
+    <p>Notifications are automatically sent to moderators, judges and debaters an hour before commencement of debate. For open debates, only moderators get notified.
+      Regular notifications may be sent to update you on happenings and hot debates.
+    </p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Judging.
+  </div>
+  <div class="content">
+    <p>Judges access debaters as a group and on individual basis. Debaters are accessed on the following criteria;</p>
+    <ul class="list">
+      <li>Grammar/Vocabulary</li>
+      <li>Articulation/Enunciation</li>
+      <li>Brevity</li>
+    </ul>
+    <p>
+    Each of these are scored on a scale of 10 for each debater and adds up to the group’s average score of 30.
+    N.B: Votes make up 70% (and may be increased for use case) of total points and may be the only judging criteria in open debates or debates excluding judges’ observation.
+     Each judge gives his verdict (in his admin panel), collated and added to votes, to get the winner.
    </p>
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header"><i class="material-icons">check_box</i>Votes</div>
-    <div class="collapsible-body">
-      <p>
-        Votes is considered a major factor in winning debates since it takes up a larger chunk of the scores. Having a huge supporter base indicates the acceptance of your stated points by the community.
-       </p>
-        <p>Vote score = (group totalvotes/total no. of voters)xvote percent</p>
-        <p>Vote percent defaults at 100 for open debates and 70 for closed debates. Remaining 30 is scored by judges</p>
-      </p>Total score = votes score + average judges score</p>
-        <p>Only registered users can vote and only opened during the voting period. It cannot be retrieved or changed on submission.
-      </p>
-    </div>
-  </li>
-  <li>
-    <div class="collapsible-header"><i class="material-icons">stars</i>Reward and Badges</div>
-    <div class="collapsible-body">
-      <p>
-        Badges are awarded to users, debaters, judges, modrators and commenters for performing tasks
-        or reaching a milestone. Go to <a href="{% url 'debate:see_badge' %}">badges</a> to view all available badges.
-        Sponsors are wanted. Send a mail to support[at]talkatif.com.
-        Some badges may be necessary to explore some aspects of the community.
-      </p>
-    </div>
-  </li>
-
-</ul>
-
+  <p>
+   <ul>
+     <li>Score is on a scale of ten for each team.</li>
+     <li>Any observation during debate should be written in the observation box. Details of scores can also be included.</li>
+     <li>Scores should be fair and just</li>
+   </ul>
+  </p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Voting.
+  </div>
+  <div class="content">
+    <p>
+      Votes is considered a major factor in winning debates since it takes up a larger chunk of the scores. Having a huge supporter base indicates the acceptance of your stated points by the community.
+     </p>
+      <p>Vote score = (group totalvotes/total no. of voters)xvote percent</p>
+      <p>Vote percent defaults at 100 for open debates and 70 for closed debates. Remaining 30 is scored by judges</p>
+    </p>Total score = votes score + average judges score</p>
+      <p>Only registered users can vote and only opened during the voting period. It cannot be retrieved or changed on submission.
+    </p>
+  </div>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    Rewards.
+  </div>
+  <div class="content">
+    <p>
+      Badges are awarded to users, debaters, judges, modrators and commenters for performing tasks
+      or reaching a milestone. Go to <a href="{% url 'debate:see_badge' %}">badges</a> to view all available badges.
+      Sponsors are wanted. Send a mail to support[at]talkatif.com.
+      Some badges may be necessary to explore some aspects of the community.
+    </p>
+  </div>
+</div>
+  <br>
   <p>Rules are constantly being reviewed and updated to meet the standards of the community. Endeavor to keep checking back for changes.</p>
   <p>Thank you for being a part of the community.</p>
   <p>That’s all for now. Enjoy!!</p>
   <p>The talkatif Team.</p>
-
-  </div>
-
-</div>
 
   {% endblock %}

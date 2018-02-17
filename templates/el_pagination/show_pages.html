@@ -1,24 +1,33 @@
-<!-- Paginate entries -->
-<ul class="pagination">
+<br><br>
+
+<div class="ui fluid grid">
+  <div class="two column row">
+
+  <div class="left floated column">
+<div class="ui yellow pagination menu">
 {% for page in pages %}
-      <li class="waves-effect"><a href="#!">{{ page|default_if_none:'<li>...</li>' }}</a></li>
+    {{ page|default_if_none:'<span class="item endless_separator">...</span>' }}
 {% endfor %}
-</ul>
+</div>
+
+</div>
 
 
 <!--Display goto form if page is more than 1 -->
+<div class="right floated column">
 {% if pages %}
-  <div class="row">
     {% if post.category %}
-    <form method="get" action="{% url 'discourse:goto_post_page' post.pk post.slug %}">
+    <form class="ui form" method="get" action="{% url 'discourse:goto_post_page' post.pk post.slug %}">
     {% else %}
-    <form method="get" action="{% url 'debate:goto_page' post.debate_category post.pk post.slug %}">
+    <form class="ui form" method="get" action="{% url 'debate:goto_page' post.debate_category post.pk post.slug %}">
     {% endif %}
-      <div class="input-field col s4 m2 right">
+      <div class="field">
         <input value='{{goto_page_no}}' name='page' id="go_to" type="text" class="validate">
         <label class="active" for="go_to">Go to Page</label>
       </div>
     </form>
-  </div>
 
 {% endif %}
+</div>
+</div>
+</div>

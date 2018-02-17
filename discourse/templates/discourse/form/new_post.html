@@ -7,51 +7,46 @@
 
 {% block content %}
 
-        <div class="row">
-          <div class="col m9 offset-m2">
-            <div class="card-panel">
-              {% if post_id %}
-              <h5 class="main_title">Edit this talk.{% else %}Add a new talk.</h5>
-              {% endif %}
-                <form class="" enctype="multipart/form-data" action="." method="post">
-                  {% csrf_token %}
-                    <div class="input-field">
-                      {{ form.title|safe}}
+      <h2 class="ui dividing header">
+        {% if post_id %}
+        Edit this talk.{% else %}Add a new talk.
+        {% endif %}
+      </h2>
+
+            <form class="ui form" enctype="multipart/form-data" action="." method="post">
+              {% csrf_token %}
+                <div class="required field">
+                    {{ form.title|safe}}
                       <label for="{{ form.title.auto_id }}">{{form.title.label_tag}}</label>
                     </div>
-                      {{ form.summary}}
+
+                    {{ form.summary}}
                     {% if form.summary.help_text %}
                     <small class="grey-text">{{ form.summary.help_text|markdownify }}</small>
                     {% endif %}
 
-                    <div class="input-field">
+                    <div class="field">
                       <label>Tags: e.g. music, culture, politics e.t.c.</label>
                       {{ form.tags}}
                     </div>
 
                   {% if post_id %}
-                  <div class="row">
-                    <button type="submit" class="yellow btn black-text">Update Talk</button>
+                  <div class="ui row">
+                    <button type="submit" class="ui basic secondary button">Update Talk</button>
                         OR <span><a href={% url "discourse:post_list" %}>Return to home</a>
                   </div>
                   {% else %}
-                  <p>
+                  <div class="ui checkbox">
                     <input type="checkbox" id="verified" required />
                     <label for="verified">I would be responsible for what I post.</label>
-                  </p><br>
+                  </div><br><br>
 
                   <div class="row">
-                    <button type="submit" class="yellow btn black-text">Add Talk</button>
+                    <button type="submit" class="ui basic primary button">Add Talk</button>
                     OR <span><a href={% url "discourse:post_list" %}>Return to talks</a>
                   </div>
                   {% endif %}
             </form>
             {{form.media}}
-        </div><!-- End of card -->
-
-
-      </div>
-
-    </div>
 
 {% endblock %}

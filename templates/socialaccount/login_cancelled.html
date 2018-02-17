@@ -6,12 +6,11 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col offset-m3 m6">
-    <div class="card-panel">
+<div class="ui fluid card">
+  <div class="content">
 
 
-<h5>{% trans "Login Cancelled" %}</h5>
+<h5 class="ui dividing header">{% trans "Login Cancelled" %}</h5>
 
 {% url 'account_login' as login_url %}
 
@@ -19,5 +18,5 @@
 
     </div>
   </div>
-</div>
+
 {% endblock %}

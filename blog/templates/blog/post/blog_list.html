@@ -27,7 +27,7 @@
             {% else %}
               <img src="{{names.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
             {% endif %}
-            {{post.author.get_full_name}}</a>
+            {{post.author}}</a>
         </div>
         <div class="content">
           <div class="header"><a href="{{post.get_absolute_url}}">{{post.title}}</a></div>
@@ -38,7 +38,10 @@
             <br>
           </div>
           <div class="description">
-            {{post.body|truncatechars:300|safe_markdown}}
+            {{post.body|truncatewords:50|safe_markdown}}
+            {% ifnotequal post.body|truncatewords_html:50|length post.body|truncatewords_html:51|length %}
+              <a href="{{post.get_absolute_url}}">read more...</a>
+            {% endifnotequal %}
           </div>
         </div>
         <div class="content">

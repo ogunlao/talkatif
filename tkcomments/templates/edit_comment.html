@@ -10,8 +10,8 @@
 
 {% block content %}
 
-      <h1 class="main_title">Edit comment.</h1>
-      <form class="col s12" method="POST" action="./?next={% get_comment_permalink comment %}">
+      <h3 class="ui dividing header">Edit comment.</h3>
+      <form class="ui form" class="col s12" method="POST" action="./?next={% get_comment_permalink comment %}">
             <input type="hidden" name="next" value="{% get_comment_permalink comment %}"/>
             {% csrf_token %}
             <div class="red-text hidden" data-comment-element="errors"></div>

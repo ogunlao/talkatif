@@ -1,27 +1,37 @@
-<footer class="amber darken-1 page-footer">
-        <div class="container">
-          <div class="row">
-            <div class="col l6 s12">
-              <h5 class="white-text">Talkatif</h5>
-              <p class="white-text">This talk and debating platform is here to serve your needs. Don't keep your opinions to yourself,
-              it can make a difference, it can change a heart.</p>
-            </div>
-            <div class="col l4 offset-l2 s12">
-              <h5 class="white-text">Links</h5>
-              <ul>
-                <li><a class="white-text text-lighten-3" href="{% url 'debate:debate_list' %}">Debate</a></li>
-                <li><a class="white-text text-lighten-3" href="{% url 'discourse:post_list' %}">Talks</a></li>
-                <li><a class="white-text text-lighten-3" href="{% url 'debate:rules_guidelines' %}">Rules</a></li>
-                <li><a class="white-text text-lighten-3" href="{% url 'faq' %}">FAQ</a></li>
-                <li><a class="white-text text-lighten-3" href="/blog/">Blog</a></li>
-              </ul>
-            </div>
-          </div>
+<br><br>
+
+<footer class="ui yellow  vertical footer segment">
+  <div class="ui container">
+    <div class="ui stackable  divided equal height stackable grid">
+      <div class="three wide column">
+        <h4 class="ui  header">About</h4>
+        <div class="ui  link list">
+          <a href="{% url 'debate:rules_guidelines' %}" class="item">Debate Rules</a>
+          <a href="{% url 'faq' %}" class="item">Site FAQ</a>
+          <a href="{% url 'debate:see_badge' %}" class="item">Badges</a>
         </div>
-        <div class="footer-copyright">
-          <div class="container">
-          &copy; Talkatif {% now 'Y' %}
-          <span class="white-text text-lighten-4 right" href="#!">With love from Laolu</span>
-          </div>
+      </div>
+      <div class="three wide column">
+        <h4 class="ui  header">Sections</h4>
+        <div class="ui  link list">
+          <a href="{% url 'debate:debate_list' %}" class="item">Debates</a>
+          <a href="{% url 'debate:debate_list' %}" class="item">Arguments</a>
+          <a href="{% url 'discourse:post_list' %}" class="item">Talks</a>
+          <a href="{% url 'blog:blog_list' %}" class="item">Blog</a>
         </div>
-      </footer>
+      </div>
+      <div class="seven wide column">
+        <h4 class="ui  header">Talkatif</h4>
+        <p>This talk and debating platform is here to serve your needs. Don't keep your opinions to yourself,
+        it can make a difference, it can change a heart.</p>
+
+        <br>
+        <div class="ui row">
+        &copy; Talkatif {% now 'Y' %}
+        <span class="" href="#!">With love from Laolu</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</footer>

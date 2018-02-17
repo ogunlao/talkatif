@@ -26,7 +26,7 @@
     {% endif %}
   </a>
   <div class="content">
-    <a class="author">{{ comment.user_name }}</a>
+    <a class="author">{{ comment.user }}</a>
     <a class="time">{{ comment.submit_date|date:"N j, Y, P" }}</a>
     <div class="text">
       {{ comment.comment|safe_markdown }}

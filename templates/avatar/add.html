@@ -2,8 +2,10 @@
 {% load i18n avatar_tags %}
 {% block title %}Add Avatar{% endblock title %}
 {% block content %}
-<div class="row">
-  <div class="col s12 m2 offset-m2">
+
+
+<div class="ui fluid card">
+  <div class="content">
     <p>{% trans "Your current avatar: " %}</p>
     {% if avatars %}
       {% avatar user %}
@@ -11,10 +13,13 @@
     <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
     {% endif %}
   </div>
-  <div class="col s12 m2">
-    <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+  <div class="content">
+    <form class="ui form" enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+        <div class="field">
         {{ upload_avatar_form.as_p }}
-        <p>{% csrf_token %}<input type="submit" value="{% trans "Upload New Image" %}" /></p>
+      </div>
+        <p>{% csrf_token %}
+          <button class="ui secondary basic button" type="submit">{% trans "Upload New Image" %}</button></p>
     </form>
   </div>
 </div>

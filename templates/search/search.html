@@ -2,9 +2,10 @@
 {% load staticfiles %}
 {% load comments %}
 {% load el_pagination_tags %}
-{% load markdownify %}
 {% load comments_xtd %}
 {% load humanize %}
+{% load avatar_tags %}
+{% load martortags %}
 
 
 {% block title %}Search Result for {{query}}{% endblock %}
@@ -12,82 +13,106 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col s12 m6 offset-m2">
     {% if query %}
 
         {% for result in page.object_list %}
 
+{% if result.debate_category %}
+    <div class="ui fluid card">
+      <div class="content">
 
-    <div class="card">
-      <div class="card-content">
+            <div class="right floated meta">{{result.object.created|naturaltime}}</div>
+            <a href="{{result.object.author.profile.get_absolute_url}}">
+              {% if result.object.author.author|has_avatar %}
+                {% avatar result.object.author 35 class="ui avatar image" %}
+              {% else %}
+                <img src="{{result.object.author.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
+              {% endif %}
+              {{result.object.author.get_full_name}}</a>
+          </div>
+          <div class="content">
+            <div class="header"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></div>
+            <div class="meta"><i class="hourglass start icon"></i> {{result.begin|naturaltime}}</div>
+            <div class="meta">
+              {% for tag in result.tags %}
+              <a href="{% url 'debate:debate_list_by_tag' tag|slugify  %}" class="ui blue basic label">{{ tag }}</a>
+              {% endfor %}
+              <br>
+            </div>
+            <div class="description">
+              {{result.summary|truncatewords:50|safe_markdown}}
+              {% ifnotequal result.summary|truncatewords_html:50|length result.summary|truncatewords_html:51|length %}
+                <a href="{{result.object.get_absolute_url}}">read more...</a>
+              {% endifnotequal %}
 
-
-        {% if result.debate_category %}
-        {% for tag in result.tags %}
-          <a href="{% url 'debate:debate_list_by_tag' tag|slugify  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag }}</span></a>
-        {% endfor %}
-        <h5 class="main_title"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></h5>
-        <p>{{result.summary|truncatechars:300|markdownify}}</p>
-        <small>
-        {% if result.end %} Ends {{result.end|naturaltime}}
-          {% elif result.begin %}
-          Began {{result.begin|naturaltime}}
-          {% else %} Debate starts soon.
-        {% endif %}
-
-        ,By <a href="{{result.object.author.profile.get_absolute_url}}">{{result.object.author.get_full_name}}</a>
-        <p><strong>Debaters:</strong>
-        {% if result.debate_category == "closed" and result.supporting_debaters or result.opposing_debaters %}
-          {% for author in result.supporting_debaters %} <a href="{{result.object.author.profile.get_absolute_url}}">{{ author}}</a>{% endfor %}
-          {% for author in result.opposing_debaters %}{% if forloop.first %}, {% endif %}<a href="{{result.object.author.profile.get_absolute_url}}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
-          {% elif result.debate_category == "open" %}
-          Debate open for comments from all.
-          {% else %}
-          No debaters yet.
-        {% endif %}
-      </small>
-
-          {% get_comment_count for result.object as comment_count %}
-          <span class="right">
-            {{ comment_count }}
-            <i class="tiny material-icons">comment</i>
-            {{ result.object.total_likes }}
-            <i class="tiny material-icons">thumb_up</i>
-          </span>
-        </p>
-
+            </div>
+          </div>
+          <div class="content">
+            <span class="right floated">
+              <i class="heart outline like icon"></i>
+              {{ result.object.total_likes }} like{{ result.object.total_likes|pluralize }}
+            </span>
+            <i class="comment icon"></i>
+            {% get_comment_count for result.object as comment_count %}
+            {{ comment_count }} comment{{ comment_count|pluralize }}
+          </div>
+          <div class="extra content">
+            <i class="users icon"></i>
+            {% if result.debate_category == "closed" and result.supporting_debaters or result.opposing_debaters %}
+              {% for author in result.supporting_debaters %} <a href="{{result.object.author.profile.get_absolute_url}}">{{ author}}</a>{% endfor %}
+              {% for author in result.opposing_debaters %}{% if forloop.first %}, {% endif %}<a href="{{result.object.author.profile.get_absolute_url}}">{{ author }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+              {% elif result.debate_category == "open" %}
+              Debate open for comments from all.
+              {% else %}
+              No debaters yet.
+              {% endif %}
+      </div>
+    </div>
         {% else %}
-
-        {% for tag in result.tags %}
-          <a href="{% url 'discourse:post_list_by_tag' tag|slugify  %}"><span class="new badge amber lighten-4 black-text" data-badge-caption="">{{ tag }}</span></a>
-        {% endfor %}
-        <h5 class="main_title"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></h5>
-        <p>{{result.summary|truncatechars:300|markdownify|linebreaks}}</p>
-        <small>Created {{result.created|naturaltime}}
-          ,By <a href="{{result.object.author.profile.get_absolute_url}}">{{result.object.author.get_full_name}}</a>
-
-          {% get_comment_count for result.object as comment_count %}
-          <span class="right">
-            {{ comment_count }}
-            <i class="tiny material-icons">comment</i>
-            {{ result.object.total_likes }}
-            <i class="tiny material-icons">thumb_up</i>
-          </span>
-
-        </small>
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="right floated meta">{{result.created|naturaltime}}</div>
+            <a href="{{result.object.author.profile.get_absolute_url}}">
+              {% if result.object.author|has_avatar %}
+                {% avatar result.object.author 35 class="ui avatar image" %}
+              {% else %}
+                <img src="{{result.object.author.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
+              {% endif %}
+              {{result.object.author.get_full_name}}</a>
+          </div>
+          <div class="content">
+            <div class="header"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></div>
+            <div class="meta">
+              {% for tag in result.tags %}
+              <a href="{% url 'discourse:post_list_by_tag' tag|slugify  %}" class="ui blue basic label">{{ tag }}</a>
+              {% endfor %}
+              <br>
+            </div>
+            <div class="description">
+              {{result.summary|truncatewords:50|safe_markdown}}
+              {% ifnotequal result.summary|truncatewords_html:50|length result.summary|truncatewords_html:51|length %}
+                <a href="{{result.object.get_absolute_url}}">read more...</a>
+              {% endifnotequal %}
+            </div>
+          </div>
+          <div class="content">
+            <span class="right floated">
+              <i class="heart outline like icon"></i>
+              {{ result.object.total_likes }} like{{ post.total_likes|pluralize }}
+            </span>
+            <i class="comment icon"></i>
+            {% get_comment_count for result.object as comment_count %}
+            {{ comment_count }} comment{{ comment_count|pluralize }}
+          </div>
+        </div>
 
         {% endif %}
-        </div>
-      </div><!-- End of card -->
+
 
           {% endfor %}
 
-          {% else %}
+        {% else %}
             <p>There are no results for this search.</p>
-          {% endif %}
-</div>
-
-</div>
+      {% endif %}
 
 {% endblock %}

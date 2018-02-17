@@ -3,13 +3,10 @@
 
 {% block title %}{% trans "Confirm Deactivation of Profile" %}{% endblock %}
 
-
 {% block content %}
 
-<div class="row">
-
-  <div class="col m6 offset-m3">
-    <div class="card-panel">
+  <div class="ui fluid card">
+    <div class="content">
       <h4>Dear {{request.user.get_full_name}},<br>We do not like to see you leave!!</h4>
       <p>
       Why do you want to leave? Do you have any concerns that needs to be attended to?
@@ -18,21 +15,12 @@
     </p>
 
 
-    <small>By clicking this button, your account would be deactivated. You would be unable to login or use the app.
-      Your profile would be deactivated(not deleted) and all your previous posts would still be visible. If you want to reactivate
-      at another time, send a mail to <a href="mailto:{{admin_email}}">{{admin_email}}</a> with "Reactivation"
-      as title and any other details in the body.
-      <br> Make sure you send the mail with your registered email address.
-      <br>Thank you for using Talkatif.
-    </small>
-      <p>
-      <form method="post" action=".">
+      <form class="ui form" method="post" action=".">
         {% csrf_token %}
-        <button type="submit" class="red btn">Deactivate Profile</p>
+        <button type="submit" class="ui negative basic button">Deactivate Profile</button>
       </form>
-      </p>
+
     </div>
   </div>
-</div>
 
   {% endblock %}

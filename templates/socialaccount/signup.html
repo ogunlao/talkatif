@@ -6,28 +6,31 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col offset-m3 m6">
-    <div class="card-panel">
+  <div class="ui fluid card">
+    <div class="content">
 
-    <h5>{% trans "Sign Up" %}</h5>
+    <h3 class="ui dividing header">{% trans "Sign Up" %}</h3>
 
 <p>{% blocktrans with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
 {{site_name}}. As a final step, please complete the following form:{% endblocktrans %}</p>
 
-<form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+<form class="ui form" class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
   {% csrf_token %}
-  {{ form.as_p }}
+  {% for field in form %}
+  <div class="field {% if field.errors %}error{% endif %}">
+    {{field}}
+  </div>
+  {% if field.errors %}<p>{{field.errors}}</p>{% endif %}
+  {% endfor %}
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
-  <button type="submit" class="blue btn">{% trans "Sign Up" %} &raquo;</button>
+  <button type="submit" class="ui basic blue button">{% trans "Sign Up" %} &raquo;</button>
 </form>
 
 <p>You may be required to verify your email address on next login.</p>
 
     </div>
   </div>
-</div>
 
 {% endblock %}

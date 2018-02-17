@@ -179,7 +179,6 @@ class Profile(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True,
                                         help_text="e.g Lagos, New York")
     country = CountryField(blank_label='(select country)', null=True, blank=True)
-    participation_type = models.ManyToManyField('Participation', blank=True, related_name='participation_type')
     notify = models.BooleanField(default = True, help_text="Notify me of upcoming debates.")
     gender = models.CharField(choices=GENDER_CHOICES, max_length=6, blank=True, null=True)
 
@@ -194,7 +193,7 @@ class Profile(models.Model):
         """
         String for representing the Custom User Model object (in Admin site etc.)
         """
-        return self.user.get_full_name()
+        return self.user.username
 
 class PostDebater(models.Model):
     """

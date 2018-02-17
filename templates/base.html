@@ -19,23 +19,25 @@
   <!-- Site Properties -->
   <title>Talkatif - {% block title %}Home{% endblock %}</title>
 
-  <link type="text/css" href="{% static 'dist/semantic.min.css' %}" rel="stylesheet" />
+  <link type="text/css" href="{% static 'serve/semantic.min.css' %}" rel="stylesheet" />
   <script src="{% static 'js/vendor/jquery.js' %}"></script>
-  <script src="{% static 'dist/semantic.min.js' %}"></script>
+  <script src="{% static 'serve/semantic.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" >
   <!-- Datetime picker dependencies -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/serve/flatpickr.min.css">
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/serve/themes/material_blue.css">
   {% block extra_css %}{% endblock extra_css %}
-  <link type="text/css" href="{% static 'dist/components/menu.min.css' %}" rel="stylesheet" />
+  <link type="text/css" href="{% static 'serve/components/menu.min.css' %}" rel="stylesheet" />
+  <link type="text/css" href="{% static 'serve/components/message.min.css' %}" rel="stylesheet" />
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
 
 </head>
 
 <body>
 
-  <div class="ui secondary menu">
-    <div class="ui text container">
+{% if not request.user_agent.is_mobile %}
+  <div class="ui blue menu">
+    <div class="ui container">
       <a href="{% url 'all_list' %}" class="header item">
         <img class="logo" src="{% static 'logo/talkatif.png' %}" alt = "ffng"/>
       </a>
@@ -49,10 +51,9 @@
       <a href= "{% url 'debate:debate_list_by_category' 'open' %}" class="{% if request.path == url2 %}active{% endif %} item">Argument{% if daily_argument > 0 %}
           <div class="floating ui red label">{{daily_argument}}</div>{% endif %}</a>
       {% url 'discourse:post_list' as url3 %}
-      <a href="{% url 'discourse:post_list' %}" class="{% if request.path == url3 %}active{% endif %} item">Talks{% if daily_discourse >= 0 %}
-          <div class="floating ui red label">{{daily_discourse}}</div>{% endif %}</a>
-
-      <div class="ui item search">
+      <a href="{% url 'discourse:post_list' %}" class="{% if request.path == url3 %}active{% endif %} item">Talks{% if daily_talk > 0 %}
+          <div class="floating ui red label">{{daily_talk}}</div>{% endif %}</a>
+      <div class="ui large item search">
         <form method="get" action="/search/">
           <div class="ui left mini icon input">
             <i class="inverted circular search link icon"></i>
@@ -60,38 +61,95 @@
           </div>
         </form>
       </div>
-      <div class="item">
-      <a href="{% url 'profile' user %}" class="ui label">
-        {% if item.comment.user|has_avatar %}
-        {% avatar user 35 class="ui right spaced avatar image" %}
-        {% else %}
-          <img src="{{user.profile.profile_image_url}}" class="ui right spaced avatar image" width="35" height="35" />
-        {% endif %}
-
-        {{ request.user.get_full_name|title }}
-      </a></div>
-      <div class="ui dropdown item" tabindex="0">
-        <i class="settings icon"></i>
-        <i class="dropdown icon"></i>
-        <div class="menu transition hidden" tabindex="-1">
-          {% if user.is_authenticated %}
-          <div class="item"><a class="" href="{% url 'profile' request.user %}">Profile</a></div>
-          <div class="item"><a class="" href="{% url 'account_logout' %}">Sign Out</a></div>
-          <div class="item"><a class="" href="{% url 'account_reset_password' %}">Change Password</a></div>
-          {% else %}
-          <div class="item"><a href="{% url 'account_login' %}">Sign In</a></div>
-          <div class="item"><a href="{% url 'account_signup' %}">Sign Up</a></div>
-          {% endif %}
-          <div class="divider"></div>
-          <div class="item"><a class="" href="{% url 'debate:see_badge' %}">Badges</a></div>
-          <div class="divider"></div>
-          <div class="item"><a class="" href="{% url 'debate:rules_guidelines' %}">Rules</a></div>
-          <div class="item"><a class="" href="{% url 'faq' %}">FAQ</a></div>
+      <div class="right menu">
+        {% if not user.is_authenticated %}
+        <div class="item">
+          <a href="{% url 'account_login' %}" class="ui basic yellow button">Log in</a>
         </div>
+        <div class="item">
+          <a href="{% url 'account_signup' %}" class="ui primary basic button">Sign Up</a>
+        </div>
+        {% else %}
+
+        <a class="item" href="{% url 'profile' user %}">
+          {% if user|has_avatar %}
+          {% avatar user 35 class="ui right spaced avatar image" %}
+          {% else %}
+            <img src="{{user.profile.profile_image_url}}" class="ui right spaced avatar image" width="35" height="35" />
+          {% endif %}
+          Welcome, {{ request.user }}
+        </a>
+
+
+        <div class="ui dropdown item" tabindex="0">
+          <i class="settings icon"></i>
+          <i class="dropdown icon"></i>
+          <div class="menu transition hidden" tabindex="-1">
+            <a class="item" href="{% url 'profile' request.user %}">Profile</a>
+            <a class="item" href="{% url 'account_logout' %}">Sign Out</a>
+            <a class="item" href="{% url 'account_reset_password' %}">Change Password</a>
+            <div class="divider"></div>
+            <a class="item" href="{% url 'debate:see_badge' %}">Badges</a>
+            <div class="divider"></div>
+            <a class="item" href="{% url 'debate:rules_guidelines' %}">Rules</a>
+            <a class="item" href="{% url 'faq' %}">FAQ</a>
+          </div>
+        </div>
+
+        {% endif %}
       </div>
     </div>
   </div>
 
+{% else %}
+
+<div class="ui navbar menu">
+                <a href="{% url 'all_list' %}" class="header item">
+                  <img class="logo" src="{% static 'logo/talkatif.png' %}" alt = "ffng"/>
+                </a>
+                <div class="ui tiny item search">
+                  <form method="get" action="/search/">
+                    <div class="ui left mini icon input">
+                      <i class="inverted circular search link icon"></i>
+                      <input class="prompt" id="id_q" name="q" type="search" placeholder="search talkatif...">
+                    </div>
+                  </form>
+                </div>
+                <div class="right menu open">
+                    <a href="" class="menu item">
+                        <i class="blue sidebar icon"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ui vertical navbar menu">
+              <a href="{% url 'all_list'  %}" class="active item">Home</a>
+              <a href="{% url 'debate:debate_list_by_category' 'closed' %}" class="item">Debates</a>
+              <a href= "{% url 'debate:debate_list_by_category' 'open' %}" class="item">Arguments</a>
+              <a href="{% url 'discourse:post_list' %}" class="item">Talks</a>
+
+                <div class="menu">
+                  {% if not user.is_authenticated %}
+                  <div class="item">
+                    <a href="{% url 'account_login' %}" class="ui basic yellow button">Log in</a>
+                  </div>
+                  <div class="item">
+                    <a href="{% url 'account_signup' %}" class="ui primary basic button">Sign Up</a>
+                  </div>
+                  {% block extra_nav %}{% endblock %}
+                  {% else %}
+                  <a class="item" href="{% url 'profile' request.user %}">Profile</a>
+                  <a class="item" href="{% url 'account_logout' %}">Sign Out</a>
+                  <a class="item" href="{% url 'account_reset_password' %}">Change Password</a>
+                  <div class="divider"></div>
+                  <a class="item" href="{% url 'debate:see_badge' %}">Badges</a>
+                  <div class="divider"></div>
+                  <a class="item" href="{% url 'debate:rules_guidelines' %}">Rules</a>
+                  <a class="item" href="{% url 'faq' %}">FAQ</a>
+                  {% endif %}
+
+                </div>
+            </div>
+{% endif %}
 
   {% block bottom_nav %}
   {% endblock bottom_nav %}
@@ -99,7 +157,7 @@
 
   {% block body %}
 
-
+<main>
   <div class="ui container">
     <div class="ui stackable three column grid">
       <div class="three wide column">
@@ -126,15 +184,16 @@
       </div>
     </div>
   </div>
+</main>
 
   {% endblock body %}
 
 
-<!-- {% include "footer.html" %} -->
+ {% include "footer.html" %}
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> <!-- Datetime picker -->
-  <script src="{% static 'js/main.js' %}" type="text/javascript"></script>
   {% block extra_js %}{% endblock extra_js %}
+  <script src="{% static 'js/main.js' %}" type="text/javascript"></script>
 
   <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
