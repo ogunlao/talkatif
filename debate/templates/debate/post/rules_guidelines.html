@@ -1,6 +1,8 @@
 {% extends "debate/base.html" %}
 {% block title %}Debate Rules and Guide {% endblock %}
+{% load staticfiles %}
 {% block extra_js %}<script src="{% static 'serve/components/accordion.min.js' %}"></script>{% endblock extra_js %}
+
 {% block content %}
 
 {% load i18n %}
@@ -148,4 +150,4 @@
   <p>That’s all for now. Enjoy!!</p>
   <p>The talkatif Team.</p>
 
-  {% endblock %}
+  {% endblock content %}
