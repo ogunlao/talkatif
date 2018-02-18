@@ -281,8 +281,6 @@ COMMENTS_APP = 'django_comments_xtd'
 COMMENTS_XTD_MODEL = 'tkcomments.models.TkComment' #2
 COMMENTS_XTD_FORM_CLASS = 'tkcomments.forms.TkCommentForm' #3
 
-COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
-
 #Comment Threading settings
 COMMENTS_XTD_MAX_THREAD_LEVEL = 3  # default is 0
 COMMENTS_XTD_LIST_ORDER = ('thread_id', 'order')  # default is ('thread_id', 'order')

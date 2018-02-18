@@ -19,7 +19,7 @@
       </a>
 
     <div class="content">
-      <a href="{{item.comment.user.profile.get_absolute_url}}" class="author">{{ item.comment.user_ }}</a>{% if item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="red">{% trans "SuperMod" %}</span>{% endif %}
+      <a href="{{item.comment.user.profile.get_absolute_url}}" class="author">{{ item.comment.user }}</a>{% if item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="red">{% trans "SuperMod" %}</span>{% endif %}
       <div class="metadata">
         <span class="date">{{ item.comment.submit_date|naturaltime }}</span>
         &nbsp;-&nbsp;
@@ -110,5 +110,5 @@
   {% if item.comment.level == 0 %}
   {% show_pages %}
   {% endif %}
-  
+
 {% endfor %}
