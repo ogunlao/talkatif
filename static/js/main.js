@@ -43,5 +43,4 @@ $(document).ready(function() {
   $('#multi-select')
   .dropdown();
 
-
 });

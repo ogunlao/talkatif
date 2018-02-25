@@ -1,0 +1,102 @@
+{% extends "account/base.html" %}
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% load account socialaccount %}
+{% providers_media_js %}
+<a href="{% provider_login_url "facebook" method="js_sdk" %}">Facebook Connect</a>
+
+
+{% block title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+    {% get_providers as socialaccount_providers %}
+
+
+    {% if socialaccount_providers %}
+    <div class="ui three column equal grid">
+
+    <div class="computer tablet only column">
+    <a href="/accounts/facebook/login/?process=login" class="ui facebook button">
+      <i class="facebook icon"></i>
+      Facebook
+    </a>
+    </div>
+    <div class="mobile only column">
+    <a href="/accounts/facebook/login/?process=login" class="ui facebook button">
+      <i class="facebook icon"></i>
+    </a>
+    </div>
+
+    <div class="computer tablet only column">
+    <a href="/accounts/twitter/login" class="ui twitter button">
+      <i class="twitter icon"></i>
+      Twitter
+    </a>
+    </div>
+    <div class="mobile only column">
+    <a href="/accounts/twitter/login" class="ui twitter button">
+      <i class="twitter icon"></i>
+    </a>
+    </div>
+
+    <div class="computer tablet only column">
+    <a href="/accounts/google/login" class="ui google plus button">
+      <i class="google plus icon"></i>
+      Google Plus
+    </a>
+    </div>
+    <div class="mobile only column">
+    <a href="/accounts/google/login" class="ui google plus button">
+      <i class="google plus icon"></i>
+    </a>
+    </div>
+    {% include "socialaccount/snippets/login_extra.html" %}
+    </div>
+    {% endif %}
+
+    <h4 class="ui horizontal header divider">
+      <a href="#">OR</a>
+    </h4>
+
+      <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        <h2 class="ui dividing header">{% trans "Sign Up" %}<span class="small_text"> or <a href="{{ login_url }}">{% trans "login" %}</a> if you already have an account.</span></h2>
+          <div class="ui form">{% csrf_token %}
+            <div class="two fields">
+              <div class="required field {% if form.first_name.errors %}error{% endif %}">
+                {{ form.first_name.label_tag }}
+                {{ form.first_name}}
+                <p><small class="red text">{{ form.first_name.errors }}</small></p>
+              </div>
+
+              <div class="required field {% if form.last_name.errors %}error{% endif %}">
+                {{ form.last_name.label_tag }}
+                {{ form.last_name}}
+                <p><small class="red text">{{ form.last_name.errors }}</small></p>
+              </div>
+
+            </div>
+
+            <div class="two fields">
+              <div class="required field {% if form.email.errors %}error{% endif %}">
+                {{ form.email.label_tag }}
+                {{ form.email}}
+                <p><small class="red text">{{ form.email.errors }}</small></p>
+              </div>
+
+              <div class="required field {% if form.password.errors %}error{% endif %}">
+                {{ form.password.label_tag }}
+                {{ form.password}}
+                <p><small class="red text">{{ form.password.errors }}</small></p>
+              </div>
+
+            </div>
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <button class="ui basic primary button" type="submit">{% trans "Sign Up" %} &raquo;</button>
+          </div>
+        </form>
+
+
+{% endblock %}

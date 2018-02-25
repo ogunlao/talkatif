@@ -1,7 +1,7 @@
 {% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
 {% load comments_xtd %}
-{% load debate_filter %}
+{% load talkatif_filter %}
 {% load avatar_tags %}
 {% load martortags %}
 
@@ -9,7 +9,7 @@
 
 {% block content %}
 
-        <h3>{% trans "Preview your comment for:" %}<br/>
+      <h3 class="ui dividing header">{% trans "Preview your comment for:" %}<br/>
         <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
       </h3>
       {% if not comment %}

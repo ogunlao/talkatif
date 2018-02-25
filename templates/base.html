@@ -43,13 +43,6 @@
       </a>
       {% url 'all_list' as url %}
       <a href="{% url 'main_page' %}" class="{% if request.path == url %}active{% endif %} item">Feed</a>
-      {% url 'debate:debate_list_by_category' 'closed' as url1 %}
-      <a href="{% url 'debate:debate_list_by_category' 'closed' %}" class="{% if request.path == url1 %}active{% endif %} item">Debate{% if daily_debate > 0 %}
-          <div class="floating ui red label">{{daily_debate}}</div>{% endif %}
-        </a>
-      {% url 'debate:debate_list_by_category' 'open' as url2 %}
-      <a href= "{% url 'debate:debate_list_by_category' 'open' %}" class="{% if request.path == url2 %}active{% endif %} item">Argument{% if daily_argument > 0 %}
-          <div class="floating ui red label">{{daily_argument}}</div>{% endif %}</a>
       {% url 'discourse:post_list' as url3 %}
       <a href="{% url 'discourse:post_list' %}" class="{% if request.path == url3 %}active{% endif %} item">Talks{% if daily_talk > 0 %}
           <div class="floating ui red label">{{daily_talk}}</div>{% endif %}</a>
@@ -88,9 +81,9 @@
             <a class="item" href="{% url 'account_logout' %}">Sign Out</a>
             <a class="item" href="{% url 'account_reset_password' %}">Change Password</a>
             <div class="divider"></div>
-            <a class="item" href="{% url 'debate:see_badge' %}">Badges</a>
+            <a class="item" href="">Badges</a>
             <div class="divider"></div>
-            <a class="item" href="{% url 'debate:rules_guidelines' %}">Rules</a>
+            <a class="item" href="">Rules</a>
             <a class="item" href="{% url 'faq' %}">FAQ</a>
           </div>
         </div>
@@ -122,8 +115,6 @@
             </div>
             <div class="ui vertical navbar menu">
               <a href="{% url 'all_list'  %}" class="active item">Home</a>
-              <a href="{% url 'debate:debate_list_by_category' 'closed' %}" class="item">Debates</a>
-              <a href= "{% url 'debate:debate_list_by_category' 'open' %}" class="item">Arguments</a>
               <a href="{% url 'discourse:post_list' %}" class="item">Talks</a>
 
                 <div class="menu">
@@ -140,9 +131,9 @@
                   <a class="item" href="{% url 'account_logout' %}">Sign Out</a>
                   <a class="item" href="{% url 'account_reset_password' %}">Change Password</a>
                   <div class="divider"></div>
-                  <a class="item" href="{% url 'debate:see_badge' %}">Badges</a>
+                  <a class="item" href="">Badges</a>
                   <div class="divider"></div>
-                  <a class="item" href="{% url 'debate:rules_guidelines' %}">Rules</a>
+                  <a class="item" href="">Rules</a>
                   <a class="item" href="{% url 'faq' %}">FAQ</a>
                   {% endif %}
 
@@ -215,6 +206,7 @@
   <script type="text/javascript" async
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
+
 
   <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
   <script>

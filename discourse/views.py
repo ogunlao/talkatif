@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from .models import Post, TrackedPost
 from .forms import PostForm
 from django.contrib.auth.models import User
-#from .forms import PostDebateForm
 from django.contrib import messages
 from django.db import IntegrityError
 from django.utils import timezone
@@ -21,6 +20,24 @@ meta = Meta(
     }
 )
 
+def all_list(request):
+    post_list = Post.published.all()
+
+    paginator = Paginator(post_list, 50) # Show 50 posts per page
+    try:
+        page = request.GET.get('page', 1)
+    except PageNotAnInteger:
+        page = 1
+    except EmptyPage:
+        page = paginator.num_pages
+
+    post_list = paginator.page(page)
+
+
+    context = {'post_list': post_list, 'meta':meta,}
+    template = 'all_list.html'
+
+    return render(request, template , context)
 
 def handler404(request):
     return render(request, '404.html' )
@@ -38,6 +55,19 @@ def handler500(request):
 #     message_info = "An error occured while opening your page. Please try Again."
 #     messages.info(request, message_info )
 #     return redirect('all_list', permanent=True )
+
+def index(request):
+    if request.user.is_authenticated():
+        return redirect('all_list', permanent=True )
+    else:
+        return render(request, 'index.html', {'meta':meta})
+
+from django.contrib.auth.decorators import user_passes_test
+@user_passes_test(lambda u: u.is_superuser)
+@login_required
+def dashboard(request):
+    total_users= User.objects.all().count()
+    return render(request, 'dashboard.html', {'total_users':total_users, 'meta':meta,})
 
 def post_list(request, tag_slug = None):
     object_list = Post.published.all()
@@ -82,7 +112,6 @@ def post_detail(request, post_id, post_slug):
     post = get_object_or_404(Post, id=post_id)
     similar_posts = post.tags.similar_objects()[:5] #Get five other similar posts
     user_id = request.user.pk
-    post_form = PostForm()
 
     ip_add = client_ip(request) #gets user ip address
     if request.user.is_authenticated(): #To save user data for page views
@@ -102,7 +131,7 @@ def post_detail(request, post_id, post_slug):
             break
 
     like_count = post.total_likes #counts total likes on post
-    context = {'post':post, 'like_count':like_count, 'liked':liked, 'post_form':post_form, 'meta':meta, 'similar_posts':similar_posts }
+    context = {'post':post, 'like_count':like_count, 'liked':liked, 'meta':meta, 'similar_posts':similar_posts }
 
     return render(request, 'discourse/post/post_detail.html', context)
 
@@ -157,7 +186,7 @@ def like_post(request):
         post = get_object_or_404(Post, slug=slug)
         liked = False
         if post.likes.filter(id=user.id).exists():
-            # user has already liked this debate post
+            # user has already liked this  post
             # remove like/user
             post.likes.remove(user)
             message = 'You disliked this'
@@ -228,7 +257,7 @@ def markdown_uploader(request):
             tmp_file = os.path.join(settings.MARTOR_UPLOAD_PATH, img_uuid)
             def_path = default_storage.save(tmp_file, ContentFile(image.read()))
             img_url = os.path.join(settings.MEDIA_URL, def_path)
-            
+
             data = json.dumps({
                 'status': 200,
                 'link': img_url,
@@ -237,3 +266,6 @@ def markdown_uploader(request):
             return HttpResponse(data, content_type='application/json')
         return HttpResponse(_('Invalid request!'))
     return HttpResponse(_('Invalid request!'))
+
+def faq(request):
+    return render(request, 'faq.html', {'meta':meta })

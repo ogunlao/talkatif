@@ -12,7 +12,7 @@
 
   {% if tag %}
     Results for:
-    <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}" class="ui blue basic label">{{ tag.name }}</a>
+    <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}" class="ui blue basic label">{{ tag.name }}</a>
   {% endif %}
 
   {% if object_list %}
@@ -66,7 +66,7 @@
       </div>
 {% endif %}
 {% if not object_list.object_list %}
-  <p>There are no debates started yet. Create a new debate or checkback.</p>
+  <p>There are no talks yet. Create a new talk or checkback.</p>
 {% endif %}
 
 {% endblock content %}

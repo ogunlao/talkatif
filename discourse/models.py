@@ -18,7 +18,6 @@ class Post(models.Model):
     title = models.CharField(max_length=500, help_text="Give a clear title for the post")
     slug = models.SlugField(max_length=250, unique=True)
     show = models.BooleanField('Post Enabled/Disabed', default=True)
-    category = models.BooleanField('A field used to separate discourse from debates', default=True, blank = True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='author', default = User)
     summary = MartorField('What are we discussing today?', \
                      help_text="Be brief and cogent. Keep it hot. <a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported.")

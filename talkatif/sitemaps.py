@@ -1,20 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from debate.models import PostDebate
 from discourse.models import Post
-
-class PostDebateSitemap(Sitemap):
-    """
-    Sitemaps for all debate pages.
-    """
-    changefreq = 'always'
-    priority = 0.5
-
-    def items(self):
-        return PostDebate.published.all()
-
-    def lastmod(self, obj):
-        return obj.updated
 
 class PostSitemap(Sitemap):
     """

@@ -5,15 +5,15 @@ from martor.widgets import AdminMartorWidget
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'allow_comments', 'author', )
-    list_filter = ('created', 'category',)
+    list_display = ('title', 'allow_comments', 'author', )
+    list_filter = ('created',)
     search_fields = ('title', 'summary',)
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'created'
 
     fieldsets = (
         (None, {
-            'fields': ('title','slug', 'category', 'summary', 'tags','author' )
+            'fields': ('title','slug', 'summary', 'tags','author' )
         }),
     )
 

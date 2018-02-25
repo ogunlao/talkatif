@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from allauth.socialaccount.models import SocialAccount
 
 from discourse.models import Post
-from debate.models import Profile, PostDebate
+from userprofile.models import Profile
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string, get_template
@@ -56,13 +56,12 @@ def email_confirmed_(request, email_address, **kwargs):
     """
     Signal to send welcome message to user on first login
     """
-    postdebate = PostDebate.objects.filter()[:5]
-    post = Post.objects.filter()[:5]
+    post = Post.objects.filter()[:10]
     user = User.objects.get(email=email_address.email)
 
     # user.is_active = True
     # user.save()
-    ctx = {'postdebate':postdebate, 'post':post, 'user':user, 'admin_email':settings.ADMIN_EMAIL}
+    ctx = {'post':post, 'user':user, 'admin_email':settings.ADMIN_EMAIL}
     from_email = settings.NOTIFICATION_EMAIL
     recipients_email = user.email
     subject = "Welcome to the Talkatif Community."

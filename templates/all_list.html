@@ -9,18 +9,13 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <div class="ui two column grid">
-      <div class="column">
-        <a href="{% url 'debate:suggest_post' %}" ><button class="ui mini primary basic button">New debate &raquo;</button></a>
-      </div>
+
         <div class="column">
         <a href="{% url 'discourse:new_post' %}"><button class="ui mini primary basic button">New talk &raquo;</button></a>
       </div>
-    </div>
-        {% if merged_list %}
-          {% for post in merged_list.object_list%}
 
-            {% if post.category %}
+        {% if post_list %}
+          {% for post in post_list.object_list%}
 
             <div class="ui fluid card">
               <div class="content">
@@ -59,92 +54,18 @@
               </div>
             </div>
 
-
-          {% else %}
-
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="right floated meta">{{post.created|naturaltime}}</div>
-              <a href="{{post.author.profile.get_absolute_url}}">
-                {% if post.author|has_avatar %}
-                  {% avatar post.author 35 class="ui avatar image" %}
-                {% else %}
-                  <img src="{{post.author.profile.profile_image_url}}" class="ui avatar image" width="35" height="35" />
-                {% endif %}
-                {{post.author}}</a>
-            </div>
-            <div class="content">
-              <div class="header"><a href="{{post.get_absolute_url}}">{{post.title}}</a></div>
-              <div class="meta"><i class="hourglass start icon"></i> {{post.begin|naturaltime}}</div>
-              <div class="meta">
-                {% for tag in post.tags.all %}
-                <a href="{% url 'debate:debate_list_by_tag' tag.slug  %}" class="ui blue basic label">{{ tag.name }}</a>
-                {% endfor %}
-                <br>
-              </div>
-              <div class="description">
-                {{post.summary|truncatewords:50|safe_markdown}}
-                {% ifnotequal post.summary|truncatewords_html:50|length post.summary|truncatewords_html:51|length %}
-                  <a href="{{post.get_absolute_url}}">read more...</a>
-                {% endifnotequal %}
-
-              </div>
-            </div>
-            <div class="content">
-              <span class="right floated">
-                <i class="heart outline like icon"></i>
-                {{ post.total_likes }} like{{ post.total_likes|pluralize }}
-              </span>
-              <i class="comment icon"></i>
-              {% get_comment_count for post as comment_count %}
-              {{ comment_count }} comment{{ comment_count|pluralize }}
-            </div>
-            <div class="extra content">
-              <i class="users icon"></i>
-              {% if post.debate_category == "closed" and post.supporting_debaters.all or post.opposing_debaters.all %}
-                {% for names in post.supporting_debaters.all %} <a href="{{names.profile.get_absolute_url}}">{{ names.get_full_name }}</a>{% endfor %}
-                {% for names in post.opposing_debaters.all %}{% if forloop.first %}, {% endif %} <a href="{{names.profile.get_absolute_url}}">{{ names.get_full_name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
-                {% else %}
-                No debaters yet.
-              {% endif %}
-            </div>
-          </div><!-- eND OF CARD -->
-
-              {% endif %}
           {% endfor %}
 
           {# The following renders the pagination html #}
           <div id="pagination">
-            {% if merged_list.object_list %}
-              {{ merged_list.render }}
+            {% if post_list.object_list %}
+              {{ post_list.render }}
             {% endif %}
           </div>
         {% endif %}
 
-            {% if not merged_list.object_list %}
+            {% if not post_list.object_list %}
               <p>There are no feeds yet. Check back.</p>
             {% endif %}
 
 {% endblock content %}
-
-{% block right_content %}
-
-    {% if last_5_badges %}
-    <div class="ui card">
-      <div class="content">
-        <div class="header">Latest Badge Winners</div>
-      </div>
-      <div class="content">
-        {% for winner in last_5_badges %}
-          <p>
-            {% with ''|center:winner.badge.rank as range %}
-                {% for _ in range %}<i class="ui heart rating"></i>{% endfor %}
-            {% endwith %}
-            {{winner.user.get_full_name}} - {{winner.badge.name}}</p>
-        {% endfor %}
-        <p>Enter for a debate to get your first badge<p>
-      </div>
-    </div>
-    {% endif %}
-
-{% endblock right_content %}
