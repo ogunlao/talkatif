@@ -155,8 +155,6 @@
 <div class="ui large top fixed hidden menu">
   <div class="ui container">
     <a href="{% url 'all_list'  %}" class="active item">Home</a>
-    <a href="{% url 'debate:debate_list_by_category' 'closed' %}" class="item">Debates</a>
-    <a href= "{% url 'debate:debate_list_by_category' 'open' %}" class="item">Arguments</a>
     <a href="{% url 'discourse:post_list' %}" class="item">Talks</a>
     <div class="right menu">
       <div class="item">
@@ -172,8 +170,6 @@
 <!-- Sidebar Menu -->
 <div class="ui vertical inverted sidebar menu">
   <a href="{% url 'all_list'  %}" class="active item">Home</a>
-  <a href="{% url 'debate:debate_list_by_category' 'closed' %}" class="item">Debates</a>
-  <a href= "{% url 'debate:debate_list_by_category' 'open' %}" class="item">Arguments</a>
   <a href="{% url 'discourse:post_list' %}" class="item">Talks</a>
   <a href="{% url 'account_login' %}" class="item">Login</a>
   <a href="{% url 'account_signup' %}" class="item">Signup</a>
@@ -189,8 +185,6 @@
           <i class="sidebar icon"></i>
         </a>
         <a href="{% url 'all_list'  %}" class="active item">Home</a>
-        <a href="{% url 'debate:debate_list_by_category' 'closed' %}" class="item">Debates</a>
-        <a href= "{% url 'debate:debate_list_by_category' 'open' %}" class="item">Arguments</a>
         <a href="{% url 'discourse:post_list' %}" class="item">Talks</a>
         <div class="right item">
           <a href="{% url 'account_login' %}" class="ui inverted button">Log in</a>

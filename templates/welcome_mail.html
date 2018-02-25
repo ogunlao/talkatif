@@ -17,7 +17,7 @@
 <table bgcolor="#F4F7BA">
 <tr>
 <td><img src="https://www.talkatif.com/media/logo/talkatif.png" width="50" height="50"/></td>
-<td align="right"><h3 class="collapse">Welcome, Kaabo, Sanu, Nno {{user.first_name}}!</h3></td>
+<td align="right"><h3 class="collapse">Welcome, Kaabo, Sanu, Nno {{user}}!</h3></td>
 </tr>
 </table>
 </div>
@@ -35,21 +35,11 @@
 <tr>
 <td>
 
-<h3>Dear, {{user.get_full_name}}</h3>
+<h3>Dear, {{user}}</h3>
 <p class="lead">We welcome you to the talkatif community.
 To get up-to-speed about the site, we have curated a list
 of present debates and talks. Click to access them.</p><br>
 
-{% if postdebate %}
-<p class="callout">
-Debates.
-<ul>
-{% for debate in postdebate %}
-<li><a href="https://talkatif.com{{debate.get_absolute_url}}">{{debate.title}}</a></li>
-{% endfor %}
-</ul>
-</p>
-{% endif %}
 <br>
 {% if post %}
 <p class="callout">
@@ -99,7 +89,7 @@ Email: <strong><a href="mailto:{{admin_email}}">{{admin_email}}</a></strong></p>
 <td align="center">
 <p>
 
-<a href="https://www.talkatif.com/debate/rules_guidelines/">Rules</a> | <a href="https://www.talkatif.com/faq/">FAQ</a> | <a href="https://www.talkatif.com/blog/">Blog</a>
+<a href="https://www.talkatif.com/faq/">FAQ</a> | <a href="https://www.talkatif.com/blog/">Blog</a>
 
 </p>
 </td>

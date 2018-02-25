@@ -1,13 +1,25 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render
 from .forms import UserForm, ProfileForm
 from meta.views import Meta
+from django.contrib.auth.models import User
+from .models import Profile
 # Create your views here.
 from django.db import transaction
 from django.utils.translation import gettext as _
+
+#Default meta details for post
+meta = Meta(
+    title="Welcome to Talkatif. Home to debates, opinions, arguments and talks. A talking family.",
+    description="talkatif.com creates an environment for interesting talks, debates, arguments and opinions.",
+    url="/",
+    extra_props = {
+        #'viewport': 'width=device-width, initial-scale=1.0, minimum-scale=1.0'
+    }
+)
 
 @login_required
 @transaction.atomic

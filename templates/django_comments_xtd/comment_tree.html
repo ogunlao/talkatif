@@ -45,34 +45,6 @@
       {% endif %}
       </div>
 
-      {% if not item.comment.is_removed %}
-      <div class="metadata">
-          {% if post.debate_category == "closed" %}
-            {% for debater in post.supporting_debaters.all %}
-              {% if debater == item.comment.user %}
-                <p class="comment_title">Supporting Debater </p>
-              {% endif%}
-            {% endfor%}
-            {% for debater in post.opposing_debaters.all %}
-              {% if debater == item.comment.user %}
-                <p class="comment_title">Opposing Debater </p>
-              {% endif%}
-            {% endfor%}
-            {% for judge in post.judges.all %}
-              {% if judge == item.comment.user %}
-                <p class="comment_title">Judge</p>
-              {% endif%}
-            {% endfor%}
-          {% endif %}
-
-          {% for mod in post.moderator.all %}
-            {% if mod == item.comment.user %}
-              <p class="comment_title">Moderator</p>
-            {% endif%}
-          {% endfor%}
-      </div>
-      {% endif %}
-
       <div class="text">
         {% if item.comment.is_removed %}
           <em>{% trans "This comment has been removed." %}</em>

@@ -1,11 +1,11 @@
 {% extends "account/base.html" %}
 {% load widget_tweaks %}
 
-{% block title %}Profile for {{profile_user.first_name}}{% endblock %}
+{% block title %}Profile for {{profile_user}}{% endblock %}
 
 {% block content %}
 
-<h3 class="ui dividing header">{{ profile_user_name|title }}</h3>
+<h3 class="ui dividing header">Username: {{ profile_user }}</h3>
 <div class="ui two column grid">
   <div class="column">
     <div class="ui fluid card">
@@ -85,28 +85,3 @@
 
  </div>
 {% endblock content %}
-
-{% block right_content %}
-  <h3 class="ui dividing header">Badges</h3>
-    <div class="ui fluid card">
-        {% if badges %}
-          <div class="content">
-            <div class="header">Badges</div>
-            {% for badge in badges %}
-            <div class="text">
-              {% with ''|center:badge.rank as range %}
-                  {% for _ in range %}<i class="ui blue star icon"></i>{% endfor %}
-              {% endwith %}
-              {{badge.category|capfirst}} - <a href="{{badge.get_absolute_url}}" data-toggle="tooltip" title="{{badge.description}}">{{badge.name|capfirst}}</a>
-            </div>
-            {% endfor %}
-            {% else %}
-            <p>No badge earned yet.</p>
-          </div>
-            {% endif %}
-
-          <div class="content"><i class="ui basic blue label">{{badges.count}}</i> Badge{{badges.count|pluralize}}</div>
-
-   </div>
-
-{% endblock right_content %}

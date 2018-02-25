@@ -24,8 +24,8 @@
   <script src="{% static 'serve/semantic.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" >
   <!-- Datetime picker dependencies -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/serve/flatpickr.min.css">
-  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/serve/themes/material_blue.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
   {% block extra_css %}{% endblock extra_css %}
   <link type="text/css" href="{% static 'serve/components/menu.min.css' %}" rel="stylesheet" />
   <link type="text/css" href="{% static 'serve/components/message.min.css' %}" rel="stylesheet" />
@@ -41,8 +41,6 @@
       <a href="{% url 'all_list' %}" class="header item">
         <img class="logo" src="{% static 'logo/talkatif.png' %}" alt = "ffng"/>
       </a>
-      {% url 'all_list' as url %}
-      <a href="{% url 'main_page' %}" class="{% if request.path == url %}active{% endif %} item">Feed</a>
       {% url 'discourse:post_list' as url3 %}
       <a href="{% url 'discourse:post_list' %}" class="{% if request.path == url3 %}active{% endif %} item">Talks{% if daily_talk > 0 %}
           <div class="floating ui red label">{{daily_talk}}</div>{% endif %}</a>

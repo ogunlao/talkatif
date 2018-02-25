@@ -43,10 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.humanize',
     'haystack',
-    'debate.apps.DebateConfig',
+    #'debate.apps.DebateConfig',
     'discourse.apps.DiscourseConfig',
     'blog.apps.BlogConfig',
     'tkcomments.apps.TkcommentsConfig',
+    'userprofile.apps.UserprofileConfig',
     'anymail',
     'martor',
     'avatar',
@@ -116,7 +117,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
-                'debate.context_processors.site_processor',
+                'discourse.context_processors.site_processor',
 
             ],
         },
@@ -213,9 +214,6 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ""
 
-# Required by django-allauth to extend the sign up form to include profile data
-ACCOUNT_FORMS = {'signup': 'debate.forms.SignupForm'}
-
 #Django-meta settings
 META_SITE_PROTOCOL = config('META_SITE_PROTOCOL')
 META_SITE_DOMAIN = config('META_SITE_DOMAIN')
@@ -282,7 +280,7 @@ COMMENTS_XTD_MODEL = 'tkcomments.models.TkComment' #2
 COMMENTS_XTD_FORM_CLASS = 'tkcomments.forms.TkCommentForm' #3
 
 #Comment Threading settings
-COMMENTS_XTD_MAX_THREAD_LEVEL = 3  # default is 0
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1  # default is 0
 COMMENTS_XTD_LIST_ORDER = ('thread_id', 'order')  # default is ('thread_id', 'order')
 
 #Disable comments confirmation for new users

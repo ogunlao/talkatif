@@ -24,7 +24,7 @@ class Profile(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True,
                                         help_text="e.g Lagos, New York")
     country = CountryField(blank_label='(select country)', null=True, blank=True)
-    notify = models.BooleanField(default = True, help_text="Notify me of upcoming debates.")
+    notify = models.BooleanField(default = True, help_text="Notify me of latest talks.")
     gender = models.CharField(choices=GENDER_CHOICES, max_length=6, blank=True, null=True)
 
     def profile_image_url(self):
