@@ -39,7 +39,7 @@ from django.conf import settings
 # urlpatterns = static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += [
+urlpatterns = [
     url(r'^$', discourse_views.index, name = 'main_page'),
     url(r'^all/', discourse_views.all_list, name='all_list'),
     url(r'^search/', include('haystack.urls')),
