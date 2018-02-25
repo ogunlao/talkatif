@@ -36,8 +36,8 @@ sitemaps = {
 from django.conf.urls.static import static
 from django.conf import settings
 
-urlpatterns = static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# urlpatterns = static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += [
     url(r'^$', discourse_views.index, name = 'main_page'),
@@ -67,9 +67,3 @@ urlpatterns += [
 
 handler404 = 'discourse.views.handler404'
 handler500 = 'discourse.views.handler500'
-# Use static() to add url mapping to serve static files during development (only)
-
-#
-# if settings.DEBUG == True:
-#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
