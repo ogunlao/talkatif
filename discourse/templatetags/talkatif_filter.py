@@ -24,11 +24,12 @@ import json
 API_KEY = settings.GOO_API_KEY
 @register.filter()
 def goo_shorten_url(url):
-    post_url = 'https://www.googleapis.com/urlshortener/v1/url?key={}'.format(API_KEY)
-    payload = {'longUrl': url}
-    headers = {'content-type': 'application/json'}
-    r = requests.post(post_url, data=json.dumps(payload), headers=headers)
-    try:
-        return r.json()["id"]
-    except:
-        return url
+    return url
+    # post_url = 'https://www.googleapis.com/urlshortener/v1/url?key={}'.format(API_KEY)
+    # payload = {'longUrl': url}
+    # headers = {'content-type': 'application/json'}
+    # r = requests.post(post_url, data=json.dumps(payload), headers=headers)
+    # try:
+    #     return r.json()["id"]
+    # except:
+    #     return url

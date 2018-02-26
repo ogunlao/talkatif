@@ -36,11 +36,12 @@
 <body>
 
 {% if not request.user_agent.is_mobile %}
-  <div class="ui borderless blue menu">
+  <div class="ui borderless tiny yellow menu">
     <div class="ui container">
-      <a href="{% url 'all_list' %}" class="header item">
+      <a href="{% url 'all_list' %}" class="item">
         <img class="ui mini circular image logo" src="{% static 'logo/talkatif.png' %}" alt = "ffng"/>
       </a>
+      <a href="{% url 'all_list' %}" class="header item">Talkatif</a>
       {% url 'discourse:post_list' as url3 %}
       <a href="{% url 'discourse:post_list' %}" class="{% if request.path == url3 %}active{% endif %} item">Talks{% if daily_talk > 0 %}
           <div class="floating ui red label">{{daily_talk}}</div>{% endif %}</a>
@@ -90,7 +91,7 @@
 
 {% else %}
 
-<div class="ui navbar menu">
+<div class="ui borderless yellow navbar menu">
                 <a href="{% url 'all_list' %}" class="header item">
                   <img class="ui mini circular image logo" src="{% static 'logo/talkatif.png' %}" alt = "ffng"/>
                 </a>
