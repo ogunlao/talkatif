@@ -135,7 +135,6 @@ AUTHENTICATION_BACKENDS = (
 
 WSGI_APPLICATION = 'talkatif.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -167,7 +166,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -248,7 +246,6 @@ CACHES = {
         'TIMEOUT': None,
    }
 }
-
 
 #comment manager
 MANAGERS = (
@@ -354,18 +351,12 @@ MAX_IMAGE_UPLOAD_SIZE = 4 * 1024 * 1024 #4 MB in bytes
 # To setup the martor editor with label or not (default is False)
 MARTOR_ENABLE_LABEL = False
 
-# Imgur API Keys
-#MARTOR_IMGUR_CLIENT_ID = 'your-client-id'
-#MARTOR_IMGUR_API_KEY   = 'your-api-key'
-
 # Safe Mode
-MARTOR_MARKDOWN_SAFE_MODE = True # default
+MARTOR_MARKDOWN_SAFE_MODE = False # default is True
 
 # Markdownify
 MARTOR_MARKDOWNIFY_FUNCTION = 'martor.utils.markdownify' # default
 MARTOR_MARKDOWNIFY_URL = '/martor/markdownify/'# default
-
-
 
 # Markdown extensions (default)
 MARTOR_MARKDOWN_EXTENSIONS = [
@@ -383,8 +374,6 @@ MARTOR_MARKDOWN_EXTENSIONS = [
 
 # Markdown Extensions Configs
 MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
-
-
 
 # Markdown Extensions
 MARTOR_MARKDOWN_BASE_EMOJI_URL = 'https://assets-cdn.github.com/images/icons/emoji/' # default

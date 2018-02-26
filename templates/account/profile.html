@@ -8,7 +8,7 @@
 <h3 class="ui dividing header">Username: {{ profile_user }}</h3>
 <div class="ui two column grid">
   <div class="column">
-    <div class="ui fluid card">
+    <div class="ui yellow fluid card">
         <div class="content">
           {% if profile_user == request.user %}
           <span class="meta"><a href="{% url 'update_profile'%}">Edit Profile</a></span>
