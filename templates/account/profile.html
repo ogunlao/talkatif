@@ -19,18 +19,19 @@
          {% load avatar_tags %}
 
            {% if profile_user|has_avatar %}
-           {% avatar profile_user class="ui small rounded image" %}
-             {% if request.user == profile_user %}
-               <p><br><a class="ui secondary basic small button" href="{% url 'avatar_delete' %}">Remove avatar</a></p>
-             {% endif %}
-
+           {% avatar profile_user class="ui tiny circular image" %}
            {% else %}
-           <img src="{{profile_user.profile.profile_image_url}}" width="100%" height=100% class="ui small rounded image" />
+           <img src="{{profile_user.profile.profile_image_url}}" width="100%" height=100% class="ui tiny circular image" />
            {% endif %}
-           {% if request.user == profile_user %}
-             <p><a class="ui secondary basic small button" href="{% url 'avatar_change' %}">Change avatar</a></p>
-           {% endif %}
+    </div>
+      {% if request.user == profile_user %}
+      <div class="content">
+        {% if profile_user|has_avatar %}
+        <span class="meta"><a class="ui secondary basic small button" href="{% url 'avatar_delete' %}">Remove avatar</a></span>
+        {% endif %}
+        <span class="right floated meta"><p><a class="ui secondary basic small button" href="{% url 'avatar_change' %}">Change avatar</a></span>
       </div>
+      {% endif %}
     </div>
   </div>
   <div class="column">
@@ -39,7 +40,7 @@
           <tbody>
             <tr>
               <td>Username</td>
-              <td>{{ profile_user.username }}</td>
+              <td>{{ profile_user }}</td>
             </tr>
             <tr>
               <td>Gender</td>

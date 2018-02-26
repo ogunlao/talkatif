@@ -5,7 +5,6 @@ from . import views
 urlpatterns = [
     # post views
     url(r'^$', views.post_list, name='post_list'),
-    #url(r'^(?P<category>\w+)/$', views.post_list, name='post_list_by_category'),
     url(r'^edit/(?P<post_id>\d+)/$', views.new_post, name='edit_post'),
     url(r'^new/$', views.new_post, name='new_post'),
     url(r'^like-post/$', views.like_post, name='like-post'),

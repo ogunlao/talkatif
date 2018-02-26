@@ -1,4 +1,4 @@
-{% extends "debate/base.html" %}
+{% extends "base.html" %}
 {% load staticfiles %}
 {% load comments %}
 {% load el_pagination_tags %}
@@ -29,6 +29,7 @@
           </div>
           <div class="content">
             <div class="header"><a href="{{result.object.get_absolute_url}}">{{result.title}}</a></div>
+            <br/>
             <div class="meta">
               {% for tag in result.tags %}
               <a href="{% url 'discourse:post_list_by_tag' tag|slugify  %}" class="ui blue basic label">{{ tag }}</a>
@@ -53,12 +54,12 @@
           </div>
         </div>
 
-        {% endif %}
-
 
           {% endfor %}
 
-      {% else %}
+      {% endif %}
+
+      {% if not page %}
             <p>There are no results for this search.</p>
       {% endif %}
 

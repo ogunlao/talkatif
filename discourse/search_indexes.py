@@ -9,7 +9,6 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
     title = indexes.CharField(model_attr='title')
     slug = indexes.CharField(model_attr='slug')
     summary = indexes.CharField(model_attr='summary')
-    category = indexes.CharField(model_attr='category')
     author = indexes.CharField(model_attr='author')
     tags = indexes.MultiValueField(model_attr='tags__name', null=True)
     created = indexes.DateTimeField(model_attr='created', null=True)

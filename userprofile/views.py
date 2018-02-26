@@ -81,5 +81,5 @@ def profile(request, username):
 
     profile_user_name = profile_user.get_full_name()
 
-    context = {'post': post, 'profile_user': profile_user, 'profile_user_name':profile_user_name, 'meta':meta}
+    context = {'post': post, 'profile_user': profile_user, 'meta':meta}
     return render(request, 'account/profile.html', context)

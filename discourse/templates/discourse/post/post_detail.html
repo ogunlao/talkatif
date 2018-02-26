@@ -21,7 +21,7 @@
 
     {% if post %}
 
-    <div class="ui fluid card">
+    <div class="ui yellow fluid card">
       <div class="content">
         <div class="right floated meta">{{post.created|naturaltime}}</div>
         <a href="{{post.author.profile.get_absolute_url}}">
@@ -34,6 +34,7 @@
       </div>
       <div class="content">
         <div class="header"><a href="{{post.get_absolute_url}}">{{post.title}}</a></div>
+        <br/>
         <div class="meta">
           {% for tag in post.tags.all %}
           <a href="{% url 'discourse:post_list_by_tag' tag.slug  %}" class="ui blue basic label">{{ tag.name }}</a>
