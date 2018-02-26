@@ -31,6 +31,20 @@ body {
   	margin-top: 0px !important;
   }
 
+  .padding-reset{
+  	padding: 0px !important;
+  }
+
+  @media (max-width: 767px) {
+    	.ui.inverted.navbar{
+  	}
+  }
+
+  .ui.vertical.menu{
+  	margin-top: -15px !important;
+  	width: 100%;
+  	display: none;
+  }
 
 .comment_title {
   font-size: 0.8em;
