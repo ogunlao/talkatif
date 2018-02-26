@@ -23,7 +23,6 @@ class TkCommentForm(XtdCommentForm):
 
 class CommentForm(forms.ModelForm):
     """Comment form used to edit comments."""
-    comment = MartorFormField()
     class Meta:
         model = TkComment
         fields = ('comment',)

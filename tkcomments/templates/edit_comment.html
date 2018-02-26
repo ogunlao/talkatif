@@ -3,26 +3,48 @@
 {% load i18n %}
 {% load comments %}
 {% load widget_tweaks %}
-{% load md2 %}
-{% load debate_filter %}
+{% load martortags %}
+{% load talkatif_filter %}
+{% load avatar_tags %}
 
 {% block title %}Edit Comment{% endblock %}
 
 {% block content %}
 
       <h3 class="ui dividing header">Edit comment.</h3>
-      <form class="ui form" class="col s12" method="POST" action="./?next={% get_comment_permalink comment %}">
-            <input type="hidden" name="next" value="{% get_comment_permalink comment %}"/>
-            {% csrf_token %}
-            <div class="red-text hidden" data-comment-element="errors"></div>
+      <div class="ui comments">
+      <div class="comment">
+        <a class="avatar">
+          {% if user|has_avatar %}
+            {% avatar user 35 class="ui avatar circular image" %}
+          {% else %}
+            <img src="{{user.profile.profile_image_url}}" width="35" height="35" />
+          {% endif %}
+        </a>
+        <div class="content">
+          <a class="author">{% if form.cleaned_data.comment_anonymous == True %}Anonymous{% else %}{{ form.cleaned_data.name }}{% endif %}</a>
+          <a class="time">{% now "N j, Y, P" %}</a>
+          <div class="text">
+            {{ comment.comment|safe_markdown }}
+            <small>{{ comment.comment|wordcount }} word{{ comment.comment|wordcount|pluralize }}. | {{comment.comment|minute_read}}</small>
+          </div>
+          <form class="ui form" class="col s12" method="POST" action="./?next={% get_comment_permalink comment %}">
+                <input type="hidden" name="next" value="{% get_comment_permalink comment %}"/>
+                {% csrf_token %}
+                <div class="red-text hidden" data-comment-element="errors"></div>
 
-              {% render_field form.comment class="materialize-textarea" data-length="3000" %}
-                <div class="inline field">
-                <button type="submit" name="post" class="ui primary basic button">Save</button>
-              </div>
-        <small><a href='http://commonmark.org/help/' target='_blank'>Mardown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported.
-        </small>
-      </form>
-      {{form.media}}
+                  {{form.comment }}
+                    <div class="inline field">
+                      <br/>
+                    <button type="submit" name="post" class="ui primary basic button">Save</button>
+                  </div>
+            <small><a href='http://commonmark.org/help/' target='_blank'>Markdown </a>and <a target='_blank' href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">MathJax</a> supported.
+            </small>
+          </form>
+
+        </div>
+      </div>
+      </div>
+
 
 {% endblock %}

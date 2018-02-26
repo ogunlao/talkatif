@@ -16,13 +16,9 @@
 <!--Display goto form if page is more than 1 -->
 <div class="right floated column">
 {% if pages %}
-    {% if post.category %}
     <form class="ui form" method="get" action="{% url 'discourse:goto_post_page' post.pk post.slug %}">
-    {% else %}
-    <form class="ui form" method="get" action="{% url 'debate:goto_page' post.debate_category post.pk post.slug %}">
-    {% endif %}
       <div class="field">
-        <input value='{{goto_page_no}}' name='page' id="go_to" type="text" class="validate">
+        <input value='{{goto_page_no}}' name='page' id="go_to" type="text" class="validate" placeholder="page number">
         <label class="active" for="go_to">Go to Page</label>
       </div>
     </form>

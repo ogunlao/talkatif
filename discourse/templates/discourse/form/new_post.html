@@ -1,7 +1,7 @@
 {% extends "discourse/base.html" %}
 {% load staticfiles %}
 {% load widget_tweaks %}
-{% load markdownify %}
+{% load martortags %}
 {% block extra_head %} {% endblock extra_head %}
 {% block title %}{% if post_id %}Edit talk{% else %}New talk{% endif %}{% endblock %}
 
@@ -19,11 +19,10 @@
                     {{ form.title|safe}}
                       <label for="{{ form.title.auto_id }}">{{form.title.label_tag}}</label>
                     </div>
-
+                    
                     {{ form.summary}}
-                    {% if form.summary.help_text %}
-                    <small class="grey-text">{{ form.summary.help_text|markdownify }}</small>
-                    {% endif %}
+                    <small class="grey-text">Be brief and cogent. Keep it hot. <a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported.
+                      </small>
 
                     <div class="field">
                       <label>Tags: e.g. music, culture, politics e.t.c.</label>
@@ -47,6 +46,5 @@
                   </div>
                   {% endif %}
             </form>
-            {{form.media}}
 
 {% endblock %}

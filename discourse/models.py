@@ -5,7 +5,6 @@ from django.utils.text import slugify
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField #For Profile
-from martor.models import MartorField
 
 
 class PublishedManager(models.Manager):
@@ -19,8 +18,7 @@ class Post(models.Model):
     slug = models.SlugField(max_length=250, unique=True)
     show = models.BooleanField('Post Enabled/Disabed', default=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, related_name='author', default = User)
-    summary = MartorField('What are we discussing today?', \
-                     help_text="Be brief and cogent. Keep it hot. <a href='http://commonmark.org/help/' target='_blank'>Markdown <a/> and <a target='_blank' href='https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference'>MathJax</a> supported.")
+    summary = models.TextField('What are we discussing today?')
     allow_comments = models.BooleanField('allow comments', default=True)
     tags = TaggableManager(blank = True)
     created = models.DateTimeField(auto_now_add=True)
