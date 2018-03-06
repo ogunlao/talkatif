@@ -13,37 +13,37 @@
 <div class="ui three column equal grid">
 
 <div class="computer tablet only column">
-<a href="/accounts/facebook/login/?process=login" class="ui facebook button">
+<a href="{% provider_login_url "facebook" process="connect" %}" class="ui facebook button">
   <i class="facebook icon"></i>
   Facebook
 </a>
 </div>
 <div class="mobile only column">
-<a href="/accounts/facebook/login/?process=login" class="ui facebook button">
+<a href="{% provider_login_url "facebook" process="connect" %}" class="ui facebook button">
   <i class="facebook icon"></i>
 </a>
 </div>
 
 <div class="computer tablet only column">
-<a href="/accounts/twitter/login" class="ui twitter button">
+<a href="{% provider_login_url "twitter" process="connect" %}" class="ui twitter button">
   <i class="twitter icon"></i>
   Twitter
 </a>
 </div>
 <div class="mobile only column">
-<a href="/accounts/twitter/login" class="ui twitter button">
+<a href="{% provider_login_url "twitter" process="connect" %}" class="ui twitter button">
   <i class="twitter icon"></i>
 </a>
 </div>
 
 <div class="computer tablet only column">
-<a href="/accounts/google/login" class="ui google plus button">
+<a href="{% provider_login_url "google" process="connect" %}" class="ui google plus button">
   <i class="google plus icon"></i>
   Google Plus
 </a>
 </div>
 <div class="mobile only column">
-<a href="/accounts/google/login" class="ui google plus button">
+<a href="{% provider_login_url "google" process="connect" %}" class="ui google plus button">
   <i class="google plus icon"></i>
 </a>
 </div>
